@@ -29,7 +29,7 @@ Here's some other ways to fine tune a histogram in R.
 \subsection{Density Plots}
 
 One of the problems with histograms is that they can be very sensitive
-to the size of the bins and the break points used. This is due to the
+to the size of the bins and the break points used. You probably noticed that in the example above as we changes the number of bins and the breakpoints to generate the histograms for the |turtles$length| variable. This is due to the
 discretization inherent in a histogram. A `density plot' or `density
 trace' is a continuous estimate of a probability distribution from a set
 of observations. Because it is continuous it doesn't suffer from the
@@ -54,7 +54,7 @@ be most aware of is the `smoothing bandwidth'.
 The bandwidth determines the standard deviation of the `kernel' that is
 used to calculate the density plot. There are a number of different
 types of kernels you can use; a Gaussian kernel is the R default and is
-the most common choice. See the documentation for more info.
+the most common choice. In the example above, R picked a bandwidth of 8.5 (the black line in our plot). When we specified a smaller bandwith of 5, the resulting density plot (red) is less smooth.  There exists a statistical literature on picking `optimum' kernel sizes. In general, larger data sets support the use of smaller kernels.  See the R documentation for more info on the |density()| function and references to the literature on density estimators.
 
 The \lstinline!lattice! package is an R library that makes it easier to
 create graphics that show conditional distributions. Here's how to
@@ -171,7 +171,6 @@ see some of the capabilities:
 
 \begin{R}
 > library(beanplot)
-> example(beanplot)
 \end{R}
 
 Note the use of the \lstinline!library()! function to make the functions
@@ -196,20 +195,25 @@ turtles.
 names = c('females','males'),xlab='Sex', ylab='Caparace length (mm)')
 \end{R}
 Note the use of the formula notation to compare the carapace length
-variable for males and females. There is also a asymmetrical version of
-the beanplot which can be used to more directly compare distributions
-between two groups. We explore this below. Note too the use of the list
+variable for males and females. Note  the use of the list
 argument to \lstinline!col!, and the use of vectors within the list to
 specify the colors for female and male beanplots.
 
+There is also a asymmetrical version of the beanplot which can be used to more directly compare distributions between two groups. This can be specified by using the argument |side='both'| to the beanplot function.
+%
+\begin{R}
+> beanplot(length~sex, data=turtles, col=list(c('red'),c('black')),names=c('females','males'),xlab='Sex', ylab='Carapace length (mm)',side='both')
+\end{R}
+%
+Plots like this one are very convenient for comparing distributions between samples grouped by treatment, sex, species, etc.
+
 We can also create a beanplot with multiple variables in the same plot
 if the variables are measured on the same scale.
-
+%
 \begin{R}
 > beanplot(turtles$length, turtles$width, turtles$height, log='',
 names=c('length','width','height'), ylab='carapace dimensions (mm)')
 \end{R}
-
 
 
 \subsection{Demo Plots in R}

@@ -206,6 +206,16 @@ The simplest way to create a vector at the interactive prompt is to use the |c()
 [1] "NULL"
 \end{R}
 
+You can also use |c()| to concatenate two or more vectors together.
+%
+\begin{R}
+> v <- c(1,3,5,7)
+> w <- c(-1, -2, -3)
+> vwx <- c(v,w,x)
+> vwx
+ [1]  1  3  5  7 -1 -2 -3  2  4  6  8
+\end{R}
+
 \subsubsection{Vector Arithmetic and Comparison}
 
 The basic R arithmetic operations work on vectors as well as on
@@ -410,7 +420,6 @@ operating on vectors.
 > abs(w) # absolute value function
 \end{R}
 
-
 \subsection{Function Arguments in R}
 
 Function arguments can specify the data that a function operates on or
@@ -445,6 +454,46 @@ Because base 2 and base 10 logarithms are fairly commonly used, there are conven
 [1] 3
 > log10(100)
 [1] 2    
+\end{R}
+
+\subsection{Lists in R}
+
+R lists are like vectors, but unlike a vector where all the elements are of the same type, the elements of a list can have arbitrary types (even other lists). 
+\begin{R}
+> l <- list('Bob', pi, 10, c(2,4,6,8))
+\end{R}
+Indexing of lists is different than indexing of vectors.  Double brackets (|x[[i]]|) return the element at index $i$, single bracket return a list containing the element at index $i$.
+\begin{R}
+> l[1] # single brackets
+[[1]]
+[1] "Bob"
+
+> l[[1]] # double brackets
+[1] "Bob"
+> typeof(l[1])
+[1] "list"
+> typeof(l[[1]])
+[1] "character"
+\end{R}
+The elements of a list can be given names, and those names objects can be accessed using the |$| operator. You can retrieve the names associated with a list using the |names()| function.
+\begin{R}
+> l <- list(name='Bob', age=27, years.in.school=10)
+> l
+$name
+[1] "Bob"
+
+$age
+[1] 27
+
+$years.in.school
+[1] 10
+
+> l$years.in.school
+[1] 10
+> l$name
+[1] "Bob"
+> names(l)
+[1] "name"            "age"             "years.in.school"    
 \end{R}
 
 
@@ -485,16 +534,22 @@ and try the following:
 > algae.table <- scan('algae2.txt', what=list('',double(0)))
                         # note use of list argument to what
 > algae.table
+
+> algae.table
 [[1]]
- [1] "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"
+ [1] "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov"
+[12] "Dec"
 
 [[2]]
- [1] 0.530 0.183 0.603 0.994 0.708 0.006 0.867 0.059 0.349 0.699 0.983 0.100
+ [1] 0.530 0.183 0.603 0.994 0.708 0.006 0.867 0.059 0.349 0.699 0.983
+[12] 0.100
 
 > algae.table[[1]]
- [1] "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"
+ [1] "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov"
+[12] "Dec"
 > algae.table[[2]]
- [1] 0.530 0.183 0.603 0.994 0.708 0.006 0.867 0.059 0.349 0.699 0.983 0.100
+ [1] 0.530 0.183 0.603 0.994 0.708 0.006 0.867 0.059 0.349 0.699 0.983
+[12] 0.100
 \end{R}
 Use help to learn more about \lstinline!scan()!.
 
