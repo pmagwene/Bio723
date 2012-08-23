@@ -159,9 +159,7 @@ overall mean.
 
 The \lstinline!beanplot! package is not installed by default. To
 download it and install it use the R package installer under the
-\lstinline!Packages & Data! menu (standard R GUI) or in
-\lstinline!Tools > Install Packages...! in RStudio (see also the
-\lstinline!Packages! tab in the lower-right window in RStudio). If this
+\lstinline!Packages & Data! menu. If this
 is the first time you use the package installer you'll have to choose a
 CRAN repository from which to download package info (I recommend you
 pick one in the US). Once you've done so you can search for `beanplot'
@@ -175,9 +173,6 @@ see some of the capabilities:
 > library(beanplot)
 > example(beanplot)
 \end{R}
-If you ran the examples in RStudio, use the \lstinline!Clear All! option
-in the \lstinline!Plots! tab after running the examples in order to
-reset parameters that the examples changed.
 
 Note the use of the \lstinline!library()! function to make the functions
 in the \lstinline!beanplot! library available for use. Here's some
@@ -213,4 +208,15 @@ if the variables are measured on the same scale.
 \begin{R}
 > beanplot(turtles$length, turtles$width, turtles$height, log='',
 names=c('length','width','height'), ylab='carapace dimensions (mm)')
+\end{R}
+
+
+
+\subsection{Demo Plots in R}
+
+To get a sense of some of the graphical power of R try the
+\lstinline!demo()! function:
+%
+\begin{R}
+> demo(graphics)
 \end{R}

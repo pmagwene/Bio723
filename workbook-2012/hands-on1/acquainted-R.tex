@@ -501,7 +501,9 @@ Use help to learn more about \lstinline!scan()!.
 \subsection{Using \lstinline!read.table()! to input data}
 
 \lstinline!read.table()! (and it's derivates - see the help file)
-provides a more convenient interface for reading tabular data. Using the
+provides a more convenient interface for reading tabular data. Download the \lstinline|turtles.txt| data set from the class wiki.  The data in \lstinline|turtles.txt| are a set of linear measurements representing dimensions of the carapace (upper shell) of painted turtles (\textit{Chrysemys picta}), as reported in Jolicoeur and Mosimmann, 1960; Growth 24: 339-354.
+
+Using the
 file \lstinline!turtles.txt!:
 
 \begin{R}
@@ -581,33 +583,33 @@ a look at some more standard statistical functions:
 \end{R}
 
 
-\subsection{Simple Plots in R}
+% \subsection{Simple Plots in R}
 
-One of the advantages of R is it's ability to produce a variety of plots
-and statistical graphics. Try out the following:
+% One of the advantages of R is it's ability to produce a variety of plots
+% and statistical graphics. Try out the following:
 
-\begin{R}
-> hist(turtles$width)  # histogram plot
-> hist(turtles$width,10) # produces a histogram with 10 bins
-> hist(turtles$width,breaks=10, xlab="Carapace Width", probability=T)
-> boxplot(turtles$width) # simple box plot
-# a fancy box plot showing multiple variables
-> boxplot(list(turtles$length, turtles$width,  turtles$height),
-+        names=c("Carapace\nLength","Carapace\nWidth","Carapace\nHeight"),
-+        ylab="millimeters")
-> title("Turtle Shell Variables")
-> plot(turtles$length, turtles$width)
-# how does this differ from the plot above?
-> plot(turtles$length ~ turtles$width)
-> plot(turtles$length, turtles$width,
-+      xlab="Carapace Length(mm)", ylab="Carapace Width(mm)")
-> title("Relationship Between\nLength and Width")
-\end{R}
+% \begin{R}
+% > hist(turtles$width)  # histogram plot
+% > hist(turtles$width,10) # produces a histogram with 10 bins
+% > hist(turtles$width,breaks=10, xlab="Carapace Width", probability=T)
+% > boxplot(turtles$width) # simple box plot
+% # a fancy box plot showing multiple variables
+% > boxplot(list(turtles$length, turtles$width,  turtles$height),
+% +        names=c("Carapace\nLength","Carapace\nWidth","Carapace\nHeight"),
+% +        ylab="millimeters")
+% > title("Turtle Shell Variables")
+% > plot(turtles$length, turtles$width)
+% # how does this differ from the plot above?
+% > plot(turtles$length ~ turtles$width)
+% > plot(turtles$length, turtles$width,
+% +      xlab="Carapace Length(mm)", ylab="Carapace Width(mm)")
+% > title("Relationship Between\nLength and Width")
+% \end{R}
 
 
-To get a sense of some of the graphical power of R try the
-\lstinline!demo()! function:
-%
-\begin{R}
-> demo(graphics)
-\end{R}
+% To get a sense of some of the graphical power of R try the
+% \lstinline!demo()! function:
+% %
+% \begin{R}
+% > demo(graphics)
+% \end{R}
