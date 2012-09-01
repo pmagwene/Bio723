@@ -64,12 +64,24 @@
  \begin{minted}[frame=single, framerule=1.5pt,framesep=0.5em,xleftmargin=1em]{#1}}%
 {\end{minted}}
 
-\DefineShortVerb{\|} 
+% \DefineShortVerb{\|} 
+% \everymath{\UndefineShortVerb{\|}\vert}
 
+
+\newcommand{\Species}[1]{{\rmfamily \itshape #1}}
 
 % Math related macros
+\newcommand{\Real}{\ensuremath{\mathbb{R}}}
+\newcommand{\RealN}{\ensuremath{\mathbb{R}^n}}
+\newcommand{\RealP}{\ensuremath{\mathbb{R}^p}}
 \newcommand{\Mtx}[1]{\ensuremath{\mathbf{#1}}}
 \newcommand{\Inv}[1]{\ensuremath{#1^{-1}}}
+\newcommand{\InvMtx}[1]{\ensuremath{\mathbf{#1}^{-1}}}
+\newcommand{\Red}[1]{\textcolor{red}{#1}}
+\newcommand{\PsInv}[1]{\ensuremath{\mathbf{#1}^{+}}}
+
+
+
 
 % Hyperref should be the last package
 \usepackage{hyperref}
