@@ -11,6 +11,7 @@ The general form of an R function is as follows:
 funcname <- function(arg1, arg2) {
  # one or more expressions
  # last expression is the object returned
+ # or you can explicitly return an object
 }
 \end{R}
 To make this concrete, here's an example where we define a function in
@@ -19,7 +20,7 @@ the interpreter and then put it to use:
 \begin{R}
 > myfunc <- function(x,y){
 + # don't type the '+' symbols, these show continuation lines
-+   x^2 + y^2 
++   x^2 + y^2
 + }
 
 > a <- 1:5
@@ -66,6 +67,14 @@ unitvector <- function(x) {
   # Return a unit vector in the same direction as x
   x/veclength(x)
 }
+
+vec.cos <- function(x,y) {
+  # Calculate the cos of the angle between vectors x and y
+  len.x <- veclength(x)
+  len.y <- veclength(y)
+  return( (x %*% y)/(len.x * len.y) )
+}
+
 \end{R}
 There are two functions defined above, one of which calls the other.
 Both take single vector arguments. At this point there is no error
@@ -92,19 +101,19 @@ Let's also add the following function to |vecgeom.R| to aid in visualizaing 2D v
 %
 \begin{R}
 draw.vectors <- function(a, b, colors=c('red', 'blue'), clear.plot=TRUE){
-    
+
     # figure out the limits such that the origin and the vector
     # end points are all included in the plot
     xhi <- max(0, a[1], b[1])
     xlo <- min(0, a[1], b[1])
     yhi <- max(0, a[2], b[2])
     ylo <- min(0, a[2], b[2])
-    
+
     xlims <- c(xlo, xhi)*1.10 # give a little breathing space around vectors
     ylims <- c(ylo, yhi)*1.10
 
     if (clear.plot){
-        plot(xlims, ylims, type='n', asp=1, xlab="x-coord", ylab="y-coord") 
+        plot(xlims, ylims, type='n', asp=1, xlab="x-coord", ylab="y-coord")
     }
     arrows(0, 0, a[1], a[2], length=0.1, col=colors[1])
     arrows(0, 0, b[1], b[2], length=0.1, col=colors[2])
@@ -142,7 +151,7 @@ Write a function in R that takes two vectors, $\vec{x}$ and $\vec{y}$, and retur
 \lstDeleteShortInline|
 
 \[P_{\vec{x}}(\vec{y}) = \left(\frac{\vec{x} \cdot \vec{y}}{|\vec{x}|}\right) \frac{\vec{x}}{|\vec{x}|}\]
-and 
+and
 \[C_{\vec{x}}(\vec{y}) = \frac{\vec{x} \cdot \vec{y}}{|\vec{x}|}\]
 
 \lstMakeShortInline|
