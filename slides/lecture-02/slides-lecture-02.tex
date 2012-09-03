@@ -20,7 +20,7 @@
 %===========================================================
 \begin{frame}
   \frametitle{Overview of Lecture}
-  
+
 \begin{itemize}
 		\item Vector Geometry
 		\begin{itemize}
@@ -36,7 +36,7 @@
 		\end{itemize}
 		\item Vector representations of multivariate data
 		\begin{itemize}
-		  \item Variable space/Subject space representations	 
+		  \item Variable space/Subject space representations
 			\item Mean as projection in subject space
 			\item Bivariate regression in geometric terms
 			\item Difference in group means as a regression problem
@@ -50,12 +50,12 @@
 \begin{frame}
   \frametitle{Hands-on Session}
 		\begin{itemize}
-		  \item Vector operations in R and Python
-		  \item Writing functions in R and Python
-		  \item Visualizing univariate distributions on R
-		  \item Linear regression and t-tests in R
+		  \item Vector operations in R
+		  \item Writing functions in R
+		  \item Visualizing bivariate relationships in R
+		  \item Linear regression in R
 	 \end{itemize}
-\end{frame}		
+\end{frame}
 %===========================================================
 
 %===========================================================
@@ -94,7 +94,7 @@ All of the figures and algebraic formulas I show you apply to $n$-dimensional ve
 
 Vectors have direction and length:
 \[
-\vec{x} = [x_1,x_2]' = [2,3]';\; |\vec{x}| = \sqrt{x_1^2 + x_2^2 + \cdots + x_n^2} 
+\vec{x} = [x_1,x_2]' = [2,3]';\; |\vec{x}| = \sqrt{x_1^2 + x_2^2 + \cdots + x_n^2}
 \]
 
 \begin{center}
@@ -123,15 +123,15 @@ Often starting point is ignored, in which case $\vec{x} = \vec{y}$.
 %===========================================================
 \begin{frame}
   \frametitle{Scalar Multiplication of a Vector}
-  
-Let $k$ be a scalar. 
+
+Let $k$ be a scalar.
 
 \[
-k \vec{x} = \left[ \begin{array}{c} k x_1 \\ 
+k \vec{x} = \left[ \begin{array}{c} k x_1 \\
 																		k x_2 \\
 																		\vdots \\
 																		k x_n \\
-\end{array} \right]														
+\end{array} \right]
 \]
 
 \begin{center}
@@ -163,15 +163,15 @@ $\vec{x} = [2,1]'; \; 3\vec{x} = [6,3]'$.
 %===========================================================
 \begin{frame}
   \frametitle{Vector Addition}
-  
+
 Let $\vec{x} = [2,1]'; \; \vec{y} = [1,3]'$
 
 \[
-\vec{z} = \vec{x} + \vec{y} = \left[ \begin{array}{c} x_1 + y_1 \\ 
+\vec{z} = \vec{x} + \vec{y} = \left[ \begin{array}{c} x_1 + y_1 \\
 															x_2 + y_2 \\
 															\vdots \\
 															x_n + y_n
-\end{array} \right] 																	
+\end{array} \right]
 \]
 
 \begin{center}
@@ -206,12 +206,12 @@ Addition follows the `head-to-tail' rule.
 %===========================================================
 \begin{frame}
   \frametitle{Vector Subtraction}
-  
+
 Let $\vec{x} = [2,1]'; \; \vec{y} = [1,3]'$
 
 \[
 \vec{z} = \vec{x} - \vec{y} = \left[ \begin{array}{c} x_1 - y_1 \\ x_2 - y_2 \end{array} \right] =
-															\left[ \begin{array}{c} 1 \\ -2 \end{array} \right]																		
+															\left[ \begin{array}{c} 1 \\ -2 \end{array} \right]
 \]
 
 \begin{center}
@@ -246,13 +246,13 @@ Follow the addition rule for $-1 \vec{y}$.
 %===========================================================
 \begin{frame}
   \frametitle{Linear Combinations of Vectors}
-  
+
 A linear combination of vectors is of the form $z = b_1 \vec{x} + b_2 \vec{y}$
 
-  
+
 \[
 \vec{z} = 3\vec{x} - 0.5\vec{y} = 3 \left[ \begin{array}{c} x_1  \\ x_2  \end{array} \right] -
-															0.5 \left[ \begin{array}{c} y_1 \\ y_2 \end{array} \right]																		
+															0.5 \left[ \begin{array}{c} y_1 \\ y_2 \end{array} \right]
 \]
 
 \begin{center}
@@ -288,12 +288,12 @@ A linear combination of vectors is of the form $z = b_1 \vec{x} + b_2 \vec{y}$
 %===========================================================
 \begin{frame}
   \frametitle{Dot Product}
-  
+
 The dot (inner) product of two vectors, $\vec{x} \cdot \vec{y}$ is a scalar.
 %
 \begin{eqnarray*}
 \vec{x} \cdot \vec{y}  & = & x_1 y_1 + x_2 y_2 + \cdots + x_n y_n \\
-								      & = & |\vec{x}||\vec{y}| \cos \theta								
+								      & = & |\vec{x}||\vec{y}| \cos \theta
 \end{eqnarray*}
 %
 where $\theta$ is the angle (in radians) between $\vec{x}$ and $\vec{y}$
@@ -328,7 +328,7 @@ $ \vec{x} = [3,2]', \vec{y} = [1,3]'; \; \vec{x} \cdot \vec{y} = \sqrt{13}\sqrt{
 %===========================================================
 \begin{frame}
   \frametitle{Useful Geometric Quantities as Dot Product}
-  
+
 
 Length:
 \begin{eqnarray*}
@@ -379,7 +379,7 @@ Some additional properties of the dot product that are useful to know:
 \vec{x} \cdot \vec{y} & = & \vec{y} \cdot \vec{x} \ \mbox{(commutative)} \\
 \vec{x} \cdot (\vec{y} + \vec{z}) & = & \vec{x} \cdot \vec{y} + \vec{x} \cdot \vec{z} \ \mbox{(distributive)}\\
 (k\vec{x}) \cdot \vec{y} & = & \vec{x} \cdot (k\vec{y}) = k(\vec{x} \cdot \vec{y}) \ \mbox{where $k$ is a scalar} \\
-\vec{x} \cdot \vec{y} & = & 0 \ \mbox{iff $\vec{x}$ and $\vec{y}$ are orthogonal} 
+\vec{x} \cdot \vec{y} & = & 0 \ \mbox{iff $\vec{x}$ and $\vec{y}$ are orthogonal}
 \end{eqnarray*}
 
 \end{frame}
@@ -438,7 +438,7 @@ C_{\vec{x}}(\vec{y}) = \frac{\vec{x} \cdot \vec{y}}{|\vec{x}|} = |\vec{y}|\cos \
 $\vec{y}$ can be decomposed into a a vector parallel to $\vec{x}$, $\widehat{y} = P_{\vec{x}}(\vec{y})$, and a vector perpendicular to $\vec{x}$, $\widehat{y}_{\bot}$.
 
 \[
-\vec{y} = \widehat{y} + \widehat{y}_{\bot} 
+\vec{y} = \widehat{y} + \widehat{y}_{\bot}
 \]
 
 \begin{center}
@@ -465,7 +465,7 @@ $\vec{y}$ can be decomposed into a a vector parallel to $\vec{x}$, $\widehat{y} 
 
 \begin{itemize}
  \item $\widehat{y}_{\bot}$ is \emph{orthogonal} to $\widehat{y}$ and $\vec{x}$.
- \item $\widehat{y}$  is the closest vector to $\vec{y}$ in the subspace defined by $\vec{x}$ 
+ \item $\widehat{y}$  is the closest vector to $\vec{y}$ in the subspace defined by $\vec{x}$
 \end{itemize}
 
 \end{frame}
@@ -473,7 +473,7 @@ $\vec{y}$ can be decomposed into a a vector parallel to $\vec{x}$, $\widehat{y} 
 
 %===========================================================
 \begin{frame}
-  
+
 \begin{center}
 \LARGE{Vector Geometry of Simple Statistics}
 \end{center}
@@ -490,15 +490,15 @@ $\vec{y}$ can be decomposed into a a vector parallel to $\vec{x}$, $\widehat{y} 
 Consider a data set in which we've measured variables $\mathbf{X} = {X_1, X_2,\ldots,X_p}$, on a set of subjects (objects) $a_1,...,a_n$.
 
 \begin{center}
-	\begin{tabular}{l|cc} 
+	\begin{tabular}{l|cc}
 
  & $X_1$ & $X_2$ \\ \hline
 
 $a_1$ & 0.9 & 1.4 \\
 $a_2$ & 1.1 & 1.7 \\
 $\vdots$ & $\vdots$ & $\vdots$ \\
-$a_n$ & 0.5 &  1.55 
-		
+$a_n$ & 0.5 &  1.55
+
 	\end{tabular}
 \end{center}
 
@@ -518,7 +518,7 @@ Such data is most often represented by drawing the objects as points in space of
 
 \end{tikzpicture}
 \end{center}
- 
+
 
 \end{frame}
 %===========================================================
@@ -529,18 +529,18 @@ Such data is most often represented by drawing the objects as points in space of
 
 \begin{small}
 
-An alternate representation is to consider the variables in the space of the subjects. This is the \emph{subject space} representation. 
+An alternate representation is to consider the variables in the space of the subjects. This is the \emph{subject space} representation.
 \begin{itemize}
 \item trickier to visualize because high dimensional
 \end{itemize}
 
 How then do we come up with a useful representation of variables in subject space?
 \begin{itemize}
- \item Any pair of non-parallel vectors (of arbitrary dimension) defines a plane.  
+ \item Any pair of non-parallel vectors (of arbitrary dimension) defines a plane.
  \item Let the variables be represented by centered vectors
  \begin{itemize}
-    \item lengths of vectors are proportional to standard deviation 
- 	\item angle between vectors represents association or similarity 
+    \item lengths of vectors are proportional to standard deviation
+ 	\item angle between vectors represents association or similarity
  \end{itemize}
 \end{itemize}
 \end{small}
@@ -557,7 +557,7 @@ How then do we come up with a useful representation of variables in subject spac
 
 \end{tikzpicture}
 \end{center}
- 
+
 
 \end{frame}
 %===========================================================
@@ -566,7 +566,7 @@ How then do we come up with a useful representation of variables in subject spac
 \begin{frame}
   \frametitle{Geometry of the Mean in Subject Space}
 
-The mean, as you know, is the `optimal' (in a least square sense) single number summary of a variable of interest. 
+The mean, as you know, is the `optimal' (in a least square sense) single number summary of a variable of interest.
 
 \begin{itemize}
 
@@ -618,7 +618,7 @@ Geometric derivation of the sample mean:
 \begin{eqnarray}
 P_{\vec{\mathbf{1}}}(\vec{\mathbf{x}}) & = & \vec{\mathbf{1}}\bar{x} \ \mbox{for some}\ \bar{x} \\
 %
-(\vec{\mathbf{x}} - P_{\vec{\mathbf{1}}}(\vec{\mathbf{x}})) \cdot \vec{\mathbf{1}} & = & 0 
+(\vec{\mathbf{x}} - P_{\vec{\mathbf{1}}}(\vec{\mathbf{x}})) \cdot \vec{\mathbf{1}} & = & 0
 \end{eqnarray}
 
 \item Substituting (1) into (2):
@@ -653,7 +653,7 @@ x_1 + x_2 + \cdots + x_n & = & n \bar{x} \\
 
 \item $|\vec{e}|^2$ is the sum of squared errors (SSE).
 
-\item What is the dimensionality of $\vec{e}$?  
+\item What is the dimensionality of $\vec{e}$?
 
 \begin{itemize}
 	\item Because $\vec{e}$ is orthogonal to the $n$-dimensional unit vector $\vec{\mathbf{1}}$, it must lie in a subpace of dimensionality $n-1$.
@@ -692,7 +692,7 @@ This is a nice geometric demonstration of why the degrees of freedom of the samp
 %===========================================================
 \begin{frame}
   \frametitle{Correlation in Vector Geometric Terms}
-  
+
 Let $X$ and $Y$ be mean centered variables, and let $\vec{x}$ and $\vec{y}$ be their corresponding vector representations in subject space.
 
 \begin{center}
@@ -723,7 +723,7 @@ Let $X$ and $Y$ be mean centered variables, and let $\vec{x}$ and $\vec{y}$ be t
 %===========================================================
 \begin{frame}
   \frametitle{Bivariate Regression as Projection}
-  
+
 The standard bivariate regression equation relating one observed variable $X$ (the predictor) to another observed variable of interest, $Y$ (the outcome) is usually written as:
 \[
 \widehat{Y} = a + bX.
@@ -754,7 +754,7 @@ Regression equation for mean-centered vectors: $\vec{\widehat{y}} = b\vec{x}$
 %
 \begin{eqnarray*}
 (\vec{y} - b\vec{x}) \cdot \vec{x} &=& 0 \\
-\vec{x} \cdot \vec{y} &=& b(\vec{x} \cdot \vec{x}) 
+\vec{x} \cdot \vec{y} &=& b(\vec{x} \cdot \vec{x})
 \end{eqnarray*}
 
 \item Solving for $b$ we get:
@@ -762,18 +762,18 @@ Regression equation for mean-centered vectors: $\vec{\widehat{y}} = b\vec{x}$
 \[
 b = \frac{\vec{x} \cdot \vec{y}}{(\vec{x} \cdot \vec{x})} = \frac{\vec{x} \cdot \vec{y}}{|\vec{x}|^2}
 \]
-  
+
 \item We can also rewrite $b = (\vec{x} \cdot \vec{y})/|\vec{x}|^2$ as
 %
 %\begin{eqnarray*}
 \[
-b = \frac{|x||y| \cos \theta}{|x|^2} 
-  = \cos \theta \frac{|y|}{|x|} 
+b = \frac{|x||y| \cos \theta}{|x|^2}
+  = \cos \theta \frac{|y|}{|x|}
   = r_{XY} \frac{|y|}{|x|}
 \]
 %\end{eqnarray*}
 
-\end{itemize}  
+\end{itemize}
 
 
 \end{frame}
@@ -824,11 +824,11 @@ b &=& |x||y| \cos \theta / |x|^2 \\
 %===========================================================
 \begin{frame}
   \frametitle{Bivariate Regression, Goodness of Fit}
-  
+
 How well does our prediction agree with our outcome?
 
 \begin{itemize}
-  \item Measure the angle between $\vec{\widehat{y}}$ and $\vec{y}$: 
+  \item Measure the angle between $\vec{\widehat{y}}$ and $\vec{y}$:
 \[
 R = \cos \theta_{\vec{y},\vec{\widehat{y}}} = \frac{|\vec{\widehat{y}}|}{|\vec{y}|}
 \]
@@ -848,7 +848,7 @@ SS_\mathit{residual} &=& (1-R^2)SS_\mathit{total}
 \end{eqnarray*}
 
 \end{itemize}
-  
+
 
 \end{frame}
 %===========================================================
