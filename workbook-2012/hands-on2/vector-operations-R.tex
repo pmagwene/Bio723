@@ -18,7 +18,7 @@ correspond to the same operations on geometric vectors. For example:
 > x - y             # vector subtraction
  [1] -9 -9 -9 -9 -9 -9 -9 -9 -9 -9 -9 -9 -9 -9 -9
 > x * 3             # multiplication by a scalar
- [1]  3  6  9 12 15 18 21 24 27 30 33 36 39 42 45 
+ [1]  3  6  9 12 15 18 21 24 27 30 33 36 39 42 45
 \end{R}
 %
 R also has an operator for the dot product, denoted \lstinline!%*%!.
@@ -43,7 +43,7 @@ In lecture we saw that many useful geometric properties of vectors could be expr
 
 \begin{R}
 > a <- c(1, 0) # the point (1,0)
-> b <- c(0, 1) # the point (0,1)    
+> b <- c(0, 1) # the point (0,1)
 \end{R}
 %
 Now let's draw our vectors:
@@ -52,12 +52,12 @@ Now let's draw our vectors:
 # create empty plot w/specified x- and y- limits
 # the 'asp=1' argument maintains the scaling of the x- and y-axes
 # so that units are equivalent for both axes (i.e. squares remain squares)
-> plot(c(-2,2),c(-1,2),type='n', asp=1) 
+> plot(c(-2,2),c(-1,2),type='n', asp=1)
 
 # draw an arrow from origin (0,0) to x,y coordinates of vector "a"
 # the length argument changes the size of the arrowhead
 # use the R help to read more about the arrows function
-> arrows(0, 0, a[1], a[2], length=0.1) 
+> arrows(0, 0, a[1], a[2], length=0.1)
 
 # and now for the vector "b"
 > arrows(0, 0, b[1], b[2], length=0.1)
@@ -78,24 +78,17 @@ Let's see what the dot product can tell us about these vectors. First recall tha
 > len.b <- drop(sqrt(b %*% b))
 \end{R}
 %
-How about the angle between $a$ and $b$??
+How about the angle between $a$ and $b$?
 \begin{R}
 > dot.ab <- a %*% b
 > dot.ab
      [,1]
 [1,]    0
 > cos.ab <- (a %*% b)/(len.a * len.b)
-> cos.ab  
+> cos.ab
      [,1]
 [1,]    0
-\end{R}     
+\end{R}
 A key point to remember dot product of two vectors is zero if, and only if, they are orthogonal to each other (regardless of their dimension).
 
-
-\begin{assignment}
-In R, use the dot product operator and the
-\lstinline!acos()! function to calculate the angle (in radians) between
-the vectors \lstinline!x = [-3, -3, -1, -1, 0, 0, 1, 2, 2, 3]! and
-\lstinline!y = [-8, -5, -3, 0, -1, 0, 5, 1, 6, 5]!.
-\end{assignment}
 
