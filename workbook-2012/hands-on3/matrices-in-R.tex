@@ -32,7 +32,7 @@ creating small matrices at the command line you can use the
 [2,]    2    6   10
 [3,]    3    7   11
 [4,]    4    8   12
-> dim(X) # give the shape of the matrix 
+> dim(X) # give the shape of the matrix
 [1] 4 3
 \end{R}
 \lstinline!matrix()! takes a data vector as input and the shape of the
@@ -50,13 +50,13 @@ the \lstinline!as.matrix()! function to convert it to a matrix.
 
 \begin{R}
 > turtles <- read.table('turtles.txt', header=T)
-> tmtx <- as.matrix(turtles) 
-> tmtx   # note how the elements were all converted to character 
+> tmtx <- as.matrix(turtles)
+> tmtx   # note how the elements were all converted to character
    sex length width height
-1  "f" " 98"  " 81" "38"  
-2  "f" "103"  " 84" "38"  
-3  "f" "103"  " 86" "42"  
-4  "f" "105"  " 86" "40"  
+1  "f" " 98"  " 81" "38"
+2  "f" "103"  " 84" "38"
+3  "f" "103"  " 86" "42"
+4  "f" "105"  " 86" "40"
  ... output truncated ...
 > tsub <- subset(turtles, select=-sex)
 > tmtx <- as.matrix(tsub)
@@ -101,7 +101,7 @@ columns, or elements. Here are some examples:
 [3,]    7    8    9
 [4,]   10   11   12
 > Y[4] # see explanation below
-[1] 10 
+[1] 10
 > Y[5]
 [1] 2
 > dim(Y) <- c(2,6)
@@ -250,7 +250,7 @@ Error in solve.default(C) : Lapack routine dgesv: system is exactly singular
 [2,] 2.710844e-17  1.000000e+00  3.577867e-18 -7.264493e-17
 [3,] 4.944640e-17  7.643625e-17  1.000000e+00  5.134714e-17
 [4,] 1.978161e-17 -1.187201e-17 -4.022390e-17  1.000000e+00
-> all.equal(C %*% Cinv, diag(4)) # test approximately equality 
+> all.equal(C %*% Cinv, diag(4)) # test approximately equality
 [1] TRUE
 \end{R}
 

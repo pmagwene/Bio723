@@ -1,0 +1,88 @@
+\section{Introduction to Literate Programming Using knitr}
+
+
+
+|knitr| documents weave together documentation/discussion and code into a
+single document. The pieces of code and documentation are referred to as
+`chunks'. Using |knitr| you can turn the entire document into a nicely formatted report, or you can extract just the code parts.
+
+I recommend you use |knitr| from inside RStudio, which has a Markdown aware editor and is pre-configured to compile |knitr| documents into HTML. The first thing you'll need to do is install the |knitr| and |markdown| packages, either from the command line using|install.packages()| or from the |Tools > Install Packages| menu (make sure you include the dependencies). Once you've installed |knitr| you can create a Markdown document using |File > New > R Markdown|.
+
+RStudio gives you a template  file that illustrates the basic Markdown syntax.  For more info about Markdown click the `MD' button, which will bring up a quick reference guide.  Replace the template with the following, and save it as |knitr1.Rmd|. Note that the |.Rmd| extension is recognized by RStudio as an R markdown file. I suggest that you get in the habit of using this extension for your markdown files.
+
+\begin{codeblock}
+# Getting started with knitr
+
+This is a very simple knitr Markdown file. It includes only a single
+code chunk.
+
+```{r}
+z <- rnorm(30, mean=0, sd=1)
+summary(z)
+```
+
+The code chunk above generated a random sample of 30 observations
+drawn from a normal distribution with mean zero and standard
+deviation one.
+\end{codeblock}
+
+Let's break down the various pieces of the document. The first line is a header.  |#| generates a level one header, |##| generates a level two header, etc.  This header is than followed by a couple of lines of text, which will appear in the output.
+
+The R code chunk begins and ends with sets of three backticks.  The |{r}| immediately after the first set of backticks tells knitr to treat  the code as R code (you can also process other languages such as Python). The final set of backticks tells knitr that you're going back to writing documentation
+chunks.
+
+After saving your document you can compile it using the |Knit HTML| button or from the R console as:
+\begin{R}
+> library(knitr)
+> knit2html('knit1.Rmd')
+\end{R}
+%
+Either of the above approaches will generate two new file |knit1.md| and |knit1.html|. RStudio will automatically open the HTML file in a built-in viewer, or you can open the HTML file in any browser. Notice how the code from the code chunk is in the output file as well as the output that you would have generated had you typed the code in at the R console.
+
+
+\subsection{A fancier knitr document}
+
+Let's get a little bit fancier and show how we can create graphics and
+use some Markdown formatting features to produce a nicer document.
+%
+\begin{codeblock}
+# My Second knitr Report
+# John Q. Public
+
+This is a still a simple knitr document. However,
+now it includes several code chunks and several
+markdown formatting commands.
+
+## Sampling from the random normal distribution
+
+```{r}
+z <- rnorm(30, mean=0, sd=1)
+summary(z)
+```
+
+That code chunk generated a random sample of 30
+observations drawn from a normal distribution with mean
+zero ($\mu = 0$) and standard deviation one ($\sigma = 1$).
+
+
+### Generating figures#
+
+We can also automatically imbed graphics in our
+report. For example, the following will generate
+a histogram.
+
+```{r fig=TRUE, fig.width=4, fig.height=4}
+hist(z)
+```
+\end{codeblock}
+
+In the second document chunk we included some text between dollar signs.  knitr recognizes this as mathematical text, using \LaTeX\ based formatting. Also notice how we put an argument, \lstinline!fig=TRUE! within the second
+code chunk delimiter. This will tell knitr to automatically imbed a
+figure with the histogram graphic we created into our report.  We also specified the dimensions of this figure using |fig.width| and |fig.height|.  Save the document
+as \lstinline!knit2.Rmd! and repeat the above steps to compile it into
+a PDF report.
+
+For a full overview of knitr's capabilities see the documentation for
+knitr availabe at
+\url{http://yihui.name/knitr/}.
+
