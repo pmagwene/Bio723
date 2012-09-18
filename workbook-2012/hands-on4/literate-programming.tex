@@ -82,7 +82,60 @@ figure with the histogram graphic we created into our report.  We also specified
 as \lstinline!knit2.Rmd! and repeat the above steps to compile it into
 a PDF report.
 
-For a full overview of knitr's capabilities see the documentation for
-knitr availabe at
-\url{http://yihui.name/knitr/}.
+
+\subsection{Extracting R Code by Tangling}
+
+In addition to generating reports, |knitr| can be used to extract R source code from your literate document.  The following example illustrates this. Save the following as |myfuncs.Rmd|
+
+\begin{codeblock}
+# My library of vector functions
+
+### Vector length
+
+Calculate the length of a vector, using the dot product;
+$|\vec{x}| = \sqrt{\vec{x} \cdot \vec{x}}$:
+
+```{r}
+vec.length <- function(x){
+  return (sqrt(x %*% x))
+}
+```
+
+### Angle between vectors
+
+Calculate the cosine of the angle between
+two vectors $\vec{x}$ and $\vec{y}$:
+
+```{r vectorcosine}
+vec.cos <- function(x,y){
+  lx <- vec.length(x)
+  ly <- vec.length(y)
+  return ( (x %*% y)/(lx*ly) )
+}
+```
+
+Calculate the angle in radians between two vectors:
+
+```{r vectorangle}
+vec.angle <- function(x,y){
+  return ( acos(vec.cos(x,y)) )
+}
+```
+
+\end{codeblock}
+
+To generate a file of pure R code (i.e. something that could be sourced from the R console), do the following:
+%
+\begin{R}
+> knit('myfuncs.Rmd', tangle=TRUE)
+\end{R}
+%
+This will generate a corresponding R file named |myfuncs.R| in which the R code chunks have been detangled from the documentation chunks.  Open this file in your R environment to see how it corresponds to the markdown document from which it was generated.
+
+For a full overview of knitr's capabilities see the documentation for knitr availabe at \url{http://yihui.name/knitr/}.
+
+\medskip
+\begin{assignment}
+Convert your library of matrix functions from Assignment 3.2 to an R markdown document. Include documentation and explanatory text as necessary so that somebody looking at your library for the first time can understand how it works.  Make sure to use appropriate markup in your document (e.g. headings) so that the HTML output is nicely formatted.
+\end{assignment}
 

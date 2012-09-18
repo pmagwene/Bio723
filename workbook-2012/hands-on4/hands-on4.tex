@@ -41,7 +41,7 @@ To visualize the multiple regression, let's use the |scatterplot3d| package to d
 \begin{R}
 > p <- scatterplot3d(trees,angle=55,type='h')
 > title('Tree Volume as\na function of Girth and Height')
-> p$plane3d(l, col='orangered')  # dark pink color
+> p$plane3d(l, col='orangered')
 > dev.copy(pdf, 'trees-regrfit.pdf')  # copy plot to a pdf file
 > dev.off()  # write the file
 \end{R}
@@ -54,7 +54,7 @@ Notice the use of |dev.copy()| and |dev.off()| to save the plot from the console
 \caption{Multiple regression plot of cherry tree volume on girth and height, generated using the \texttt{scatterplot3d} library\label{fig:treesregr}}
 \end{figure}
 
-From the figure it looks like the regression model fits pretty well (we could have anticipated that from the pairwise relationships).  Let's use the |summary()| function to obtain details of the fit:
+From the figure it looks like the regression model fits pretty well, as we anticipated  from the pairwise relationships.  Let's use the |summary()| function to obtain details of the model:
 \begin{R}
 > summary(l)
 
@@ -78,7 +78,9 @@ Multiple R-squared: 0.948,  Adjusted R-squared: 0.9442
 F-statistic:   255 on 2 and 28 DF,  p-value: < 2.2e-16
 \end{R}
 %
-We see that the coefficients for both Girth and Height are significant at the $p<0.05$ level, but that Girth is the much stronger predictor. In fact the addition of height explains only a minor additional fraction of variation in tree volume, so from the lumberjack's perspective the additional trouble of measuring height probably isn't worth it.
+The regression equation is: $\hat{y} = 4.71x_1 + 0.34x_2$, where $y$ is Volume, and $x_1$ and $x_2$ are Girth and Height respectively. Since they're on different scales the coefficients for Girth and Height aren't directly comparable. Both coefficients are significant at the $p<0.05$ level, but that Girth is the much stronger predictor. In fact the addition of height explains only a minor additional fraction of variation in tree volume, so from the lumberjack's perspective the additional trouble of measuring height probably isn't worth it.
+
+\subsection{Exploring the Vector Geometry of a Regression Model}
 
 The object returned by the |lm()| function hold lots of useful information:
 %
@@ -88,7 +90,39 @@ The object returned by the |lm()| function hold lots of useful information:
  [7] "qr"            "df.residual"   "xlevels"       "call"          "terms"         "model"
 \end{R}
 %
-Let's look at the residuals from the regression. The residuals represent the `unexplained' variance:
+The |fitted.values| correspond to the predicted values of the outcome variable ($\hat{y}$). Let's use our knowledge of vector geometry to further explore the relationship between the predicted Volume and the predictor variables.  By definition the vector representing the predicted values lies in the plane defined by Height and Girth, so let's do some simple calculations to understand their length and angular relationships:
+%
+\begin{R}
+# proportional to length of vectors
+> sd(l$fitted.values)
+[1] 16.00434
+> sd(trees$Height)
+[1] 6.371813
+> sd(trees$Girth)
+[1] 3.138139
+
+# cosines of angles btw vectors
+> cor(trees$Height, trees$Girth)
+[1] 0.5192801
+> cor(trees$Height, l$fitted.values)
+[1] 0.6144545
+> cor(trees$Girth, l$fitted.values)
+[1] 0.9933158
+
+# angles btw vectors in degrees
+> acos(cor(trees$Height, l$fitted.values)) * (180/pi)
+[1] 52.08771
+> acos(cor(trees$Girth, l$fitted.values)) * (180/pi)
+[1] 6.628322
+> acos(cor(trees$Girth, trees$Height)) * (180/pi)
+[1] 58.71603
+\end{R}
+%
+Using those calculations above you should now be able to sketch out by hand, a diagram depicting the vector relationships between Height, Girth, and the predicted Volume.  Once you've finished with your sketch, discuss it with your fellow classmates.  Did you get similar answers? If not, discuss it and try to come up with an agreed upon representation.
+
+\subsection{Exploring the Residuals from the Model Fit}
+
+Now let's look at the residuals from the regression. The residuals represent the `unexplained' variance:
 \begin{R}
 > plot(trees$Volume,l$residuals, xlab='Volume',ylab='Regression Residuals')
 > abline(h=0, lty='dashed', col='red')
@@ -98,225 +132,127 @@ Ideally the residuals should be evenly scatter around zero, with no trends as we
 %
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.65\columnwidth]{./figures/hands-on4/trees-residuals.pdf}
+\includegraphics[height=1.5in]{./figures/hands-on4/trees-residuals.pdf}
 \caption{Residual plot based on the multiple regression plot of cherry tree volume on girth and height,\label{fig:trees-resid}}
 \end{figure}
 
+Let's think about the relationships we're actually modeling for a few minutes.  For the sake of simplicity let's consider the trunk of a tree to be a cylinder.  How do the dimensions of this cylinder relate to it's volume? You can look up the formula for the volume of a cylinder, but the key thing you'll want to note is that volume of the cylinder should be proportional to a characteristic  length of the cylinder  ($V \propto \mathrm{L}^3$). This suggests that if we want to fit a linear model we should relate Girth to $\sqrt[3]{\mathrm{Volume}}$. Let's explore this a little. Since our initial multiple regression suggested that height had relatively little predictive power, we'll simplify our model down to a single predictor:
+%
+\begin{R}
+> cuberoot.V <- trees$Volume^0.33
+> cor(trees$Volume, trees$Girth)
+[1] 0.9671194
+> cor(cuberoot.V, trees$Girth)
+[1] 0.9777078
+> l.orig <- lm(trees$Volume~ trees$Girth)
+> l.transf <- lm(cuberoot.V ~ trees$Girth)
+> summary(l.orig)
 
-% This weeks hands-on exercises draw from a nice set of introductory R
-% notes written by John Verzani, entitled ``simpleR -- Using R for
-% Introductory Statistics.'' This text used to available online at:
-% \url{http://www.math.csi.cuny.edu/Statistics/R/simpleR/} (the page still
-% exists, but the PDF is not available as of Sept. 2011, but see below). I've put up a
-% \href{https://raw.github.com/pmagwene/Bio313/master/lecture-04/simpleR.pdf}{PDF version of the Verzani text} on GitHub. Also from the class wiki
-% download the set of R functions and data that are associated with the
-% Verzani text
-% \href{https://raw.github.com/pmagwene/Bio313/master/lecture-04/simpleR.R}{\lstinline!simpleR.R!}
-% and put it in your R working directory.
+Call:
+lm(formula = trees$Volume ~ trees$Girth)
 
-% \section{Bivariate Linear Regression in R revisited}
+Residuals:
+   Min     1Q Median     3Q    Max
+-8.065 -3.107  0.152  3.495  9.587
 
-% Recall from previous class sessions that the main function for carrying
-% out regression in R is \lstinline!lm()! (short for linear-model). Read and work through the exercises in Verzani, section 13 (starting at
-% p.~100 in the PDF), for a refresher on bivariate regression. As you work
-% through the material you will notice that Verzani uses a number of
-% functions that are defined in the code file \lstinline!simple.R!, for
-% example \lstinline!simple.lm()!. Most of these are what me might call
-% ``wrapper functions'' --- they wrap pre-existing R functions to make
-% them more convenient to use, for example automatically creating useful
-% plots.
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept) -36.9435     3.3651  -10.98 7.62e-12 ***
+trees$Girth   5.0659     0.2474   20.48  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
+Residual standard error: 4.252 on 29 degrees of freedom
+Multiple R-squared: 0.9353, Adjusted R-squared: 0.9331
+F-statistic: 419.4 on 1 and 29 DF,  p-value: < 2.2e-16
 
-% \end{assignment}
+> summary(l.transf)
 
-% \section{Multiple Regression in R}
+Call:
+lm(formula = cuberoot.V ~ trees$Girth)
 
-% Like bivariate regression, multiple regression in R is typically
-% conducted using the \lstinline!lm()! function. Work through Verzani
-% section 14 (p.~109 in the PDF). On p.~114 Verzani demonstrates an
-% application of polynomial regression.
+Residuals:
+     Min       1Q   Median       3Q      Max
+-0.18919 -0.09775 -0.01488  0.07855  0.26427
 
-% \section{Logistic Regression in R}
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept)  0.82543    0.08856   9.321 3.18e-10 ***
+trees$Girth  0.16324    0.00651  25.076  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-% Logistic regression is a type of `Generalized Linear Model' (GLM) and
-% hence is fit using the \lstinline!glm()! function in R.
-% \lstinline!glm()! can also be used to fit other types of generalized
-% linear models so one must specify the model type as shown below. We will
-% apply logistic regression to study natural selection on a population of
-% house sparrows.
+Residual standard error: 0.1119 on 29 degrees of freedom
+Multiple R-squared: 0.9559, Adjusted R-squared: 0.9544
+F-statistic: 628.8 on 1 and 29 DF,  p-value: < 2.2e-16
+\end{R}
+%
+Comparing the summary tables, we see indeed that using the cube root of Volume improves the fit of our model some. Let's examine the residuals.
+%
+\begin{R}
+> layout(c(1,2), widths=c(3,3), heights=c(2,2))
+> plot(trees$Volume, l.orig$residuals, xlab='Volume', ylab="Residuals")
+> abline(h = 0, col='red', lty='dashed')
+> plot(cuberoot.V, l.transf$residuals, xlab='Volume^0.33', ylab='Residuals')
+> abline(h = 0, col='red', lty='dashed')
+> dev.copy(pdf, 'compare-residuals.pdf')
+> dev.off()
+\end{R}
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[height=2in]{./figures/hands-on4/compare-residuals.pdf}
+\caption{Residual plot based on the bivariate regression of tree volume on girth, or $\sqrt[3]{V}$ on girth \label{fig:compare-resid}}
+\end{figure}
+%
+As we can see the transformation we applied to the data did seem to make our residuals more uniform across the range of observations. Note the use of the |layout()| function to put multiple plots in the same figure.
 
-% \subsection{Bumpus' Sparrow Data}
+Above we transformed the volume data in order to fit a straight line relationship between $\sqrt[3]{V}$  and Girth. However, we could just as easily have applied a cubic regression to the original variables as shown below (remember this is still linear regression in the coefficients):
 
-% Bumpus (1898) described a sample of house sparrows which he collected
-% after a very severe storm. The sample included 136 birds, sixty four of
-% which perished during the storm. Also included in his description were a
-% variety of morphological measurements on the birds and information about
-% their sex and age (for male birds). This data set has become a benchmark
-% in the evolutionary biology literature for demonstrating methods for
-% analyzing natural selection. The bumpus data set is available from the
-% class website as \lstinline!bumpus-data.txt!.
+\begin{R}
+> lm.3 <- lm(Volume ~ I(Girth^3), data=trees)
+> summary(lm.3)
 
-% Bumpus, H. C. 1898. The elimination of the unfit as illustrated by the
-% introduced sparrow, Passer domesticus. (A fourth contribution to the
-% study of variation.) \emph{Biol. Lectures: Woods Hole Marine Biological
-% Laboratory}, 209--225.
+Call:
+lm(formula = Volume ~ I(Girth^3), data = trees)
 
-% \subsection{Using logistic regression to analyze the Bumpus data}
+Residuals:
+   Min     1Q Median     3Q    Max
+-4.526 -3.036  0.215  2.419  8.291
 
-% We'll load the Bumpus data set and rename the variable names to shorter,
-% more convenient ones.
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)
+(Intercept) 8.0426960  1.0426698   7.714 1.66e-08 ***
+I(Girth^3)  0.0081365  0.0003118  26.098  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-% \begin{R}
-% > bumpus <- read.delim("bumpus-data.txt")
-% > names(bumpus)
-%  [1] "line.number"                 "sex"                         "age..a...adult..y...young."
-%  [4] "survived"                    "total.length..mm."           "alar.extent..mm."
-%  [7] "weight..g."                  "length.of.beak.and.head"     "length.of.humerus..in."
-% [10] "length.of.femur..in."        "length.of.tibiotarsus..in."  "width.of.skull..in."
-% [13] "length.of.sternal.keel..in."
-% > split.names <- strsplit(names(bumpus), ".", fixed=T)
-% > split.names[1]
-% [[1]]
-% [1] "line"   "number"
-% > split.names[8]
-% [[1]]
-% [1] "length" "of"     "beak"   "and"    "head"
-% > first <- function(x){x[1]}
-% > third <- function(x){x[3]}
-% > new.names1 <- unlist(lapply(g[1:7],first))
-% > new.names2 <- unlist(lapply(g[8:13],third))
-% > new.names <- c(new.names1, new.names2)
-% > new.names
-%  [1] "line"        "sex"         "age"         "survived"    "total"       "alar"
-%  [7] "weight"      "beak"        "humerus"     "femur"       "tibiotarsus" "skull"
-% [13] "sternal"
-% > names(bumpus) <- new.names
-% \end{R}
-% Having made the names more convenient we can now proceed to carrying out
-% the logistic regression:
+Residual standard error: 3.379 on 29 degrees of freedom
+Multiple R-squared: 0.9592, Adjusted R-squared: 0.9578
+F-statistic: 681.1 on 1 and 29 DF,  p-value: < 2.2e-16
 
-% \begin{R}
-% > weight <- bumpus$weight
-% > survived <- bumpus$survived
-% > plot(survived ~ weight)
-% > fit <- glm(formula = survived ~ weight, family=binomial(link=logit))
-% > summary(fit)
-
-% Call:
-% glm(formula = survived ~ weight, family = binomial(link = logit))
-
-% Deviance Residuals:
-%     Min       1Q   Median       3Q      Max
-% -1.6331  -1.1654   0.8579   1.0791   1.4626
-
-% Coefficients:
-%             Estimate Std. Error z value Pr(>|z|)
-% (Intercept)   8.0456     3.2516   2.474   0.0133 *
-% weight       -0.3105     0.1272  -2.441   0.0146 *
-% ---
-% Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-% (Dispersion parameter for binomial family taken to be 1)
-
-%     Null deviance: 188.07  on 135  degrees of freedom
-% Residual deviance: 181.58  on 134  degrees of freedom
-% AIC: 185.58
-
-% Number of Fisher Scoring iterations: 4
-% > newx <- seq(20,35,0.5)
-% > p <- predict.glm(fit, newdata=data.frame(weight = newx), type="response")
-% > lines(newx,p)
-% \end{R}
-
-% \medskip
-% \begin{assignment}
-% Repeat the logistic regression of survival as a
-% function of body weight for: 1)the female birds and 2) the adult male
-% birds. Produce plots illustrating these regressions for each sex.
-% \end{assignment}
-
-% \subsection{LOESS Models}
-
-% LOESS (aka LOWESS; `Locally weighted scatterplot smoothing') is a
-% modeling technique that fits a curve (or surface) to a set of data using
-% a large number of local regressions. Local weighted regressions are fit
-% at numerous regions across the data range, using a weighting function
-% that drops off as you move away from the center of the fitting region
-% (hence the `local' aspect). LOESS combines the simplicity of least
-% squares fitting with the flexibility of non-linear techniques and
-% doesn't require the user to specify a functional form ahead of time in
-% order to fit the model. It does however require relatively dense
-% sampling in order to produce robust fits.
-
-% Formally, at each point $x_i$ we estimate the regression coefficients
-% $\hat{\beta}_j(x)$ as the values that minimize:
-% \[\sum_{k=1}^n w_k(x_i)(y_k - \beta_0 - \beta_1 x_k - \ldots - \beta_d x_k^2)^2\]
-% where $d$ is the degree of the polynomial (usually 1 or 2) and $w_k$ is
-% a weight function. The most common choice of weighting function is
-% called the ``tri-cube'' function which is defined as:
-
-% \lstDeleteShortInline|
-% \begin{align*}
-%  w(x) & = (1-|x|^3)^3, \mbox{for}\ |x| < 1  \\
-%       & = 0,\ \mbox{for}\ |x| \geq 1
-% \end{align*}
-% \lstMakeShortInline|
+> lm.3$coefficients
+(Intercept)  I(Girth^3)
+8.042696007 0.008136533
+> a0 = lm.3$coefficients[[1]]
+> B1 = lm.3$coefficients[[2]]
+> x <- seq(8,20,0.25) # range of values to evaluate model over
+> fit <- a0 + B1*x^3
+> plot(Volume ~ Girth, data=trees)
+> lines(x,fit,col='red')
+> figtext <- paste(c("Volume = ", round(a0,2), "+", round(B1,4), "*Girth^3"),collapse='')
+> text(12, 60, figtext)
+\end{R}
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[height=2in]{./figures/hands-on4/cubic-regr.pdf}
+\caption{Cubic regression of tree volume on girth \label{fig:cubic-regr}}
+\end{figure}
+%
 
 
-% \medskip
-% \begin{assignment}
-% Write an R function that computes the tri-cube
-% function described above. Create a plot of the tri-cube function over
-% the range (--3,3). Create a second R function that calculates the
-% Gaussian function $f(x) = e^{-x^2}$ and plot that function over the same
-% range in the same plot. If you're struggling with writing the functions
-% you may wish to review Chapter 6 of Paradis, R for Beginners (see wiki)
-% and Chapters 9 (Grouping, loops and conditional execution) and 10
-% (Writing your own functions) in the ``R Introduction'' included with R.
-% \end{assignment}
-
-% The primary parameter that a user must decide on when using LOESS is the
-% size of the neighborhood function to apply (i.e.~over what distance
-% should the weight function drop to zero). This is referred to as the
-% ``span'' in the R documentation, or as the parameter $\alpha$ in many of
-% the papers that discuss LOESS. The appropriate span can be determined by
-% experimentation or, more rigorously by cross-validation.
-
-% We'll illustrate fitting a Loess model using data on Barack Obama's
-% approval ratings over the period from November 2008 to September 2010
-% (\lstinline!obama-polls.txt! available on the class wiki).
-
-% \begin{R}
-% > polls <- read.table('obama-polls.txt',header=T,sep="\t")
-% > names(polls)
-% [1] "Pollster"   "Dates"      "N.Pop"      "Approve"    "Disapprove" "Undecided"
-% > dim(polls)
-% [1] 854   6
-% # polls in reverse chronological order so let's reverse them
-% # so we can look at trend from earliest to most recent dates
-% > approve <- rev(polls$Approve)
-% > pollnum <- 1:length(approve)
-% > loess.app <- loess(approve ~ pollnum)
-% > pred.app <- predict(loess.app, pollnum)
-
-% # illustrate Loess with a smaller neighborhood span
-% > loess.app2 <- loess(approve ~ pollnum, span=0.25)
-% > pred.app2 <- predict(loess.app2, pollnum)
-% > lines(pollnum, pred.app2, lwd=2, col='cyan')
-% \end{R}
-% Take note of how the loess curve changed when we made the span smaller.
-% By decreasing the span we've increased the sensitivity of the model
-% (perhaps overfitting in this case).
-
-% \medskip
-% \begin{assignment}
-% Write an R function that genereates a plot that
-% simultaneously illustrates trends in both approval and disapproval
-% ratings for Barack Obama, showing both the raw data and corresponding
-% loess fits. Use colors and/or shapes to distinguish the two trends. Make
-% sure both your x- and y-axes are scaled to show the full range of the
-% data. Label your axes and create a title in the plot. Aim for a
-% `publication quality' figure.
-% \end{assignment}
-
-
+\medskip
+\begin{assignment}
+In the same R markdown docoument you created for Assignment 4.1, write a function, |mult.regr(X,y)| that calculates the multiple regression of $y$ on multiple predictors, $x_1, x_2, \ldots x_k$ \emph{using matrix operations}. Your function should take two arguments, |X| and |y|, where |X| is a matrix representing the predictor variables and |y| is a vector for the outcome variable.  Your function should return a list containg the vector of regression coeffients, $B$, the coefficient of determination ($R^2$), and a vector, $\hat{y}$, representing the fitted values.  Refer to the slides from lecture 4 (and possibly lecture 2 if you need a refresher) to review the matrix  solution to the regression problem.
+\end{assignment}
