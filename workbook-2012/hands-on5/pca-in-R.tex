@@ -127,7 +127,7 @@ e  0.9835813  1.5599356 -0.5063161  0.89525751  3.3510942
 \end{R}
 The magnitude of the loadings is what you want to focus on. For example, species `a' and `b' contribute most to the first PC, while species `c' has the largest influence on PC2.
 
-You can think of the loadings, as defined above, as the standard deviations of the original variables with respect to the new basis vectors.  The loadings squared sum to the total variance in the original data, as shown below.
+You can think of the loadings, as defined above, as the components (i.e lengths of the projected vectors) of the original variables with respect to the PC basis vectors.  Since vector length is proportional to the standard deviation of the variables they represent, you can think of the loadings as giving the standard deviation of the original variables with respect the PC axes. This implies that the loadings squared sum to the total variance in the original data, as illustrated below.
 \begin{R}
 > apply(a.loadings**2, 1, sum)
         a         b         c         d         e
@@ -162,7 +162,46 @@ As we did in previous weeks we can also use one of the 3D plotting functions to 
 > plot3d(a.pca$x[,1:3], asp=1, type='s', xlim=c(-30,30), ylim=c(-30,30), zlim=c(-30,30),col='red',size=2)
 \end{R}
 
+\subsubsection{Simultaneous Depiction of Observations and Variables in the PC Space}
 
+Let's return to our simple PC score plot.  As we discussed above, the loadings are components of the original variables in the space of the PCs. This implies we can depict those loadings in the same PC basis that we use to depict the scores.
+%
+\begin{R}
+> plot(a.pca$x[,1], a.pca$x[,2],asp=1,pch=16, xlab='PC1', ylab='PC2',xlim=c(-30,30),ylim=c(-30,30))
+
+# get the loadings for each variable w/respect to PCs 1 and 2
+> load2d.a <- a.loadings[1,1:2]
+> load2d.b <- a.loadings[2,1:2]
+> load2d.c <- a.loadings[3,1:2]
+> load2d.d <- a.loadings[4,1:2]
+> load2d.e <- a.loadings[5,1:2]
+
+# draw arrows depicting loadings
+> arrows(0, 0, load2d.a[1], load2d.a[2], length=0.1, col='red')
+> text(load2d.a[1], load2d.a[2], 'a',col='red')
+> arrows(0, 0, load2d.b[1], load2d.b[2], length=0.1, col='red')
+> text(load2d.b[1], load2d.b[2], 'b',col='red')
+> arrows(0, 0, load2d.c[1], load2d.c[2], length=0.1, col='red')
+> text(load2d.c[1], load2d.c[2], 'c',col='red')
+> arrows(0, 0, load2d.d[1], load2d.d[2], length=0.1, col='red')
+> text(load2d.d[1], load2d.d[2], 'd',col='red')
+> arrows(0, 0, load2d.e[1], load2d.e[2], length=0.1, col='red')
+> text(load2d.e[1], load2d.e[2], 'e',col='red')
+\end{R}
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\columnwidth]{./figures/hands-on5/bioenv-simplebiplot.pdf}
+\caption{PCA of the bioenv dataset. This biplot represents both the observations (black points) and variables (red vectors) in the space of PCs 1 and 2.}\label{fig:bioenvbiplot}
+\end{figure}
+
+The output of the code above should look  like Fig.~\ref{fig:bioenvbiplot}. Fig.~\ref{fig:bioenvbiplot} is called a `biplot', as it simultaneously depicts both the observations and variables in the same space.  From this biplot we can immediately see that variable `a' is highly correlated with PC1, but only weakly associated with PC2. Conversely, variable `c' is strongly correlated with PC2 but only weakly so with PC1. We can also approximate the correlations among the variables themselves -- for example `b' and `d' are fairly strongly correlated, but weakly correlated with `c'.  Keep in mind however that with respect to the relationships among the variables, this visualization is a 2D projection of a 5D space so the geometry is approximate.
+
+The biplot is a generally useful tool for multivariate analyses and there are a number of different ways to define biplots. We'll study biplots more formally in a few weeks after we've covered singular value decomposition.
+
+
+
+\bigskip
 
 \begin{assignment}
 Do a PCA analysis on the iris data set with all
