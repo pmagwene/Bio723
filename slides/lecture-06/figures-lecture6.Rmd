@@ -1,0 +1,64 @@
+Figures for Lecture 6 Slides
+========================================================
+
+
+## SVD Example
+
+
+```{r}
+
+A <- matrix(c(3,2,1,2),nrow=2)
+
+pts <-t(expand.grid(c(-1,0,1),c(1,0,-1)))
+x <- as.matrix(pts)
+
+l <- 5  # axis limits
+
+f <- x
+plot(f[1,], f[2,], type='n', asp=1, xlim=c(-l,l), ylim=c(-l,l),xlab='',ylab='')
+text(f[1,], f[2,], LETTERS[1:ncol(pts)], col='red', font=2, cex=2)
+dev.copy(pdf, 'fig-svdpts.pdf')
+dev.off()
+
+
+Ax <- A %*% x
+f <- Ax
+plot(f[1,], f[2,], type='n', asp=1, xlim=c(-l,l), ylim=c(-l,l),xlab='',ylab='')
+text(f[1,], f[2,], LETTERS[1:ncol(pts)], col='red', font=2, cex=2)
+dev.copy(pdf, 'fig-svdtransform.pdf')
+dev.off()
+
+
+s <- svd(A)
+U <- s$u
+S <- diag(s$d)
+Vt <- t(s$v) # note La.svd returns t(v) in the v object
+
+A
+U
+S
+Vt
+
+
+Vtx <- Vt %*% x
+f <- Vtx
+plot(f[1,], f[2,], type='n', asp=1, xlim=c(-l,l), ylim=c(-l,l),xlab='',ylab='')
+text(f[1,], f[2,], LETTERS[1:ncol(pts)], col='red', font=2, cex=2)
+dev.copy(pdf, 'fig-svd-Vtx.pdf')
+dev.off()
+
+
+SVtx <-  S %*%  Vtx
+f <- SVtx
+plot(f[1,], f[2,], type='n', asp=1, xlim=c(-l,l), ylim=c(-l,l),xlab='',ylab='')
+text(f[1,], f[2,], LETTERS[1:ncol(pts)], col='red', font=2, cex=2)
+dev.copy(pdf, 'fig-svd-SVtx.pdf')
+dev.off()
+
+USVtx <- U %*% SVtx
+f <- USVtx
+plot(f[1,], f[2,], type='n', asp=1, xlim=c(-l,l), ylim=c(-l,l),xlab='',ylab='')
+text(f[1,], f[2,], LETTERS[1:ncol(pts)], col='red', font=2, cex=2)
+dev.copy(pdf, 'fig-svd-USVtx.pdf')
+dev.off()
+```
