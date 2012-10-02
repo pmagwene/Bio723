@@ -184,7 +184,7 @@ SVD can be thought of decomposing the transformation specified by $\Mtx{A}$ into
 $$ \Mtx{A} = (\text{rotation})(\text{scaling)}(\text{rotation})$$
 
 \begin{itemize}
-\item $\Mtx{U}$ and $\Mtx{V}$ are orthonormal matrices $\rightsquigarrow$ Orthonormal matrices represent rigid rotations (or rotation plus reflection)
+\item $\Mtx{U}$ and $\Mtx{V}$ are orthonormal (orthogonal) matrices $\rightsquigarrow$ Orthonormal matrices represent rigid rotations (or rotation plus reflection).
 \item Diagonal matrices represent ``stretching''
 \end{itemize}
 
@@ -303,7 +303,7 @@ By SVD we can write $\Mtx{X} = \Mtx{U}\Mtx{S}\Mtx{V}^T$, therefore:
 \end{align*}
 
 \begin{itemize}
-  \item The PC vectors are given by the columns of \Mtx{V}
+  \item The PC vectors are given by the columns of \Mtx{V} (rows of $\Mtx{V}^T$)
   \item The PC scores are given by $\Mtx{U}\Mtx{D}$, where $\Mtx{D} = \Mtx{S}\Mtx{S}$
 \end{itemize}
 
