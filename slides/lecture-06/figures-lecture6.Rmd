@@ -2,6 +2,10 @@ Figures for Lecture 6 Slides
 ========================================================
 
 
+```{r}
+library(MASS)
+```
+
 ## SVD Example
 
 
@@ -62,3 +66,82 @@ text(f[1,], f[2,], LETTERS[1:ncol(pts)], col='red', font=2, cex=2)
 dev.copy(pdf, 'fig-svd-USVtx.pdf')
 dev.off()
 ```
+
+## Iris biplot examples
+
+```{r}
+
+i <- subset(iris, select=-Species)
+i.pca <- prcomp(i)
+
+# note that scale = 1 - alpha as I've defined it on my slides
+
+biplot(i.pca, scale=0, cex=0.75)
+dev.copy(pdf, 'fig-irisbiplot-alpha1.pdf')
+dev.off()
+
+biplot(i.pca, scale=0.5, cex=0.75)
+dev.copy(pdf, 'fig-irisbiplot-alpha05.pdf')
+dev.off()
+
+biplot(i.pca, scale=1, cex=0.75)
+dev.copy(pdf, 'fig-irisbiplot-alpha0.pdf')
+dev.off()
+```
+
+## Crab biplot
+
+```{r}
+crab.sub <- subset(crabs, select=c(FL,RW,CL,CW,BD))
+crab.pca <- prcomp(crab.sub)
+
+biplot(crab.pca, scale=0, cex=0.75)
+dev.copy(pdf, 'fig-crabbiplot-alpha1.pdf')
+dev.off()
+
+biplot(crab.pca, scale=1, cex=0.75)
+dev.copy(pdf, 'fig-crabbiplot-alpha0.pdf')
+dev.off()
+
+library(PerformanceAnalytics)
+chart.Correlation(crab.sub)
+dev.copy(pdf, 'fig-crab-pairs.pdf')
+dev.off()
+```
+
+
+## SVD to PCA
+
+```{r}
+set.seed(100) # set random number seed
+
+
+mu = c(0,0)
+sigma = matrix(c(1.1,0.85,0.85,2),nrow=2,byrow=T)
+c <- mvrnorm(100, mu, sigma)
+
+l <- 4
+plot(c, asp=1, pch=16, xlim=c(-l,l), ylim=c(-l,l), xlab='', ylab='')
+
+c.svd <- svd(c)
+U <- c.svd$u
+S <- diag(c.svd$d)
+Vt <- t(c.svd$v)
+
+plot(U, asp=1, pch=16,  xlim=c(-l,l), ylim=c(-l,l), xlab='', ylab='')
+dev.copy(pdf, 'fig-Uplot.pdf')
+dev.off()
+
+US <- U %*% S
+plot(US, asp=1, pch=16,  xlim=c(-l,l), ylim=c(-l,l), xlab='', ylab='')
+dev.copy(pdf, 'fig-USplot.pdf')
+dev.off()
+
+
+USVt <- U %*% S %*% Vt
+plot(USVt, asp=1, pch=16,  xlim=c(-l,l), ylim=c(-l,l), xlab='', ylab='')
+dev.copy(pdf, 'fig-USVtplot.pdf')
+dev.off()
+
+```
+

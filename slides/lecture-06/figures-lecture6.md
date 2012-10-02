@@ -2,6 +2,12 @@ Figures for Lecture 6 Slides
 ========================================================
 
 
+
+```r
+library(MASS)
+```
+
+
 ## SVD Example
 
 
@@ -21,7 +27,7 @@ plot(f[1, ], f[2, ], type = "n", asp = 1, xlim = c(-l, l), ylim = c(-l, l),
 text(f[1, ], f[2, ], LETTERS[1:ncol(pts)], col = "red", font = 2, cex = 2)
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-11.png) 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-21.png) 
 
 ```r
 dev.copy(pdf, "fig-svdpts.pdf")
@@ -51,7 +57,7 @@ plot(f[1, ], f[2, ], type = "n", asp = 1, xlim = c(-l, l), ylim = c(-l, l),
 text(f[1, ], f[2, ], LETTERS[1:ncol(pts)], col = "red", font = 2, cex = 2)
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-12.png) 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-22.png) 
 
 ```r
 dev.copy(pdf, "fig-svdtransform.pdf")
@@ -128,7 +134,7 @@ plot(f[1, ], f[2, ], type = "n", asp = 1, xlim = c(-l, l), ylim = c(-l, l),
 text(f[1, ], f[2, ], LETTERS[1:ncol(pts)], col = "red", font = 2, cex = 2)
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-13.png) 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-23.png) 
 
 ```r
 dev.copy(pdf, "fig-svd-Vtx.pdf")
@@ -158,7 +164,7 @@ plot(f[1, ], f[2, ], type = "n", asp = 1, xlim = c(-l, l), ylim = c(-l, l),
 text(f[1, ], f[2, ], LETTERS[1:ncol(pts)], col = "red", font = 2, cex = 2)
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-14.png) 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-24.png) 
 
 ```r
 dev.copy(pdf, "fig-svd-SVtx.pdf")
@@ -187,7 +193,7 @@ plot(f[1, ], f[2, ], type = "n", asp = 1, xlim = c(-l, l), ylim = c(-l, l),
 text(f[1, ], f[2, ], LETTERS[1:ncol(pts)], col = "red", font = 2, cex = 2)
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-15.png) 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-25.png) 
 
 ```r
 dev.copy(pdf, "fig-svd-USVtx.pdf")
@@ -206,4 +212,304 @@ dev.off()
 ## pdf 
 ##   2
 ```
+
+
+## Iris biplot examples
+
+
+```r
+
+i <- subset(iris, select = -Species)
+i.pca <- prcomp(i)
+
+# note that scale = 1 - alpha as I've defined it on my slides
+
+biplot(i.pca, scale = 0, cex = 0.75)
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-31.png) 
+
+```r
+dev.copy(pdf, "fig-irisbiplot-alpha1.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+
+biplot(i.pca, scale = 0.5, cex = 0.75)
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-32.png) 
+
+```r
+dev.copy(pdf, "fig-irisbiplot-alpha05.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+
+biplot(i.pca, scale = 1, cex = 0.75)
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-33.png) 
+
+```r
+dev.copy(pdf, "fig-irisbiplot-alpha0.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+
+## Crab biplot
+
+
+```r
+crab.sub <- subset(crabs, select = c(FL, RW, CL, CW, BD))
+crab.pca <- prcomp(crab.sub)
+
+biplot(crab.pca, scale = 0, cex = 0.75)
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-41.png) 
+
+```r
+dev.copy(pdf, "fig-crabbiplot-alpha1.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+
+biplot(crab.pca, scale = 1, cex = 0.75)
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-42.png) 
+
+```r
+dev.copy(pdf, "fig-crabbiplot-alpha0.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+
+library(PerformanceAnalytics)
+```
+
+```
+## Loading required package: zoo
+```
+
+```
+## Attaching package: 'zoo'
+```
+
+```
+## The following object(s) are masked from 'package:base':
+## 
+## as.Date, as.Date.numeric
+```
+
+```
+## Loading required package: xts
+```
+
+```
+## Attaching package: 'PerformanceAnalytics'
+```
+
+```
+## The following object(s) are masked from 'package:graphics':
+## 
+## legend
+```
+
+```r
+chart.Correlation(crab.sub)
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-43.png) 
+
+```r
+dev.copy(pdf, "fig-crab-pairs.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+
+
+## SVD to PCA
+
+
+```r
+set.seed(100)  # set random number seed
+
+
+mu = c(0, 0)
+sigma = matrix(c(1.1, 0.85, 0.85, 2), nrow = 2, byrow = T)
+c <- mvrnorm(100, mu, sigma)
+
+l <- 4
+plot(c, asp = 1, pch = 16, xlim = c(-l, l), ylim = c(-l, l), xlab = "", ylab = "")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-51.png) 
+
+```r
+
+c.svd <- svd(c)
+U <- c.svd$u
+S <- diag(c.svd$d)
+Vt <- t(c.svd$v)
+
+plot(U, asp = 1, pch = 16, xlim = c(-l, l), ylim = c(-l, l), xlab = "", ylab = "")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-52.png) 
+
+```r
+dev.copy(pdf, "fig-Uplot.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+
+US <- U %*% S
+plot(US, asp = 1, pch = 16, xlim = c(-l, l), ylim = c(-l, l), xlab = "", ylab = "")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-53.png) 
+
+```r
+dev.copy(pdf, "fig-USplot.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+
+
+USVt <- U %*% S %*% Vt
+plot(USVt, asp = 1, pch = 16, xlim = c(-l, l), ylim = c(-l, l), xlab = "", ylab = "")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-54.png) 
+
+```r
+dev.copy(pdf, "fig-USVtplot.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
 

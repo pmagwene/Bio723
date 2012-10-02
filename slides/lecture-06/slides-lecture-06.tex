@@ -112,18 +112,40 @@ when $\Mtx{A}$ is real-valued and symmetric than $\Mtx{V}$ is orthgonal.
 %===========================================================
 
 %===========================================================
+% \begin{frame}
+%   \frametitle{Singular Value Decomposition}
+
+
+% %$$ \Mtx{A} = \Mtx{U}\Mtx{S}\Mtx{V}^T $$
+
+% \begin{center}
+% \includegraphics[height=3in]{svd-graphic}
+% \end{center}
+
+% \end{frame}
+%===========================================================
+
+%===========================================================
 \begin{frame}
   \frametitle{Singular Value Decomposition}
 
+\includegraphics[height=2in]{fig-svd-overview}
 
-%$$ \Mtx{A} = \Mtx{U}\Mtx{S}\Mtx{V}^T $$
+\smallskip
+\begin{itemize}
+  \item When written like this $\Mtx{U}$ and $\Mtx{V}$ are orthonormal.
 
-\begin{center}
-\includegraphics[height=3in]{svd-graphic}
-\end{center}
+  \item Sometimes SVD is written as:
+\[
+\underset{(n \times p)}{\Mtx{A}} = \underset{(n \times p)}{\Mtx{U}} \underset{(p \times p)}{\Mtx{S}} \underset{(p \times p)}{\Mtx{V}^T} 
+\]
+
+\end{itemize}
+
 
 \end{frame}
 %===========================================================
+
 
 
 %===========================================================
@@ -205,10 +227,10 @@ where
 \]
 
 \medskip
-\textbf{Geometry}
-\begin{center}
-\includegraphics[width=\textwidth]{fig-svd-example}
-\end{center}
+\alert{Geometry}
+\centerline{
+\includegraphics[height=1.5in]{fig-svd-example}
+}
 
 \end{frame}
 %===========================================================
@@ -297,7 +319,7 @@ By SVD we can write $\Mtx{X} = \Mtx{U}\Mtx{S}\Mtx{V}^T$, therefore:
 
 
 \begin{center}
-\includegraphics[height=2.5in]{svd-another-view}
+\includegraphics[width=\textwidth]{fig-svdpca}
 \end{center}
 
 \end{frame}
@@ -312,7 +334,8 @@ By SVD we can write $\Mtx{X} = \Mtx{U}\Mtx{S}\Mtx{V}^T$, therefore:
 \begin{itemize}
 \item Pseudoinverse of an arbirary matrix
 \item Matrix approximation
-\item Motivates the Biplot and Correspondence Analysis
+\item Biplots
+\item ... and many more ...
 \end{itemize}
 
 \end{frame}
@@ -354,7 +377,9 @@ where \PsInv{S} has the reciprocal of non-zero elements of S.
 
 If $ \Mtx{A} = \Mtx{U} \Mtx{S} \Mtx{V}^T $
 then the optimal (least-squares) $k$-dimensional approximation of \Mtx{A} (where $ k < \rank(\Mtx{A})$) is given by:
-$$ \tilde{\Mtx{A}} = \Mtx{U}\Mtx{S}^{\thinstar} \Mtx{V}^T$$ 
+\[
+\tilde{\Mtx{A}} = \Mtx{U}\Mtx{S}^{\thinstar} \Mtx{V}^T
+\]
 
 where:
 \begin{eqnarray*}
@@ -366,22 +391,52 @@ where:
 %===========================================================
 
 
+% %===========================================================
+% \begin{frame}
+%   \frametitle{Biplots}
+
+
+% \begin{center}
+% \includegraphics[height=2.75in]{about-biplots}
+% \end{center}
+
+% \end{frame}
+
+% %===========================================================
+
+
 %===========================================================
 \begin{frame}
   \frametitle{Biplots}
 
+\begin{itemize}
+  \item Technique for simultaneously displaying row and column data (observations and variables)
+  \item Invented by K. Gabriel (see also papers by Gower)
+\end{itemize}
 
-\begin{center}
-\includegraphics[height=2.75in]{about-biplots}
-\end{center}
+Given a data matrix, \Mtx{X}, we can use SVD to approximate \Mtx{X} as so:
+\begin{gather*}
+  \tilde{\Mtx{X}}_k =  \Mtx{U}\Mtx{S}^{\thinstar} \Mtx{V}^T \\
+  \text{\footnotesize (k-dimensional approximation to \Mtx{X})}
+\end{gather*}
 
+
+We can rewrite $\tilde{\Mtx{X}}_k$ as a product of two matrices:
+\[
+  \Mtx{X} = \Mtx{G}\Mtx{H}^T
+\]
+where
+\[
+  \Mtx{G} = \Mtx{U}(\Mtx{S}^{\thinstar})^\alpha\; \text{ and } \ \Mtx{H}^T = (\Mtx{S}^{\thinstar})^{1-\alpha}\Mtx{V}^T
+\]
 \end{frame}
 
 %===========================================================
 
+
 %===========================================================
 \begin{frame}
-  \frametitle{Biplots}
+  \frametitle{Biplots, cont.}
 
 \begin{eqnarray*}
 \Mtx{G} &=& \Mtx{U}(\Mtx{S}^{\thinstar})^{\alpha} \text{ (row effects) } \\
@@ -392,7 +447,7 @@ Different choices of $\alpha$ emphasize different relationships in the data.
 
 \begin{itemize}
 \item \Red{$\alpha = 0$}, column-metric preserving biplot; optimally approximates variance-covariance structure. Cosine of angles between vectors approximate correlations; distances between points approximate Mahalanobis distance ( ``correlation biplot'')
-\item \Red{$\alpha = 1$}, row-metric preserving biplot; optimally approximates Euclidean distances among observations. Coordinates of observations correspond to PC scores; coordinates of variables correspond to eigenvector coefficients (``distance biplot'')
+\item \Red{$\alpha = 1$}, row-metric preserving biplot; optimally approximates Euclidean distances among observations. Coordinates of observations correspond to PC scores; coordinates of variables correspond to eigenvector coefficients (``distance biplot''). PCs are `sphered'.
 \item \Red{$\alpha = 0.5$},  optimally approximates observational values (``symmetric biplot'')
 \end{itemize}
 
@@ -404,13 +459,19 @@ Different choices of $\alpha$ emphasize different relationships in the data.
 \begin{frame}
   \frametitle{Biplots, Example}
 
+\begin{itemize}
+\item Observations drawn as points in space of PCs
+\item Variables drawn as vectors in PC space
+\end{itemize}
 
+\medskip
+
+\centerline{
+\includegraphics[height=1.75in]{fig-irisbiplots.pdf}
+}
 \begin{center}
-\includegraphics[height=2.5in]{iris-biplots2}
-
-{\footnotesize Anderson's famous iris data set.}
+PCA Biplots of Iris data set.
 \end{center}
-
 
 \end{frame}
 
@@ -420,15 +481,14 @@ Different choices of $\alpha$ emphasize different relationships in the data.
 %===========================================================
 \begin{frame}
   \frametitle{Biplots, Example II}
-\begin{itemize}
-\item Observations drawn as points in space of PCs
-\item Variables drawn as vectors in PC space
-\end{itemize}
+
+
+\centerline{
+\includegraphics[height=3in]{fig-crabs}
+}
 
 \begin{center}
-\includegraphics[height=2.25in]{crab-biplot}
-
-{\footnotesize Biplot ($\alpha=1$) for dataset of five morphological measurements on crabs.}
+{\footnotesize Biplots for dataset of five morphological measurements on crabs.}
 \end{center}
 
 
@@ -438,74 +498,6 @@ Different choices of $\alpha$ emphasize different relationships in the data.
 
 
 
-% 
-% %===========================================================
-% \begin{frame}
-%   \frametitle{Correspondence Analysis}
-% 
-% 
-% \begin{center}
-% \includegraphics[height=2.75in]{about-correspondence1}
-% \end{center}
-% 
-% \end{frame}
-% 
-% %===========================================================
-% 
-% \begin{frame}
-%   \frametitle{Correspondence Analysis II}
-% 
-% 
-% \begin{center}
-% \includegraphics[height=2.75in]{about-correspondence2}
-% \end{center}
-% 
-% \end{frame}
-% 
-% %===========================================================
-% 
-% 
-% \begin{frame}
-%   \frametitle{Solving the Correspondence Analysis Problem}
-% 
-% 
-% \begin{center}
-% \includegraphics[height=2.75in]{solving-correspondence1}
-% \end{center}
-% 
-% \end{frame}
-% 
-% %===========================================================
-% 
-% 
-% \begin{frame}
-%   \frametitle{Solving CA, cont.}
-% 
-% 
-% \begin{center}
-% \includegraphics[height=2.75in]{solving-correspondence2}
-% \end{center}
-% 
-% \end{frame}
-% 
-% %===========================================================
-% 
-% \begin{frame}
-%   \frametitle{Visualizing a Correspondence Analysis}
-% 
-% Results of correspondence analysis often depicted as a biplot!
-% 
-% 
-% 
-% \begin{center}
-% \includegraphics[height=0.75in]{correspondence-table}
-% 
-% \includegraphics[height=2in]{correspondence-biplot}
-% \end{center}
-% 
-% \end{frame}
-% 
-% %===========================================================
 
 \end{document}
 
