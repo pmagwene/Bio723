@@ -310,7 +310,7 @@ If SVD is working like expected it should capture that feature of our input matr
 > U <- zsvd$u[,1:3]
 > V <- zsvd$v[,1:3]
 > newZ <- U %*% D %*% t(V)
-> all.equal(newZ, zmatx, check.attributes=F)
+> all.equal(newZ, z, check.attributes=F)
 [1] TRUE
 
 # and let's double check using the image() function
@@ -339,7 +339,7 @@ The file |noisy-zero.dat| is the same 'zero' image, but now sprinkled with Gauss
 > nD <- diag(nz.svd$d[1:3])
 > nU <- nz.svd$u[,1:3]
 > nV <- nz.svd$v[,1:3]
-> approx.nz <- nU %*% D %*% t(nV)
+> approx.nz <- nU %*% nD %*% t(nV)
 
 # now plot the original and approximating matrix side-by-side
 > par(mfrow=c(1,2))
@@ -356,15 +356,17 @@ R doesn't have native support for common image files like JPEG and PNG.  However
 \begin{R}
 > install.packages("png", dependencies=T)
 > install.packages("jpeg", dependencies=T)
+> install.packages("ReadImages", dependencies=T)
 \end{R}
 
-The |png| and |jpeg| libraries provide simple functions for reading and writing image files.  The following code shows how to read in the |chesterbw.jpg| image which can be found in the course datasets. An alternative package is |ReadImages| which provides more functions for manipulating image data, including a funciton to convert color images to greyscale.
+The |png| and |jpeg| libraries provide simple functions for reading and writing image files.  The following code shows how to read in the |chesterbw.jpg| image which can be found in the course datasets. The |ReadImages| provides more functions for manipulating image data, including functions for converting color images to grayscale, and for normalizing image values so they conform to what R expects for raster images.
 
 The function |grid.raster| in the |grid| library can be used to draw the matrix of image data returned from the |readJPEG|.  There is also a lower-level |rasterImage()| function that can be used to draw images, as shown below.
 %
 \begin{R}
 > library(jpeg)
 > img <- readJPEG("chesterbw.jpg")
+> library(ReadImages) # provides normalize
 > dim(img)
 [1] 556 605
 > typeof(img)
@@ -376,14 +378,14 @@ The function |grid.raster| in the |grid| library can be used to draw the matrix 
 > max.pixels <- max(nx,ny)
 > plot(0:max.pixels, 0:max.pixels, type='n', xlab='', ylab='',asp=1)
 > ?rasterImage
-> rasterImage(img, 0, 0, nx, ny)
-> library(grid)
+> rasterImage(normalize(img), 0, 0, nx, ny)
+> library(grid) # provides grid.raster function
 > ?grid.raster
-> grid.raster(img)  # more convenient but less flexible than rasterImage
+> grid.raster(normalize(img))  # more convenient but less flexible than rasterImage
 \end{R}
 The output of the code above is shown in Fig~\ref{fig:chester}.
 \begin{figure}[ht!]
-  \center{\includegraphics[width=0.33\textwidth]{./figures/hands-on6/fig-chesterorig.pdf}}
+  \center{\includegraphics[width=0.28\textwidth]{./figures/hands-on6/fig-chesterorig.pdf}}
   \caption{My ever-faithful companion Chester.\label{fig:chester}}
 \end{figure}
 
@@ -401,35 +403,48 @@ Now we'll use SVD to create a low-dimensional approximation of this image.
 > Vt15 <- Vt[1:15,]  # first 15 right singular values, NOTE: we're getting rows rather than columns here
 
 > approx15 <- U15 %*% S15 %*% Vt15
-> grid.raster(approx15)
+> grid.raster(normalize(approx15))
 \end{R}
 %
 The output of our approximate image is shown in Fig~\ref{fig:chester15}.
 \begin{figure}[ht!]
-  \center{\includegraphics[width=0.33\textwidth]{./figures/hands-on6/fig-chesterapprox15.pdf}}
+  \center{\includegraphics[width=0.28\textwidth]{./figures/hands-on6/fig-chesterapprox15.pdf}}
   \caption{A low-dimensional approximation of Chester.\label{fig:chester15}}
 \end{figure}
 
 
 Above we created a rank 15 approximation to the rank 556 original image matrix. This approximation is crude (as judged by the visual quality of the approximating image) but it does represent a very large savings in space. Our original image required the storage of $605 \times 556 = 336380$ integer values. Our approximation requires the storage of only $15 \times 556 + 15 \times 605 + 15 = 17430$ integers. This is a saving of roughly 95\%. Of course, as with any lossy compression algorithm, you need to decide what is the appropriate tradeoff between compression and data loss for your given application.
 
+Finally, let's look at the `error term' associated with our approximation, i.e. what we \emph{did not} capture in the 15 singular vectors.
+%
+\begin{R}
+> img.diff <- img - approx15
+> grid.raster(normalize(img.diff))
+\end{R}
+%
+An image representing the information our approximation didn't capture is shown in Fig~\ref{fig:chesterdiff}.
+%
+\begin{figure}[ht!]
+  \center{\includegraphics[width=0.28\textwidth]{./figures/hands-on6/fig-chesterdiff15.pdf}}
+  \caption{A representation of the information \emph{not} captured by our approximation.\label{fig:chesterdiff}}
+\end{figure}
+  
 
 \begin{assignment}
-% \small
-
+\small
 Write a function, |svd_img()|, that automates the creation of a lower dimensional approximation of a grayscale image using SVD.
-
+%
 \begin{enumerate}
   \item Your function should take as input a matrix representing the original image and an integer specifying the approximating dimension -- i.e. function will be called as \verb|svd_img(imgmtx,dim)|.
 
-  \item Your function should return a list of two objects: 1) an array representing the approximated image; and 2) an array representing the difference between the original and approximating images.
+  \item Your function should return a list of two objects: 1) an array representing the approximated image; and 2) an array representing the difference between the original and approximating images (i.e. original - approximation).
 
   \item Test your function on various images using a variety of approximating dimensions (e.g. 5,10, 25, 50, 100, 250) on the \verb|chesterbw.jpg| image.
 \end{enumerate}
 
 
 In addition to your code consider the following questions:
-
+%
 \begin{itemize}
 \item When analyzing \texttt{chesterbw.jpg}, at some approximating dimensions you'll notice interesting artifacts. How do these relate to the original image?
 
@@ -437,7 +452,7 @@ In addition to your code consider the following questions:
 
 \item At what approximating dimension would you judge the  image to be ``close enough"  to the original by the casual observer? What is the storage saving of this approximation relative to the original image?
 
-%\item How does the difference array (original - approximating) change as the approximating dimension changes? Is there a particular type of image information that seems most prominent in the difference array?
+\item How does the difference array change as the approximating dimension changes? Is there a particular type of image information that seems most prominent in the difference array?
 \end{itemize}
 
 

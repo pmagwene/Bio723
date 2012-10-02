@@ -5,6 +5,7 @@ Read image
 
 ```r
 
+library(ReadImages)
 library(jpeg)
 img <- readJPEG("../../datasets/chesterbw.jpg")
 
@@ -43,7 +44,11 @@ max.pixels <- max(nx, ny)
 # rasterImage(img, 0, 0, nx, ny)
 
 library(grid)  # provides grid.raster function
-grid.raster(img)
+library(ReadImages)
+
+# normalize is defined in ReadImages and helps to make sure rgb data is in
+# proper range
+grid.raster(normalize(img))
 ```
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
@@ -85,7 +90,8 @@ nx <- dim(img)[2]
 ny <- dim(img)[1]
 # plot(0:max.pixels, 0:max.pixels, type='n', xlab='', ylab='',asp=1)
 # rasterImage(approx15, 0, 0, nx, ny)
-grid.raster(approx15)
+
+grid.raster(normalize(approx15))
 ```
 
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
@@ -107,6 +113,35 @@ dev.off()
 ## pdf 
 ##   2
 ```
+
+
+Examine error term
+
+```r
+img.diff <- img - approx15
+grid.raster(normalize(img.diff))
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+
+```r
+dev.copy(pdf, "fig-chesterdiff15.pdf")
+```
+
+```
+## pdf 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
 
 
 
