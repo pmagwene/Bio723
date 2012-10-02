@@ -1,7 +1,7 @@
 
 \section{SVD in R}
 
-If \Mtx{A} is an $n \times p$ matrix, and the singular value decomposition of \Mtx{A} is given by $\Mtx{A} = \Mtx{U} \Mtx{S} \Mtx{V}^T$, the columns of the  matrix $\Mtx{V}^T$ are the eigenvectors of the square matrix $\Mtx{A}^T \Mtx{A}$ (sometimes refered to  as the minor product of \Mtx{A}). The singular values of \Mtx{A} are equal to the square roots of the eigenvalues of $\Mtx{A}^T \Mtx{A}$. 
+If \Mtx{A} is an $n \times p$ matrix, and the singular value decomposition of \Mtx{A} is given by $\Mtx{A} = \Mtx{U} \Mtx{S} \Mtx{V}^T$, the columns of the  matrix $\Mtx{V}^T$ are the eigenvectors of the square matrix $\Mtx{A}^T \Mtx{A}$ (sometimes refered to  as the minor product of \Mtx{A}). The singular values of \Mtx{A} are equal to the square roots of the eigenvalues of $\Mtx{A}^T \Mtx{A}$.
 
 The \verb|svd()| function computes the singular value decomposition of an arbitrary rectangular matrix. Below I demonstrate the use of the \verb|svd()| function and confirm the relationships described above:
 
@@ -16,10 +16,10 @@ The \verb|svd()| function computes the singular value decomposition of an arbitr
            [,1]       [,2]
 [1,] -0.6618026 -0.7496782
 [2,] -0.7496782  0.6618026
-# R uses the notation A = u d v' rather than A = u s v' 
-> a.svd$d  
+# R uses the notation A = u d v' rather than A = u s v'
+> a.svd$d
 [1] 4.1306486 0.9683709
-> all.equal(A, a.svd$u %*% diag(a.svd$d) %*% t(a.svd$v)) 
+> all.equal(A, a.svd$u %*% diag(a.svd$d) %*% t(a.svd$v))
 [1] TRUE
 > AtA <- t(A) %*% A
 > eigen.AtA <- eigen(AtA)
@@ -93,19 +93,19 @@ PCA <- function(X, center=T, scale=F){
    x <- scale(X, center=center, scale=scale)
    n <- nrow(x)
    p <- ncol(x)
-   
+
    x.svd <- svd(x)
    U <- x.svd$u
    S <- diag(x.svd$d)
    V <- x.svd$v
-   
+
    # check for zero eigenvalues
    zeros <- rep(0, p)
    tolerance = .Machine$double.eps^0.5
    has.zero.singval <- any(x.svd$d <= tolerance)
    if(has.zero.singval)
      print("WARNING: Zero singular values detected")
-  
+
    pc.scores <- U %*% S
    pc.sdev <- diag(sqrt((S**2/(n-1))))
    return(list(vectors = V, scores=pc.scores, sdev = pc.sdev))
@@ -138,17 +138,17 @@ To bring things full circle, let's make sure that the covariance matrix we recon
 > S <- diag( sqrt(iris.pca$sdev**2 * (n-1)) ) # turn sdev's back into singular values
 > reconstructed.cov <- (1/(n-1)) * V %*% S %*% S %*% t(V) # see pg. 11 of slides
 > all.equal(reconstructed.cov, cov(i.sub), check.attributes=F)
-[1] TRUE  
+[1] TRUE
 \end{R}
 Great! I seems like things are working as expected.
 
 \section{Creating Biplots in R}
 
-To illustrate the construction of biplots we'll use the iris data set. The built-in R function is |biplot()|. 
+To illustrate the construction of biplots we'll use the iris data set. The built-in R function is |biplot()|.
 
 \begin{R}
 # leave out the Species variable
-> iris.vars <- subset(iris, select=-Species) 
+> iris.vars <- subset(iris, select=-Species)
 # read the prcomp docs and note differnces from princomp
 > iris.pca <- prcomp(iris.vars)
 > summary(iris.pca)
@@ -163,7 +163,7 @@ Cumulative Proportion  0.9246 0.97769 0.9948 1.00000
 > ?biplot.prcomp  # more detailed info on how biplot works with objects return by prcomp
 > biplot(iris.pca, scale=1)  # scale = 1 - alpha
 # change the biplot scaling - how does this differ?
-> biplot(iris.pca, scale=0)  
+> biplot(iris.pca, scale=0)
 \end{R}
 
 Note that the |scale| argument to biplot sets the $\alpha$ value we discussed during lecture, however |scale| = $1-\alpha$ (i.e. if |scale| = 1, $\alpha=0$, and if |scale| = 0, $\alpha=1$).
@@ -171,18 +171,18 @@ Note that the |scale| argument to biplot sets the $\alpha$ value we discussed du
 \medskip
 \begin{assignment}
 \begin{enumerate}
-  \item Apply PCA (on the covariances) to the \verb|yeast-subnetwork-clean.txt| data set.
-  \item Create biplots in the first two principal components using both $\alpha=0$ and $\alpha=1$ (i.e. the |scale| argument to biplot). 
+  \item Apply PCA to the \verb|yeast-subnetwork-clean.txt| data set.
+  \item Create biplots in the first two principal components using both $\alpha=0$ and $\alpha=1$ (i.e. the |scale| argument to biplot).
   \item In your biplots change the labels for the observations to integers using the \verb|xlabs| argument to \verb|biplot()|. To make the plot more readable use the |cex| argument to |biplot| to make the font size for the observations half the size of the variable labels.
   \item An obvious pattern emerges in the biplot with respect to the gene MEP2. What is this pattern? What subset of conditions (rownames) is most closely related to the vector representing MEP2?
-\end{enumerate}     
+\end{enumerate}
 \end{assignment}
 
 
 
 % \subsection{`Seriating' samples using SVD}
 
-% The term `seriation' refers to the process of finding an ordering of objects or variables such that they follow a natural ordering with respect to some criteria (e.g. time, similarity, etc.). One way to think about this problem is in terms of ordering objects on a line (i.e. a 1D approximation).  Since we've learned that SVD can be used to provide optimal approximations (in the least squares sense) it seems natural to apply the technique to the problem of seriation. We'll illustrate this application by seriating both experimental conditions (samples) and variables (genes) for the yeast expression data set we've been working with.  There's some support for the assertion that seriation by SVD is a better method for re-ordering data matrices for heat maps than the more commonly used hierarchical clustering methods that you see in many microarray papers (Wilkinson, L. and M. Friendly. The History of the Cluster Heat Map. The American Statistician. May 1, 2009, 63(2): 179-184. \href{http://dx.doi.org/10.1198/tas.2009.0033}{doi link}) 
+% The term `seriation' refers to the process of finding an ordering of objects or variables such that they follow a natural ordering with respect to some criteria (e.g. time, similarity, etc.). One way to think about this problem is in terms of ordering objects on a line (i.e. a 1D approximation).  Since we've learned that SVD can be used to provide optimal approximations (in the least squares sense) it seems natural to apply the technique to the problem of seriation. We'll illustrate this application by seriating both experimental conditions (samples) and variables (genes) for the yeast expression data set we've been working with.  There's some support for the assertion that seriation by SVD is a better method for re-ordering data matrices for heat maps than the more commonly used hierarchical clustering methods that you see in many microarray papers (Wilkinson, L. and M. Friendly. The History of the Cluster Heat Map. The American Statistician. May 1, 2009, 63(2): 179-184. \href{http://dx.doi.org/10.1198/tas.2009.0033}{doi link})
 
 
 
@@ -196,7 +196,7 @@ Note that the |scale| argument to biplot sets the $\alpha$ value we discussed du
 % >>> fig = pyplot.figure(figsize=(4,8))
 % >>> ax = pylab.imshow(yeast, cmap='seismic')
 % >>> fig.axes[0].set_aspect(0.2)
-% >>> fig.show() 
+% >>> fig.show()
 % \end{python}
 
 % Since we're going to be creating several figures you essentially the same code let's take a moment to create a function that will take care of the key steps for us.
@@ -207,16 +207,16 @@ Note that the |scale| argument to biplot sets the $\alpha$ value we discussed du
 
 % def draw_yeast_matrices(matrices = [], titles = [], cmap='seismic'):
 %     """ draw an image represent of a set of matrices
-    
+
 %     matrices and titles should be lists containing np.arrays and strings
 %     respectively. See the matplotlib docs for color maps other than 'seismic'
 %     """
 %     nmtx = len(matrices)
 %     width = nmtx * 4
 %     height = 8
-    
+
 %     fig = pyplot.figure(figsize=(width,height))
-    
+
 %     # look at the Python docs to read about how the enumerate fxn
 %     for i, mtx in enumerate(matrices):
 %         fig.add_subplot(1, nmtx, i+1)
@@ -227,23 +227,23 @@ Note that the |scale| argument to biplot sets the $\alpha$ value we discussed du
 %         except IndexError:  # if the title doesn't exist
 %             pass            # just continue with the plotting tasks
 %     return fig
-    
+
 % \end{codeblock}
 
 % Having created that function we can now put it to use to visualization our seriation of the yeast expression data set.
 
 
 % \begin{python}
-% >>> import yeastdraw as yd    
-% >>> # now do the SVD   
+% >>> import yeastdraw as yd
+% >>> # now do the SVD
 % >>> u,s,vt = la.svd(yeast)
 % >>> u1 = u[:,0] # first column of u
 
-% # ths specifies how to sort the samples relative to the largest left 
+% # ths specifies how to sort the samples relative to the largest left
 % # singular vector
-% >>> u1sort = np.argsort(u1) 
+% >>> u1sort = np.argsort(u1)
 % # lookup the help for argsort so you understand what it does
-% >>> help(np.argsort)  
+% >>> help(np.argsort)
 % >>> s1 = yeast[u1sort] # yeast data with rows sorted by u1
 
 % # now create a figure showing original and new ordering
@@ -277,7 +277,7 @@ Download the file |zeros.dat| from the course wiki. This is a $25 \times 15$ bin
 ... output truncated ...
 
 # we'll use the image() function to visualize z
-> image(1:15,1:25,t(z),col=c('black','white'),asp=1)    
+> image(1:15,1:25,t(z),col=c('black','white'),asp=1)
 \end{R}
 
 This matrix data is shown below in a slightly different form that emphasizes the individual elements of the matrix.  As you can see, this matrix can be thought of as being composed of just three types of vectors.
@@ -286,10 +286,10 @@ This matrix data is shown below in a slightly different form that emphasizes the
 \begin{figure}[ht!]
 \begin{center}
 \subcaptionbox{The `zero' matrix.}[0.4\linewidth]{%
-\includegraphics[height=1in]{./figures/hands-on6/zero.jpg}% 
+\includegraphics[height=1in]{./figures/hands-on6/zero.jpg}%
 }
 \subcaptionbox{The three vector types in the `zero' matrix.}[0.4\linewidth]{%
-\includegraphics[height=1in]{./figures/hands-on6/zero-vecs.jpg}% 
+\includegraphics[height=1in]{./figures/hands-on6/zero-vecs.jpg}%
 }
 \end{center}
 \end{figure}
@@ -317,12 +317,12 @@ If SVD is working like expected it should capture that feature of our input matr
 > image(1:15,1:25,t(newZ),col=c('black','white'),asp=1)
 \end{R}
 
-Our original matrix required $25 \times 15$ ($= 375$) storage elements. Using the SVD we can represent the same data using only $15 \times 3 + 25 \times 3 + 3 = 123$ units of storage (corresponding to the truncated U, V, and D in the example above). Thus our SVD allows us to represent the same data with at less than $1/3$ the size of the original matrix. In this case, because all the singular values after the 3rd were zero this is a lossless data compression procedure. 
+Our original matrix required $25 \times 15$ ($= 375$) storage elements. Using the SVD we can represent the same data using only $15 \times 3 + 25 \times 3 + 3 = 123$ units of storage (corresponding to the truncated U, V, and D in the example above). Thus our SVD allows us to represent the same data with at less than $1/3$ the size of the original matrix. In this case, because all the singular values after the 3rd were zero this is a lossless data compression procedure.
 
 
 \subsection{Noise filtering using SVD}
 
-The file |noisy-zero.dat| is the same 'zero' image, but now sprinkled with Gaussian noise draw from a normal distribution ($N(0,0.1)$. As in the data compression case we can use SVD to approximate the input matrix with a lower-dimensional approximation. Here the SVD is `lossy' as our approximation throws away information.  In this case we hope to choose the approximating dimension such that the information we lose corresponds to the noise which is `polluting' our data. 
+The file |noisy-zero.dat| is the same 'zero' image, but now sprinkled with Gaussian noise draw from a normal distribution ($N(0,0.1)$. As in the data compression case we can use SVD to approximate the input matrix with a lower-dimensional approximation. Here the SVD is `lossy' as our approximation throws away information.  In this case we hope to choose the approximating dimension such that the information we lose corresponds to the noise which is `polluting' our data.
 
 \begin{R}
 > nz <- as.matrix(read.delim('noisy-zero.dat',header=F))
@@ -339,7 +339,7 @@ The file |noisy-zero.dat| is the same 'zero' image, but now sprinkled with Gauss
 > nD <- diag(nz.svd$d[1:3])
 > nU <- nz.svd$u[,1:3]
 > nV <- nz.svd$v[,1:3]
-> approx.nz <- nU %*% D %*% t(nV)    
+> approx.nz <- nU %*% D %*% t(nV)
 
 # now plot the original and approximating matrix side-by-side
 > par(mfrow=c(1,2))
@@ -417,10 +417,10 @@ Above we created a rank 15 approximation to the rank 556 original image matrix. 
 \begin{assignment}
 % \small
 
-Write a function, |svd_img()|, that automates the creation of a lower dimensional approximation of a grayscale image using SVD.  
+Write a function, |svd_img()|, that automates the creation of a lower dimensional approximation of a grayscale image using SVD.
 
 \begin{enumerate}
-  \item Your function should take as input a matrix representing the original image and an integer specifying the approximating dimension -- i.e. function will be called as \verb|svd_img(imgmtx,dim)|.  
+  \item Your function should take as input a matrix representing the original image and an integer specifying the approximating dimension -- i.e. function will be called as \verb|svd_img(imgmtx,dim)|.
 
   \item Your function should return a list of two objects: 1) an array representing the approximated image; and 2) an array representing the difference between the original and approximating images.
 
@@ -431,10 +431,10 @@ Write a function, |svd_img()|, that automates the creation of a lower dimensiona
 In addition to your code consider the following questions:
 
 \begin{itemize}
-\item When analyzing \texttt{chesterbw.jpg}, at some approximating dimensions you'll notice interesting artifacts. How do these relate to the original image? 
+\item When analyzing \texttt{chesterbw.jpg}, at some approximating dimensions you'll notice interesting artifacts. How do these relate to the original image?
 
 \item What is the lowest approximating dimension where you would you consider the image to be recognizable as a dog?
- 
+
 \item At what approximating dimension would you judge the  image to be ``close enough"  to the original by the casual observer? What is the storage saving of this approximation relative to the original image?
 
 %\item How does the difference array (original - approximating) change as the approximating dimension changes? Is there a particular type of image information that seems most prominent in the difference array?

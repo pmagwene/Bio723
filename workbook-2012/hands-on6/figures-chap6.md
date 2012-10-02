@@ -108,3 +108,35 @@ dev.off()
 ##   2
 ```
 
+
+
+
+## Writing our own PCA function
+
+
+```r
+
+# a user defined version of principal components analysis
+PCA <- function(X, center = T, scale = F) {
+    x <- scale(X, center = center, scale = scale)
+    n <- nrow(x)
+    p <- ncol(x)
+    
+    x.svd <- svd(x)
+    U <- x.svd$u
+    S <- diag(x.svd$d)
+    V <- x.svd$v
+    
+    # check for zero eigenvalues
+    zeros <- rep(0, p)
+    tolerance = .Machine$double.eps^0.5
+    has.zero.singval <- any(x.svd$d <= tolerance)
+    if (has.zero.singval) 
+        print("WARNING: Zero singular values detected")
+    
+    pc.scores <- U %*% S
+    pc.sdev <- diag(sqrt((S^2/(n - 1))))
+    return(list(vectors = V, scores = pc.scores, sdev = pc.sdev))
+}
+```
+

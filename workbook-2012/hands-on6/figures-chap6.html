@@ -271,6 +271,33 @@ grid.raster(approx15)
 ##   2
 </code></pre>
 
+<h2>Writing our own PCA function</h2>
+
+<pre><code class="r">
+# a user defined version of principal components analysis
+PCA &lt;- function(X, center = T, scale = F) {
+    x &lt;- scale(X, center = center, scale = scale)
+    n &lt;- nrow(x)
+    p &lt;- ncol(x)
+
+    x.svd &lt;- svd(x)
+    U &lt;- x.svd$u
+    S &lt;- diag(x.svd$d)
+    V &lt;- x.svd$v
+
+    # check for zero eigenvalues
+    zeros &lt;- rep(0, p)
+    tolerance = .Machine$double.eps^0.5
+    has.zero.singval &lt;- any(x.svd$d &lt;= tolerance)
+    if (has.zero.singval) 
+        print(&quot;WARNING: Zero singular values detected&quot;)
+
+    pc.scores &lt;- U %*% S
+    pc.sdev &lt;- diag(sqrt((S^2/(n - 1))))
+    return(list(vectors = V, scores = pc.scores, sdev = pc.sdev))
+}
+</code></pre>
+
 </body>
 
 </html>
