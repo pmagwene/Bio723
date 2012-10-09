@@ -62,7 +62,7 @@
 \end{align*}
 %
 \begin{center}
-\alert{Is my regression significant? = Is $|\vec{\hat{y}}|^2$ large relative to $|\vec{e}|^2$?}
+\alert{Is my regression significant? $\implies$ Is $|\vec{\hat{y}}|^2$ large relative to $|\vec{e}|^2$?}
 \end{center}
 
 \end{frame}
@@ -271,7 +271,89 @@ In general, effect coding is more similar to standard ANOVA contrasts.
 %===========================================================
 
 
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{ANOVA: Example Data Set}
+\small
+\begin{center}
+\begin{tabular}{lrrrrr}
+  \toprule
+  & $g_1$ & $g_2$ & $g_3$ & $g_4$ \\
+  \midrule
+  & 20 & 21 & 17 & 8 & \\
+  & 17 & 16 & 16 & 11 &  \\
+  & 17 & 14 & 15 & 8 & \\
+  \midrule
+$M_{g.}$ & 18& 17 & 16 & 9 & $M_{..}=15$ \\
+\bottomrule    
+\end{tabular} 
+\end{center}
+%
+\footnotesize
+\begin{equation*}
+y = \begin{bmatrix}
+20 \\ 17 \\ 17 \\
+21 \\ 16 \\ 14 \\
+17 \\ 16 \\ 15 \\ 
+8 \\ 11 \\ 8 
+\end{bmatrix}
+,\qquad
+\Mtx{X} = \begin{bmatrix}
+1 & 1 & 0 & 0 \\
+1 & 1 & 0 & 0 \\
+1 & 1 & 0 & 0 \\
+1 & 0 & 1 & 0 \\
+1 & 0 & 1 & 0 \\
+1 & 0 & 1 & 0 \\
+1 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 \\
+1 & -1 & -1 & -1 \\
+1 & -1 & -1 & -1 \\
+1 & -1 & -1 & -1
+\end{bmatrix}
+\end{equation*}
+\end{frame}
+%===========================================================
 
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{ANOVA: Example Data Set, cont}
+\small
+
+Solving for $\Mtx{b}$ we find:
+
+\begin{equation*}
+\Mtx{b} = \begin{bmatrix}
+15 \\ 3 \\ 2 \\ 1
+\end{bmatrix},
+\; \quad |\hat{\Mtx{y}}|^2 = 150, \;|\Mtx{e}|^2 = 40 
+\end{equation*}
+Since, $\dim(\mathcal{V}_x) = 3$, and $\dim(\mathcal{V}_e)= 8$,  we get:
+\begin{equation*}
+  F = \frac{\dim(\mathcal{V}_e)|\vec{\hat{y}}|^2}
+              {\dim(\mathcal{V}_x)|\vec{e}|^2}
+    = 10
+\end{equation*}
+ 
+Here's the more conventional ANOVA table for the same data:
+\footnotesize
+\begin{center}
+\begin{tabular}{lrrrrr}
+  \toprule
+ Source & df & $SS$ & $MS$ & $F$ & $\Pr(F)$ \\
+  \midrule
+ Experimental  & 3 & 150 & 50 & 10 & .0044\\
+ Error  & 8  & 40 & 5 & \\
+ \midrule
+ Total & 11 & 190 & &\\
+\bottomrule    
+\end{tabular} 
+\end{center}
+
+
+\end{frame}
+%===========================================================
 
 
 
@@ -280,7 +362,7 @@ In general, effect coding is more similar to standard ANOVA contrasts.
   \frametitle{Overview of Discriminant Analysis}
 
 \begin{block}{Discrimination}
-Given an $n \times p$ data matrix, \Mtx{X}, and a grouping of the $n$ specimens into $g$ groups, find the linear combination of the variables, $\Mtx{a}'\Mtx{x}$ that best discriminates between the groups.
+Given an $n \times p$ data matrix, \Mtx{X}, and a grouping of the $n$ specimens into $g$ groups, find the linear combination of the variables, $\Mtx{a}'\Mtx{x}$ that best discriminates between the groups (using $'$ to indicate transpose). 
 \end{block}
 
 \begin{block}{Classification}
@@ -365,10 +447,10 @@ where $c$ is an arbitrary constant (usually taken to be 1).
 Fisher's solution can also be setup as a classification solution using regression.
 
 \begin{itemize}
-\item setup a dummy variable, $y$ that takes the values:
+\item setup a dummy variable, $\Mtx{y}$ that takes the values:
 \begin{itemize}
-    \item $y_1 = n_2/(n_1 + n_2)$ for observations in group 1
-    \item $y_1 = -n_1/(n_1 + n_2)$ for observations in group 2
+    \item $\Mtx{y}_1 = n_2/(n_1 + n_2)$ for observations in group 1
+    \item $\Mtx{y}_1 = -n_1/(n_1 + n_2)$ for observations in group 2
 \end{itemize}
 \item Solve the standard multivariate regression, $\Mtx{y} = \Mtx{X}\Mtx{b} + \Mtx{e}$
 \item Allocate unknown individual to group 1 if it's predicted $y$ is closer to $y_1$ than to $y_2$, otherwise assign to group 2.
@@ -435,7 +517,7 @@ There will be $s=\min(p, g-1)$ non-zero eigenvalues.
 Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mtx{A}. 
 \begin{itemize}
 \item The \textbf{\emph{canonical variates}} are given by $\Mtx{y} = \Mtx{A}'\Mtx{x}$
-\item The mean of the $i$th group in the canonical variates space is given by $\bar{\Mtx{y}}_i = \Mtx{A}'\bar{\Mtx{x}}_i$
+\item The mean of the $i$-th group in the canonical variates space is given by $\bar{\Mtx{y}}_i = \Mtx{A}'\bar{\Mtx{x}}_i$
 \end{itemize}
 
 \end{frame}
@@ -682,7 +764,7 @@ A 100(1-$\alpha$) percent confidence region for the true mean $\Mtx{v}_i$ is giv
   \frametitle{Which variables are most important in CVA?}
 
 \begin{block}{Question}
-Which variables are most 'important' in distinguishing between the groups?
+Which variables are most `important' in distinguishing between the groups?
 \end{block}
 
 Consider the coefficients $\Mtx{a}_i$

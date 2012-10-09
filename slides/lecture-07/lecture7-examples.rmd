@@ -1,0 +1,108 @@
+
+
+```{r}
+y <- c(20, 17, 17, 21, 16, 14, 17, 16, 15, 8, 11, 8)
+y <- matrix(y, nrow=length(y))
+
+n <- length(y)
+ones <- rep(1,n)
+g0 <- c(1, 1, 1)
+notg0 <- c(0, 0, 0)
+lastg0 <- c(-1,-1,-1)
+
+x1 <- c(g0, notg0, notg0, lastg0)
+x2 <- c(notg0, g0, notg0, lastg0)
+x3 <- c(notg0, notg0, g0, lastg0)
+
+X <- matrix(c(ones, x1, x2, x3), nrow=n)
+```
+
+
+```{r}
+
+b <- solve(t(X) %*% X) %*% t(X) %*% y
+b
+
+yhat <- X %*% b
+yhat.ctr <- yhat - mean(yhat)
+len.yhat <- t(yhat.ctr) %*% yhat.ctr
+dim.yhat <- 3
+
+e <- y - yhat
+len.e <- t(e) %*% e
+dim.e <- 8
+
+F <- (dim.e * len.yhat)/(dim.yhat * len.e)
+F
+```
+
+Here's the how to do this in R:
+
+```{r}
+
+groups <- c(1,1,1, 2,2,2, 3,3,3, 4,4,4)
+group.factor <- as.factor(groups)
+
+lm.dummy <- lm(y ~ group.factor)
+anova(lm.dummy)
+summary(lm.dummy)
+```
+
+The ANOVA table looks the same as what I presented in the slides, but the model coefficients don't look the same because by default `lm()` uses dummy coding. We use the `contrasts` function to see how R creates contrasts from our grouping variable. 
+
+```{r}
+contrasts(group.factor)
+```
+
+To see the actual matrix, X, that `lm()` creates to fit the linear model, use `model.matrix()`:
+
+```{r}
+model.matrix(~group.factor) # note the use of tilde (see below)
+```
+
+We can also use `contrasts()` in combination with `contr.sum` to change this to effect coding. The argument to `contr.sum()` should be the total number of groups:
+
+```{r}
+contrasts(group.factor) <- contr.sum(4)
+contrasts(group.factor)
+
+anova.2 <- aov(y ~ group.factor)
+summary(anova.2)
+coefficients(anova.2)
+```
+
+```{r}
+model.matrix(~group.factor)  # see how it's changed
+```
+
+```{r}
+lm.effects <- lm(y ~ group.factor)
+anova(lm.effects)
+summary(lm.effects)
+```
+
+
+```{r}
+
+Y <- matrix(y)
+X <- model.matrix(~group.factor)  
+   # will be effect coding if you used the contr.sum function above
+   # otherwise will be dummy coding
+X
+
+b <- solve(t(X) %*% X) %*% t(X) %*% Y
+b
+
+yhat <- X %*% b
+yhat.ctr <- yhat - mean(yhat)
+len.yhat <- t(yhat.ctr) %*% yhat.ctr
+dim.yhat <- 3
+
+e <- Y - yhat
+len.e <- t(e) %*% e
+dim.e <- 8
+
+F <- (dim.e * len.yhat)/(dim.yhat * len.e)
+F
+```
+
