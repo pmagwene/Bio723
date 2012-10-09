@@ -51,7 +51,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
            18            -1            -2            -9 
 \end{R}
 
-The ANOVA table shown by |summary()| looks the same as what I presented in the slides, but the model coefficients don't look the same because by default |aov()| uses dummy coding. To ee how R creates contrasts from our grouping variable use the |contrasts()|:
+The ANOVA table shown by |summary()| looks the same as what I presented in the slides, but the model coefficients don't look the same because by default |aov()| uses dummy coding. To see how R creates contrasts from our grouping variable use the |contrasts()| function:
 \begin{R}
 > contrasts(group.factor)
   2 3 4
@@ -139,10 +139,15 @@ group.factor3    1
 > len.e <- t(e) %*% e
 > dim.e <- 8
 > 
-> F <- (dim.e * len.yhat)/(dim.yhat * len.e)
-> F
+> F.stat <- (dim.e * len.yhat)/(dim.yhat * len.e)
+> F.stat
      [,1]
 [1,]   10
+> ?FDist  # read the docs on the F distribution functions
+
+# probability of observing the F, with given degrees of freedom
+> pf(F.stat, 3, 8, lower.tail = FALSE)
+[1] 0.004407445
 \end{R}
 
 And now, more compactly with the |lm()| function:
