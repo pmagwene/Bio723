@@ -94,8 +94,8 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 In lecture we discussed how ANOVA can be fit as a multiple regression, using grouping variables as the predictor variables.  Let's confirm that, first by hand and then using the |lm()| function:
 \begin{R}
 > Y <- matrix(y)
-> X <- model.matrix(~group.factor)  
->    # will be effect coding if you used the contr.sum function above
+> X <- model.matrix(~group.factor)  # note the leading tilde
+>    # X will be effect coding if you used the contr.sum function above
 >    # otherwise will be dummy coding
 > X
    (Intercept) group.factor1 group.factor2 group.factor3
