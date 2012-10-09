@@ -38,17 +38,17 @@ Terms:
 Sum of Squares           150        40
 Deg. of Freedom            3         8
 
-Residual standard error: 2.236068 
+Residual standard error: 2.236068
 Estimated effects may be unbalanced
 > summary(ex.anova)
-             Df Sum Sq Mean Sq F value  Pr(>F)   
+             Df Sum Sq Mean Sq F value  Pr(>F)
 group.factor  3    150      50      10 0.00441 **
-Residuals     8     40       5                   
+Residuals     8     40       5
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1   
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > coefficients(ex.anova)
-  (Intercept) group.factor2 group.factor3 group.factor4 
-           18            -1            -2            -9 
+  (Intercept) group.factor2 group.factor3 group.factor4
+           18            -1            -2            -9
 \end{R}
 
 The ANOVA table shown by |summary()| looks the same as what I presented in the slides, but the model coefficients don't look the same because by default |aov()| uses dummy coding. To see how R creates contrasts from our grouping variable use the |contrasts()| function:
@@ -79,14 +79,14 @@ Now that we've changed the matrix of contrasts, let's refit the model:
 \begin{R}
 > anova.2 <- aov(y ~ group.factor)
 > summary(anova.2)
-             Df Sum Sq Mean Sq F value  Pr(>F)   
+             Df Sum Sq Mean Sq F value  Pr(>F)
 group.factor  3    150      50      10 0.00441 **
-Residuals     8     40       5                   
+Residuals     8     40       5
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > coefficients(anova.2)
-  (Intercept) group.factor1 group.factor2 group.factor3 
-           15             3             2             1 
+  (Intercept) group.factor1 group.factor2 group.factor3
+           15             3             2             1
 \end{R}
 
 \subsection{ANOVA via Multiple Regression}
@@ -121,7 +121,7 @@ attr(,"contrasts")$group.factor
 3    0    0    1
 4   -1   -1   -1
 
-> 
+>
 > b <- solve(t(X) %*% X) %*% t(X) %*% Y
 > b
               [,1]
@@ -129,16 +129,16 @@ attr(,"contrasts")$group.factor
 group.factor1    3
 group.factor2    2
 group.factor3    1
-> 
+>
 > yhat <- X %*% b
 > yhat.ctr <- yhat - mean(yhat)
 > len.yhat <- t(yhat.ctr) %*% yhat.ctr
 > dim.yhat <- 3
-> 
+>
 > e <- Y - yhat
 > len.e <- t(e) %*% e
 > dim.e <- 8
-> 
+>
 > F.stat <- (dim.e * len.yhat)/(dim.yhat * len.e)
 > F.stat
      [,1]
@@ -157,32 +157,32 @@ And now, more compactly with the |lm()| function:
 Analysis of Variance Table
 
 Response: y
-             Df Sum Sq Mean Sq F value   Pr(>F)   
+             Df Sum Sq Mean Sq F value   Pr(>F)
 group.factor  3    150      50      10 0.004407 **
-Residuals     8     40       5                    
+Residuals     8     40       5
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > summary(a.lm)
 
 Call:
 lm(formula = y ~ group.factor)
 
 Residuals:
-   Min     1Q Median     3Q    Max 
- -3.00  -1.00  -1.00   1.25   4.00 
+   Min     1Q Median     3Q    Max
+ -3.00  -1.00  -1.00   1.25   4.00
 
 Coefficients:
-              Estimate Std. Error t value Pr(>|t|)    
+              Estimate Std. Error t value Pr(>|t|)
 (Intercept)    15.0000     0.6455  23.238 1.25e-08 ***
-group.factor1   3.0000     1.1180   2.683   0.0278 *  
-group.factor2   2.0000     1.1180   1.789   0.1114    
-group.factor3   1.0000     1.1180   0.894   0.3972    
+group.factor1   3.0000     1.1180   2.683   0.0278 *
+group.factor2   2.0000     1.1180   1.789   0.1114
+group.factor3   1.0000     1.1180   0.894   0.3972
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 2.236 on 8 degrees of freedom
-Multiple R-squared: 0.7895, Adjusted R-squared: 0.7105 
-F-statistic:    10 on 3 and 8 DF,  p-value: 0.004407 
+Multiple R-squared: 0.7895, Adjusted R-squared: 0.7105
+F-statistic:    10 on 3 and 8 DF,  p-value: 0.004407
 \end{R}
 
 \subsection{Graphical Depictions of ANOVA}
@@ -190,23 +190,24 @@ F-statistic:    10 on 3 and 8 DF,  p-value: 0.004407
 The |granova| package provides nice graphical representations of ANOVA. We'll apply this to a dataset called |genotypes| available in the |MASS| package (part of the basic R installation).  As described in the R help, rats with four different genotypes (A, B, I, and J) were separated from their natural mothers at birth, and give to foster mothers to rear.  There are two grouping variables we can explore here, the genotype of the foster mother and that of the litter.
 \begin{R}
 > install.packages("granova", dependencies=T)
-> library(MASS)
+> library(granova)
+> library(MASS)  # for the genotype dataset
 > attach(genotype) # read about attach/detach in the docs
 > aov.litter <- aov(Wt ~ Litter)
 > summary(aov.litter)
             Df Sum Sq Mean Sq F value Pr(>F)
 Litter       3     60   20.05   0.283  0.838
-Residuals   57   4040   70.88               
+Residuals   57   4040   70.88
 > g.litter <- granova.1w(Wt, Litter)
 
 
 > aov.mother <- aov(Wt ~ Mother)
 > summary(aov.mother)
-            Df Sum Sq Mean Sq F value  Pr(>F)   
+            Df Sum Sq Mean Sq F value  Pr(>F)
 Mother       3    772   257.2   4.405 0.00743 **
-Residuals   57   3329    58.4                   
+Residuals   57   3329    58.4
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > g.mother <- granova.1w(Wt, Mother)
 \end{R}
 %
@@ -215,17 +216,17 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 % > attach(iris)  # read about attach/detach in the docs
 % > aov.sl <- aov(Sepal.Length ~ Species)
 % > summary(aov.sl)
-%              Df Sum Sq Mean Sq F value Pr(>F)    
+%              Df Sum Sq Mean Sq F value Pr(>F)
 % Species       2  63.21  31.606   119.3 <2e-16 ***
-% Residuals   147  38.96   0.265                   
+% Residuals   147  38.96   0.265
 % ---
-% Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+% Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 % > granova.1w(Sepal.Length, Species)
 % $grandsum
-%     Grandmean        df.bet       df.with        MS.bet       MS.with        F.stat 
-%          5.84          2.00        147.00         31.61          0.27        119.26 
-%        F.prob SS.bet/SS.tot 
-%          0.00          0.62 
+%     Grandmean        df.bet       df.with        MS.bet       MS.with        F.stat
+%          5.84          2.00        147.00         31.61          0.27        119.26
+%        F.prob SS.bet/SS.tot
+%          0.00          0.62
 
 % $stats
 %            Size Contrast Coef Wt'd Mean Mean Trim'd Mean Var. St. Dev.
@@ -244,21 +245,20 @@ The output of the |granova.1w()| function is shown below. Use your common sense 
 
 \section{Discriminant Analysis in R}
 
-The function \texttt{lda()}, found in the R library \texttt{MASS}, carries out linear discriminant analysis (i.e. canonical variates analysis). 
+The function \texttt{lda()}, found in the R library \texttt{MASS}, carries out linear discriminant analysis (i.e. canonical variates analysis).
 
 
 \begin{R}
 > library(MASS) #load the MASS package
-> z <-lda(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width,
-+           iris, prior=c(1,1,1)/3)
+> z <-lda(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width, iris, prior=c(1,1,1)/3)
 > z
 Call:
-lda(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width, 
+lda(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width,
     data = iris, prior = c(1, 1, 1)/3)
 
 Prior probabilities of groups:
-    setosa versicolor  virginica 
- 0.3333333  0.3333333  0.3333333 
+    setosa versicolor  virginica
+ 0.3333333  0.3333333  0.3333333
 
 Group means:
            Sepal.Length Sepal.Width Petal.Length Petal.Width
@@ -274,8 +274,8 @@ Petal.Length -2.2012117 -0.93192121
 Petal.Width  -2.8104603  2.83918785
 
 Proportion of trace:
-   LD1    LD2 
-0.9912 0.0088 
+   LD1    LD2
+0.9912 0.0088
 \end{R}
 
 The |prior| argument given in the |lda()| function call isn't strictly necessary because by default the |lda| function will assign equal probabilities among the groups. However I included this argument call to illustrate how to change the prior if you wanted. The output give some simple summary statistics for the group means for each of the variables and then gives the coefficients of the canonical variates.  The `Proportion of trace' output above tells us that 99.12\% of the between-group variance is captured along the first discriminant axis.
@@ -284,7 +284,7 @@ The |prior| argument given in the |lda()| function call isn't strictly necessary
 
 You've encountered the use of model formulae in R several times, such as in the call to |lda()| above and when carrying out various regressions.  The document ``An Introduction to R" (distributed with R and available at the R project website) gives a concise summary and a number of examples of how to construct formulae in R (see \href{http://cran.r-project.org/doc/manuals/R-intro.html#Formulae-for-statistical-models}{Defining statistical models: formulae}).
 
-Relevant to our current example is a shorthand way for specifying multiple variables in a formula. In the example above we called the |lda()| function with a formula of the form: 
+Relevant to our current example is a shorthand way for specifying multiple variables in a formula. In the example above we called the |lda()| function with a formula of the form:
 \begin{R}
 Species ~ Sepal.Length + Sepal.Width + ....
 \end{R}
@@ -307,7 +307,7 @@ To get a graphical representation of the specimens in the space of the canonical
 You can also create a plot to look at group variation along just the first canonical variate:
 
 \begin{R}
-> plot(z, dimen=1,type='both') # plot histograms and density plots for each group along 1st CV 
+> plot(z, dimen=1,type='both') # plot histograms and density plots for each group along 1st CV
 \end{R}
 
 
@@ -362,29 +362,29 @@ Here I created a simple example involving five specimens where each specimens wa
 > plot(iris.cv, pch=group.symbols, cex=0.75, asp=1, xlab="CV1", ylab="CV2")
 \end{R}
 
-This draws each specimen with the label ``a", ``b", or ``c" depending on which species it is assigned to. Notice that in the last example I used the |cex| argument to make the symbols smaller than normal.  
+This draws each specimen with the label ``a", ``b", or ``c" depending on which species it is assigned to. Notice that in the last example I used the |cex| argument to make the symbols smaller than normal.
 
 What if i wanted to also plot the group means in the canonical variate space?  The following example shows how to do that:
 
 \begin{R}
-> group.symbols = c(0,2,4)[iris$Species] # I switched back to symbols 
-> group.colors = c('red','darkorange','blue')[iris$Species] # I also want to use colors 
+> group.symbols = c(0,2,4)[iris$Species] # I switched back to symbols
+> group.colors = c('red','darkorange','blue')[iris$Species] # I also want to use colors
 > cv1.means <- tapply(iris.cv[,1], iris$Species, mean)
 > cv1.means
-    setosa versicolor  virginica 
-  5.502493  -3.930156  -7.887657 
+    setosa versicolor  virginica
+  5.502493  -3.930156  -7.887657
 > cv2.means <- tapply(iris.cv[,2], iris$Species, mean)
 > cv2.means
-    setosa versicolor  virginica 
-  6.876606   5.933573   7.174239 
-> plot(iris.cv, pch=group.symbols, cex=0.75, asp=1, 
+    setosa versicolor  virginica
+  6.876606   5.933573   7.174239
+> plot(iris.cv, pch=group.symbols, cex=0.75, asp=1,
 +       xlab="CV1", ylab="CV2", col=group.colors)
 > points(cv1.means, cv2.means, pch=16, cex=1.5, col='black')
 \end{R}
 
 Note the use of the |points()| function. This function draws on top of rather than erasing the previous plot.  Note too the use of the |col| argument in the |plot()| call to specify different colors.  If you'd like to see a chart of all the colors in R check out this web page: \href{http://research.stowers-institute.org/efg/R/Color/Chart/}{A Chart of R Colors}.
 
-I stated in lecture that for the canonical variate diagram we can estimate the $100(1-\alpha)$ confidence region for a group mean as a circle centered at the mean having a radius $(\chi^{2}_{\alpha,r}/n_i)^{1/2}$ where $r$ is the number of canonical variate dimensions considered. Using similar reasoning the $100(1-\alpha)$ confidence region for the whole population is given by a hypersphere centered at the mean with radius $(\chi^{2}_{\alpha,r})^{1/2}$.  
+I stated in lecture that for the canonical variate diagram we can estimate the $100(1-\alpha)$ confidence region for a group mean as a circle centered at the mean having a radius $(\chi^{2}_{\alpha,r}/n_i)^{1/2}$ where $r$ is the number of canonical variate dimensions considered. Using similar reasoning the $100(1-\alpha)$ confidence region for the whole population is given by a hypersphere centered at the mean with radius $(\chi^{2}_{\alpha,r})^{1/2}$.
 To calculate these confidence regions you could look up the appropriate value of the the  $\chi^2$ distribution in a book of statistical tables, or we can use the |qchisq()| function which gives the inverse cumulative probability distribution for the $\chi^2$ function:
 
 \begin{R}
@@ -393,13 +393,13 @@ To calculate these confidence regions you could look up the appropriate value of
 [1] 5.991465
 > group.lengths = tapply(iris$Species, iris$Species, length)
 > group.lengths
-    setosa versicolor  virginica 
-        50         50         50 
+    setosa versicolor  virginica
+        50         50         50
 > mean.radii = sqrt(chi2/group.lengths)
 > pop.radii = rep(sqrt(chi2),3)
 > help.search("circle")  # I don't remember off hand how to draw circles so let's look it up
 > library(tripack) # Let's use the circles function in the 'tripack' package
-> circles(cv1.means, cv2.means, pop.radii,lty='dashed') 
+> circles(cv1.means, cv2.means, pop.radii,lty='dashed')
 > circles(cv1.means, cv2.means, mean.radii,lty='dotted')
 \end{R}
 
@@ -425,7 +425,7 @@ If you did everything right (and I cut and pasted correctly!) you should get a p
 \includegraphics[height=0.5\columnwidth]{./figures/hands-on7/iris-cva-fancy}
 \end{center}
 \caption{Ordination of iris specimens in the space of the first two canonical variates.  The dashed circles surrounding each species distribution give the approximate 95\% tolerance regions for the population distributions. See text for details on the construction of this plot.} \label{fig:cva}.
-\end{figure} 
+\end{figure}
 
 \subsection{Calculating the Within and Between Group Covariance Matrices}
 
@@ -450,14 +450,14 @@ Having now calculated the within group covariance matrix we can calculate the Ma
 
 \begin{R}
 > mahalanobis(group.means, group.means[1,], win.cov)
-    setosa versicolor  virginica 
-   0.00000   89.86419  179.38471 
+    setosa versicolor  virginica
+   0.00000   89.86419  179.38471
 > mahalanobis(group.means, group.means[2,], win.cov)
-    setosa versicolor  virginica 
-  89.86419    0.00000   17.20107 
+    setosa versicolor  virginica
+  89.86419    0.00000   17.20107
 > mahalanobis(group.means, group.means[3,], win.cov)
-    setosa versicolor  virginica 
- 179.38471   17.20107    0.00000 
+    setosa versicolor  virginica
+ 179.38471   17.20107    0.00000
 \end{R}
 
 \medskip

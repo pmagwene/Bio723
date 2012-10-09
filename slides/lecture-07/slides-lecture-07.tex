@@ -9,7 +9,7 @@
 
 \title{Scientific Computing for Biologists}
 \subtitle{Lecture 7 \\
-        Testing for Group Effects and Contrasting Groups:\\ 
+        Testing for Group Effects and Contrasting Groups:\\
          ANOVA and Discriminant Analysis}
 
 \author{Instructor: Paul M. Magwene}
@@ -31,13 +31,13 @@
 
 \begin{itemize}
     \item ANOVA as multiple regression
-    \item Fisher's Discriminant Function    
+    \item Fisher's Discriminant Function
     \item Canonical Variates Analysis (CVA)
     \begin{itemize}
         \item Geometric and Algebraic View
         \item Similarities and differences between CVA and PCA
         \item Interpretting CVA
-    \end{itemize}    
+    \end{itemize}
 
 \end{itemize}
 
@@ -49,7 +49,7 @@
 %===========================================================
 \begin{frame}[fragile]
   \frametitle{Testing the Regression Effects}
-  
+
 \begin{figure}
 {\centering \includegraphics[height=1.5in]{fig-multireg.pdf}}
 \caption{Geometry of multiple regression.}
@@ -72,7 +72,7 @@
 \begin{frame}
   \frametitle{Geometry of the Population Regression Model}
 
-  
+
 \begin{figure}
 {\centering \includegraphics[height=2in]{regr-error-model2.pdf}}
 \caption{\textbf{Left:} null hypothesis of no regression effects is true; \textbf{Right:} null model is false.}
@@ -90,7 +90,7 @@
 \begin{frame}
   \frametitle{Dimensionality of Regression Subspaces}
 
-  
+
 \begin{figure}
 {\centering \includegraphics[height=2in]{regr-dimofspaces.pdf}}
 \end{figure}
@@ -137,7 +137,7 @@ We compare these by defining a statistic, $F$:
 We can also use a geometric perspective to test whether the mean of a variable differs between two groups of subjects.
 
 \begin{itemize}
-\item Setup a `dummy variable' as the predictor $X_g$.   We assign all subjects in group 1 the value 1 and all subjects in group 2 the value -1 on the dummy variable.  We then regress the variable of interest, $Y$, on $X_g$.  
+\item Setup a `dummy variable' as the predictor $X_g$.   We assign all subjects in group 1 the value 1 and all subjects in group 2 the value -1 on the dummy variable.  We then regress the variable of interest, $Y$, on $X_g$.
 
 \end{itemize}
 %
@@ -240,20 +240,20 @@ $$
 \begin{frame}
   \frametitle{How Do We Construct the Grouping Matrix, $X_g$?}
 
-Two common methods are: 
+Two common methods are:
 
 \begin{enumerate}
-\item Dummy coding -- define a set of $g$ grouping variables, where values take either 0 or 1, depending on group membership, but \emph{use only the first} $g-1$ columns: 
+\item Dummy coding -- define a set of $g$ grouping variables, where values take either 0 or 1, depending on group membership, but \emph{use only the first} $g-1$ columns:
 %
 \begin{equation*}
-U_j = \left\{ 
+U_j = \left\{
 \begin{aligned}
 1, &\qquad \text{for every subject in group } j, \\
-0, &\qquad \text{for all other subjects.}  
+0, &\qquad \text{for all other subjects.}
 \end{aligned}
 \right.
 \end{equation*}
-and 
+and
 %
 $$
 X_g= [U_1, U_2, \cdots, U_{g-1}]
@@ -285,8 +285,8 @@ In general, effect coding is more similar to standard ANOVA contrasts.
   & 17 & 14 & 15 & 8 & \\
   \midrule
 $M_{g.}$ & 18& 17 & 16 & 9 & $M_{..}=15$ \\
-\bottomrule    
-\end{tabular} 
+\bottomrule
+\end{tabular}
 \end{center}
 %
 \footnotesize
@@ -294,8 +294,8 @@ $M_{g.}$ & 18& 17 & 16 & 9 & $M_{..}=15$ \\
 y = \begin{bmatrix}
 20 \\ 17 \\ 17 \\
 21 \\ 16 \\ 14 \\
-17 \\ 16 \\ 15 \\ 
-8 \\ 11 \\ 8 
+17 \\ 16 \\ 15 \\
+8 \\ 11 \\ 8
 \end{bmatrix}
 ,\qquad
 \Mtx{X} = \begin{bmatrix}
@@ -327,7 +327,7 @@ Solving for $\Mtx{b}$ we find:
 \Mtx{b} = \begin{bmatrix}
 15 \\ 3 \\ 2 \\ 1
 \end{bmatrix},
-\; \quad |\hat{\Mtx{y}}|^2 = 150, \;|\Mtx{e}|^2 = 40 
+\; \quad |\hat{\Mtx{y}}|^2 = 150, \;|\Mtx{e}|^2 = 40
 \end{equation*}
 Since, $\dim(\mathcal{V}_x) = 3$, and $\dim(\mathcal{V}_e)= 8$,  we get:
 \begin{equation*}
@@ -335,7 +335,7 @@ Since, $\dim(\mathcal{V}_x) = 3$, and $\dim(\mathcal{V}_e)= 8$,  we get:
               {\dim(\mathcal{V}_x)|\vec{e}|^2}
     = 10
 \end{equation*}
- 
+
 Here's the more conventional ANOVA table for the same data:
 \footnotesize
 \begin{center}
@@ -347,8 +347,8 @@ Here's the more conventional ANOVA table for the same data:
  Error  & 8  & 40 & 5 & \\
  \midrule
  Total & 11 & 190 & &\\
-\bottomrule    
-\end{tabular} 
+\bottomrule
+\end{tabular}
 \end{center}
 
 
@@ -362,7 +362,7 @@ Here's the more conventional ANOVA table for the same data:
   \frametitle{Overview of Discriminant Analysis}
 
 \begin{block}{Discrimination}
-Given an $n \times p$ data matrix, \Mtx{X}, and a grouping of the $n$ specimens into $g$ groups, find the linear combination of the variables, $\Mtx{a}'\Mtx{x}$ that best discriminates between the groups (using $'$ to indicate transpose). 
+Given an $n \times p$ data matrix, \Mtx{X}, and a grouping of the $n$ specimens into $g$ groups, find the linear combination of the variables, $\Mtx{a}'\Mtx{x}$ that best discriminates between the groups (using $'$ to indicate transpose).
 \end{block}
 
 \begin{block}{Classification}
@@ -397,11 +397,11 @@ where
 
 % Given an $n \times p$ data matrix, \Mtx{X}, and a grouping of the $n$ specimens into $g$ groups, find the linear coeffients, \Mtx{a}, such that  of the variables, $\Mtx{a}\Mtx{x}_i$ that best discriminates between the groups.
 % \end{block}
-% 
+%
 % Solution: find a that maximizes the ratio of the squared group mean difference to within-group variance:
-% 
-% 
-% 
+%
+%
+%
 
 \end{frame}
 %===========================================================
@@ -410,7 +410,7 @@ where
 
 \begin{frame}
   \frametitle{Geometry of the Two-Group Discriminant Function}
-  
+
 \begin{center}
 \includegraphics[height=3.1in]{2group}
 \end{center}
@@ -449,13 +449,16 @@ Fisher's solution can also be setup as a classification solution using regressio
 \begin{itemize}
 \item setup a dummy variable, $\Mtx{y}$ that takes the values:
 \begin{itemize}
-    \item $\Mtx{y}_1 = n_2/(n_1 + n_2)$ for observations in group 1
-    \item $\Mtx{y}_1 = -n_1/(n_1 + n_2)$ for observations in group 2
+    \item $y_1 = n_2/(n_1 + n_2)$ for observations in group 1
+    \item $y_2 = -n_1/(n_1 + n_2)$ for observations in group 2
 \end{itemize}
 \item Solve the standard multivariate regression, $\Mtx{y} = \Mtx{X}\Mtx{b} + \Mtx{e}$
 \item Allocate unknown individual to group 1 if it's predicted $y$ is closer to $y_1$ than to $y_2$, otherwise assign to group 2.
 
 \end{itemize}
+
+%% What is the subspace of X, that is closest to the y_g (the grouping variable) -- i.e. regressing grouping variable on continuous X (rather than regressing continuous y on grouping variable X in ANOVA case)
+
 \end{frame}
 %===========================================================
 
@@ -482,13 +485,15 @@ F = \frac{\Mtx{a}'\Mtx{B}\Mtx{a}}{\Mtx{a}'\Mtx{W}\Mtx{a}}
 
 \end{itemize}
 
+
+
 \end{frame}
 %===========================================================
 
 %===========================================================
 \begin{frame}
   \frametitle{Geometry of CVA}
-  
+
 \begin{center}
 \includegraphics[height=3.1in]{3group}
 \end{center}
@@ -514,7 +519,7 @@ Maximizing $F$ leads to the following:
 There will be $s=\min(p, g-1)$ non-zero eigenvalues.
 \medskip
 
-Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mtx{A}. 
+Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mtx{A}.
 \begin{itemize}
 \item The \textbf{\emph{canonical variates}} are given by $\Mtx{y} = \Mtx{A}'\Mtx{x}$
 \item The mean of the $i$-th group in the canonical variates space is given by $\bar{\Mtx{y}}_i = \Mtx{A}'\bar{\Mtx{x}}_i$
@@ -526,7 +531,7 @@ Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mt
 %===========================================================
 \begin{frame}
   \frametitle{CVA as a two-stage rotation I}
-  
+
 \begin{center}
 \includegraphics[width=\textwidth]{cva-as-rot1}
 \end{center}
@@ -539,7 +544,7 @@ Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mt
 %===========================================================
 \begin{frame}
   \frametitle{CVA as a two-stage rotation II}
-  
+
 \begin{center}
 \includegraphics[width=0.9\textwidth]{cva-as-rot2}
 \end{center}
@@ -553,7 +558,7 @@ Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mt
 %===========================================================
 \begin{frame}
   \frametitle{CVA as a two-stage rotation III}
-  
+
 \begin{center}
 \includegraphics[width=0.9\textwidth]{cva-as-rot3}
 \end{center}
@@ -567,7 +572,7 @@ Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mt
 %===========================================================
 \begin{frame}
   \frametitle{CVA as a two-stage rotation IV}
-  
+
 \begin{center}
 \includegraphics[width=\textwidth]{cva-as-rot4}
 \end{center}
@@ -581,7 +586,7 @@ Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mt
 %===========================================================
 \begin{frame}
   \frametitle{Similarities and Differences between CVA and PCA}
-  
+
 PCA:
 \begin{itemize}
 \item Uncorrelated over the whole sample
@@ -618,11 +623,11 @@ What is the direction of PC1? What is the direction of CVI?
 % %===========================================================
 % \begin{frame}
 %   \frametitle{The different components of interest}
-% 
+%
 % \begin{center}
 % \includegraphics[height=3in]{krz-components}
 % \end{center}
-% 
+%
 % \end{frame}
 % %===========================================================
 
@@ -652,49 +657,49 @@ What is the direction of PC1? What is the direction of CVI?
 % %===========================================================
 % \begin{frame}
 %   \frametitle{Mahalanobis Distance I}
-%  
-% \begin{block}{Question} 
+%
+% \begin{block}{Question}
 % If canonical variates are not orthogonal, what justifies plotting them as so?
 % \end{block}
-% 
+%
 % \begin{block}{Answer}
 % A consideration of multivariate distance is the justification for orthogonal representation of CVs.
 % \end{block}
-% 
-% 
+%
+%
 % \end{frame}
 % %===========================================================
-% 
+%
 % %===========================================================
 % \begin{frame}
 %   \frametitle{Mahalanobis Distance II}
-%  
+%
 % Consider:
 % \begin{itemize}
 % \item if all variates have equal variances and are uncorrelated w/in groups than Euclidean distance between group means is an accurate representation of (statistical) dissimilarity
 % \item However, if some variables have very large variance or pairs of variables are highly correlated than Euclidean distance between group means isn't a good representation of the `true' dissimilarity in terms of variational trends
 % \end{itemize}
-% 
+%
 % see illustration on board.
-% 
+%
 % \end{frame}
 % %===========================================================
-% 
+%
 % %===========================================================
 % \begin{frame}
 %   \frametitle{Mahalanobis Distance III}
-% 
+%
 % A dissimilarity measure that takes into account patterns of variance/covariance is called `Mahalanobis Distance'.
-% 
+%
 % The Mahalanobis distance between the $i$th and $j$th group means is given by:
 % \[
 % D^2 = (\bar{\Mtx{x}}_i - \bar{\Mtx{x}}_j)' \Mtx{W}^{-1} (\bar{\Mtx{x}}_i - \bar{\Mtx{x}}_j)
 % \]
-% 
+%
 % It turns out that by constructing orthogonal axes from the canonical variates than Euclidean distance in the canonical variate space corresponds  (approximately) to Mahalanobis distance in the original variate space.
-% 
+%
 % \emph{Sidenote} -- The distance between the individual point $\Mtx{x}_i$ and the mean of a $\bar{\Mtx{x}}$ of a single sample is given by $d^2 = (\Mtx{x}_i - \bar{\Mtx{x}})' S^{-1} (\Mtx{x}_i - \bar{\Mtx{x}})$ where \Mtx{S} is the covariance matrix.
-% 
+%
 % \end{frame}
 % %===========================================================
 
@@ -711,7 +716,7 @@ To test:
 A couple of approaches:
 \begin{itemize}
 \item  Compare the largest eigenvalue, $l_1$, of $\Mtx{W}^{-1}\Mtx{B}$ to critical values in a F-table. $H_0$ is rejected for large values ($>1$).
-\item Likelihood approach: 
+\item Likelihood approach:
 \begin{itemize}
 \item Wilks' lambda, $\Lambda = |\Mtx{W}|/|\Mtx{B} + \Mtx{W}| = \prod_{i=1}^{p} (1 + l_i)^{-1}$
 \item there is an approximation that has a $\chi^2$ distribution.
@@ -727,8 +732,8 @@ Both boil down to a consideration of eigenvalues of $\Mtx{W}^{-1}\Mtx{B}$.
 %===========================================================
 \begin{frame}
   \frametitle{Which groups are different? Where does an unassigned observation belong?}
-  
-Within groups the canonical variates are: 
+
+Within groups the canonical variates are:
 \begin{itemize}
 \item uncorrelated
 \item have unit variance
@@ -780,11 +785,11 @@ Consider the coefficients $\Mtx{a}_i$
 % %===========================================================
 % \begin{frame}
 %   \frametitle{CVA as a two-step PCA}
-% 
+%
 % \begin{center}
 % \includegraphics[height=3.2in]{two-step-cva}
 % \end{center}
-% 
+%
 % \end{frame}
 % %===========================================================
 
