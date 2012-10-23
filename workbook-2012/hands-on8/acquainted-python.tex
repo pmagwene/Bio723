@@ -1,19 +1,59 @@
-%!TEX root = ./hands-on1.tex
+%!TEX root = ./hands-on8.tex
+
+\section{About Python}
+
+Python is a programming language invented in the early 1980's by a Dutch programmer named Guido van Rossum who was working at the Dutch National Research Institute for Mathematics and Computer Science.  Python is a high-level programming language with a simple syntax that is easy to learn. The language supports a variety of programming paradigms including procedural programming, object-oriented programming, as well as some functional programming idioms. The name of the language is a whimsical nod toward Monty Python's Flying Circus.
+
+Python has a very active development community. There is a stable core to the language, but new language features are also being developed. Python has an extensive standard library that includes facilities for a wide range of programming tasks. There is a very large user community the provides support and helps to develop an extensive set of third-party libraries. Python is also highly portable -- it is available on pretty much any computing platform you're likely to use. Python is also open-source and free!
+
+\section{Python Resources}
+
+There are many resources available online and in bookstores for learning Python. A few handy resources are listed here:
+
+\begin{itemize}
+ \item \href{http://www.python.org/}{Python Website} -- the official website for the programming language.
+ \item \href{http://docs.python.org/tutorial/}{The Python Tutorial} -- the `official' Python tutorial.
+ \item \href{http://docs.python.org/library/}{Python Library Reference} -- a reference guide to the many modules that come included with Python.
+ \item \href{http://greenteapress.com/thinkpython/thinkpython.html}{Think Python: How to Think Like a Computer Scientist} --  a free book that provides an introduction to programming using Python.
+\end{itemize}
+
 
 \section{Starting the Python interpretter}
 
 The Python interpretter can be started in a number of ways. The simplest
-way is to open a shell (terminal) and type |python|. Go ahead and do
-this to make sure you have a working version of the default Python
-interpretter available on your system. From within the default
-interpretter you can type |Ctrl-d| (Unix, \OSX) or
-|Ctrl-z| (Windows) to stop the interpretter and return to the
+way is to open a shell (terminal) and type |python|. You can open a terminal as follows:
+%
+\begin{itemize}
+    \item On a Mac (OS X) run the terminal program available under |Applications > Utilities|
+    \item On Windows open up a command prompt, available from |Start Menu > Accessories|. 
+\end{itemize}
+%
+
+Once you're at the command prompt type the following command:
+\begin{bash}
+python
+\end{bash}
+% 
+If everything is working correctly you should see something like:
+%
+\begin{python}
+Enthought Python Distribution -- www.enthought.com
+Version: 7.2-2 (32-bit)
+
+Python 2.7.2 |EPD 7.2-2 (32-bit)| (default, Sep  7 2011, 09:16:50) 
+[GCC 4.0.1 (Apple Inc. build 5493)] on darwin
+Type "packages", "demo" or "enthought" for more information.
+>>>     
+\end{python}
+%
+If that command didn't work, please see me for further help configuring your Python installation. From within the default
+interpretter you can type |Ctrl-d| (Unix, \OSX) , |Ctrl-z| (Windows) or type |quit()| to stop the interpretter and return to the
 command line.
 
 For interactive use, the default interpretter isn't very feature rich,
 so the Python community has developed a number of GUIs or shell
 interfaces that provide more functionality. For this class we will be
-using a shell interface called \href{http://ipython.org/}{IPython}.
+using a shell interface called \href{http://ipython.org/}{IPython}. \ipython is one of the tools that was included when you installed the Enthought Python Distribution.
 
 Recent versions of IPython (v0.11) provides both terminal and GUI-based
 shells. The EPD installer will place a number of shortcuts on your Start
@@ -30,17 +70,13 @@ following command from your shell:
 ipython --pylab
 \end{bash}
 %
+Again, |Ctrl-d| or |Ctrl-z| will quite t
+
 To get the equivalent of |QtConsole| you can run ipython with
 the following arguments:
 %
 \begin{bash}
 ipython qtconsole --pylab
-\end{bash}
-%
-If you'd prefer a dark background, call QtConsole as so:
-%
-\begin{bash}
-ipython qtconsole --pylab --colors=linux
 \end{bash}
 %
 QtConsole is a recent addition to IPython and there may still be bugs to
@@ -85,39 +121,154 @@ save you time:
 \end{itemize}
 
 
-\section{Accessing the Documentation in Python}
+\subsection{IP[y] Notebooks}
 
-Python comes with extensive HTML documentation and the Python
-interpreter has a help function that works similar to R's
-|help()|.
+For most of this class we'll be using a web-browser based `notebook' to interface with Python. This notebook tool, called \ipy, is included with \ipython.   \ipy notebooks are similar to Mathematica notebooks, or Sweave/Knitr documents, in that you can weave together code and text.
+
+To start an \ipy notebook first open up a terminal or command prompt and type the following command:
+%
+\begin{bash}
+ipython notebook --pylab=inline
+\end{bash}
+%
+If \ipython was installed correctly this will open up a new tab or window in your webbrowser, as show in \cref{fig:ipystart}. Click the ``New Notebook" button in the upper right and you'll be presented with an interface like the one show in \cref{fig:ipynotebook}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{./figures/hands-on8/ipy-start.png}
+    \caption{The web-browser based \ipy Notebook is a new feature of \ipython, available in version 0.12.}\label{fig:ipystart}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[height=0.5\textheight]{./figures/hands-on8/ipy-interface.png}
+    \caption{The \ipy Notebook interface.}\label{fig:ipynotebook}
+\end{figure}
+
+\subsection{Entering commands in IP[y] Notebooks}
+
+Unlike the normal Python interpreter, when you hit |Enter| in an \ipy notebook, the commands you enter in a notebook cell are not immediately evaluated. You have to use |Shift-Enter| (hold the |Shift| key while you hit the |Enter| key) when you want a cell to be evaluated.
+
+In the examples that follow, lines that begin with |>>>| indicate lines that you should enter in the \ipy notebook. Lines that follow will indicate the output produced by that command (sometimes the output will be omitted).
+
+\subsection{Exploring some of the power Python}
+
+Let's start off by demonstrating some of the cool things you can do with Python. This will also serve to demonstrate some of the powerful features of the \ipy notebook format. The examples should be fairly self-explanatory; I will defer explanation of specific function calls and the various libraries until later.
 %
 \begin{python}
->>> help(sum)
-Help on built-in function sum in module __builtin__:
-
-sum(...)
-    sum(sequence, start=0) -> value
-
-    Returns the sum of a sequence of numbers (NOT strings) plus the value
-    of parameter 'start'.  When the sequence is empty, returns start.
+>>> x = array([1,2,3,4,5,6,7,8,9,10])
+>>> plot(x, x**2)
 \end{python}
-%
-IPython also lets you use proceed the function name with a question
-mark, like in R:
+
+\begin{alert}
+    When entering these lines from inside \ipy, remember to hit |Shift-Enter| to evaluate the commands!
+\end{alert}
+
+Now click on the notebook cell with the |plot| command, change it to the following, and hit |Shift-Enter| to re-evaluate the cell.
 %
 \begin{python}
-In [1]: ?sum
-Type:       builtin_function_or_method
-Base Class: <type 'builtin_function_or_method'>
-String Form:<built-in function sum>
-Namespace:  Python builtin
-Docstring:
-sum(sequence[, start]) -> value
-
-Returns the sum of a sequence of numbers (NOT strings) plus the value
-of parameter 'start' (which defaults to 0).  When the sequence is
-empty, returns start.
+plot(x, x**2, color='red', marker='o')
+xlabel("Length")
+ylabel("Area")
+title("Length vs. Area for Squares")
 \end{python}
+%
+One of the coolest features of \ipy notebooks is that they allow you to interactively enter some code, evaluate the results, and then go back and fix, edit or change the code and re-evaluate it without having to reload or compile anything. This is particularly useful for interactively creating complex graphics.
+%
+% \begin{figure}[!ht]
+%     \centering
+%     \includegraphics[width=0.75\columnwidth]{fig-simpleplot.png}
+%     \caption{A basic plot.}\label{fig:simpleplot}
+% \end{figure}
+
+Let's create a more complicated figure, illustrating a histogram of random draws from a normal distribution, compared to the expected probability distribution function (PDF) for a normal distribution with the same parameters:
+\begin{python}
+mean = 100
+sd = 15
+
+# draw 1000 random samples from a normal distn
+normaldraw = normal(mean, sd, size=1000)
+
+# draw a histogram
+# "normed" means normalize the counts
+n, bins, patches = hist(normaldraw, bins=50, normed=True)
+xlabel("x")
+ylabel("density")
+
+# draw the normal PDF for the same parameters
+# evaluated at the bins we used to construct the histogram
+y = normpdf(bins, mean, sd)
+l = plot(bins, y, "r--", linewidth=2)    
+\end{python}
+%
+This produces the plot shown in \cref{fig:histexample}.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{./figures/hands-on8/fig-histexample.png}
+    \caption{A histrogram created using \ipy and the \matplotlib library.}\label{fig:histexample}
+\end{figure}
+
+In this final set of examples we create several representations of the function $z = \cos(x) \sin(y)$.
+%
+\begin{python}
+def f(x,y):
+    # multiply by pi/180 to convert degrees to radians
+    return cos(x*pi/180) * sin(y*pi/180)
+
+# note we set the upper boundary as 361
+# so that 360 get's included
+x,y = ogrid[0:361:10, 0:361:10]
+z = f(x,y)
+
+# ravel insures the x and y are 1d arrays
+# try with 'contour' rather than 'contourf'
+p = contourf(ravel(x), ravel(y),z)
+
+lx = xlabel("x (degrees)")
+tx = xticks(arange(0,361,45))
+ly = ylabel("y (degrees)")
+tx = yticks(arange(0,361,45))
+\end{python}
+%
+And the same function represented in 3D, that produces \cref{fig:3dplot}.
+%
+\begin{python}
+from mpl_toolkits.mplot3d import Axes3D
+fig = figure()
+ax = Axes3D(fig)
+
+# create x,y grid
+x,y = meshgrid(arange(0,361,10), arange(0,361,10))
+z = f(x,y) # uses fxn f from previous cell
+ax.plot_surface(x,y,z,rstride=2,cstride=2,cmap="jet")
+
+# setup axes labels
+ax.set_xlabel("x (degrees)")
+ax.set_ylabel("y (degrees)")
+ax.set_zlabel("z")
+
+# set elevation and azimuth for viewing
+ax.view_init(68,-11) 
+\end{python}
+%
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{./figures/hands-on8/fig-3dplot.png}
+    \caption{A 3D representation of $z = \cos(x) \sin(y)$}\label{fig:3dplot}
+\end{figure}
+
+
+% The |plot()| function is not a built-in function in Python, but rather is provided by a plotting library for Python called \href{http://matplotlib.sourceforge.net/}{\matplotlib}. \matplotlib provides powerful 2D and 3D plotting functions that facilitate the production of publication quality figures.
+
+\subsection{Accessing the Documentation}
+
+Python comes with extensive \href{http://docs.python.org/}{HTML documentation}. If you have a network connection, you can access the online documentation for Python (and several other packages) by clicking the appropriate button under ``Help" in the left-hand frame of \ipy. Alternately, you can use the |help()| function (a built-in function in Python), or the |?| command (specific to \ipython):
+%
+\begin{python}
+>>> help(len)
+>>> ?len
+\end{python}
+
 
 
 \section{Using Python as a Calculator}
@@ -425,31 +576,6 @@ array([-0.41614684, -0.65364362,  0.96017029, -0.14550003, -0.83907153])
 \end{python}
 
 
-\section{Simple Plots in Python}
-
-The Matplotlib package is the de facto standard for producing
-publication quality scientific graphics in Python. Matplotlib is
-included with the EPD and was automatically pulled into the interpretter
-namespace if you're using the IPython PyLab or QtConsole configurations. Here are some simple plotting examples using matplotlib:
-%
-\begin{python}
->>> from pylab import * # only necessary if not using pylab
->>> import numpy as np # use a shorter alias
-# load the turtle data using the numpy.loadtxt function 
-# skipping the first row (header) and the first column 
->>> turt = np.loadtxt('turtles.txt', skiprows=1, 
-                      usecols=(1,2,3))
->>> turt.shape
-(48, 3)
-# draw bivariate scatter plot
->>> scatter(turt[:,0], turt[:,1])
-# give the axes some labels and a title for the plot
->>> xlabel('Length')
->>> ylabel('Width')
->>> title('Turtle morphometry')
-\end{python}
-
-
 \section{Writing Functions in Python}
 
 The general form of a Python function is as follows:
@@ -522,8 +648,7 @@ array([ 5, 20, 45, 80])
 As with R, you can define your own Python modules that contain user
 defined functions. Using a programmer's text editor, write your
 function(s) and save it to a file with a \lstinline!.py! extension in a
-directory in your PYTHONPATH (see {[}{[}Setting
-Paths\textbar{}setting-paths{]}{]}.
+directory in your PYTHONPATH (see below).
 
 \begin{python}
 # functions defined in vecgeom.py
@@ -561,15 +686,42 @@ veclength(x)
      0.16222142  0.32444284  0.32444284  0.48666426]
 \end{python}
 
-\begin{assignment}
-Write Python code for the vector projection and
-component functions as described in Assignment 2. In your Pweave
-document illustrate the use of these functions with several examples.
-Remember that your module will need to have access to the
-\lstinline!numpy! module so include an appropriate \lstinline!import!
-statement.
-\end{assignment}
+\section{Setting the PYTHONPATH}
 
+Like the operating system, Python searches a set of default directories whenever you ask it to load a specific module.  Python knows where to find all of it's base modules, and a well written package will install it's files into one of the standard locations.
+
+To see the directories that your Python installation searches by default try the following commands in the Python interpreter (your output will be different):
+%
+\begin{python}
+>>> import sys
+>>> import sys
+>>> sys.path
+['', '/Library/Frameworks/Python.framework/Versions/7.1/bin', '/Users/pmagwene', 
+'/Users/pmagwene/synchronized/pyth', '/Users/pmagwene/pytest', 
+... output truncated ...
+\end{python}
+
+For your own code it's useful to setup a separate directory. Create a directory called |pycode| in your home directory. In order for Python to "see" the code in this directory you must add it to your |PYTHONPATH|.
+
+To temporarily add a new directory to |sys.path|:
+\begin{python}
+>>> sys.path.append('/Users/pmagwene/pycode') # substitute the path to the directory you used
+>>> print sys.path
+['', '/Library/Frameworks/Python.framework/Versions/7.1/bin', '/Users/pmagwene', 
+'/Users/pmagwene/synchronized/pyth', '/Users/pmagwene/pytest', 
+... output truncated...
+'/Users/pmagwene/pycode']
+\end{python}
+
+This change applies only to your current interpreter and lasts until you close the interactive prompt. To make persistent changes to the Python seach path you need to create an environment variable called |PYTHONPATH| and add the desired directories.  You do this the same way you set your system |PATH|, but modify your shell initialization file (Unix or OS X) or using the System Properties tool in the control panel to create a new environment variable (Windows). For example, on OS X add the following line to your |.bash_profile| (found in your home directory, create it if doesn't already exist):
+%
+\begin{bash}
+export PYTHONPATH=$PYTHONPATH:$HOME/pycode   
+\end{bash}
+%
+If you are keeping your Bio723 code somewhere other than |~/pycode| than change the location as needed. To have this change take effect, start a new Terminal window or re-start \ipy.
+
+For more info on setting PATH variables see: \url{https://github.com/pmagwene/Bio313/wiki/setting-paths}.
 
 \section{Vector Operations in Python}
 
@@ -756,10 +908,10 @@ array([[ 1.00000000e+000, -5.55111512e-017, -6.93889390e-017,  2.94902991e-017],
 \section{Plotting in Python}
 
 Python doesn't have any `native' data plotting tools but there are a
-variety of packages that provide tools for visualizing data. The package
-we're going to use is called `Matplotlib'. Matplotlib is one of the many
-packages that is distributed with the Enthought Python distribution. If
-you want to explore the full power of Matplotlib check out the example
+variety of packages that provide tools for visualizing data. The Matplotlib package is the de facto standard for producing
+publication quality scientific graphics in Python. Matplotlib is
+included with the EPD and was automatically pulled into the interpretter
+namespace if you're using the \ipython |--pylab| option. If you want to explore the full power of Matplotlib check out the example
 gallery and the documentation at
 \url{http://matplotlib.sourceforge.net/}.
 
@@ -770,13 +922,25 @@ basic matplotlib functions are already available to you. If not, import
 them as so:
 
 \begin{python}
->>> from pylab import *
->>> import numpy as np # go ahead and import numpy as well
+>>> from pylab import * # only necessary if not using pylab
+>>> import numpy as np # go ahead and import numpy as well, using an alias
+
+# load the turtle data using the numpy.loadtxt function 
+# skipping the first row (header) and the first column 
+>>> turt = np.loadtxt('turtles.txt', skiprows=1, 
+                      usecols=(1,2,3))
+>>> turt.shape
+(48, 3)
+# draw bivariate scatter plot
+>>> scatter(turt[:,0], turt[:,1])
+# give the axes some labels and a title for the plot
+>>> xlabel('Length')
+>>> ylabel('Width')
+>>> title('Turtle morphometry')
 \end{python}
-\subsubsection{Loading data}
 
-First let's load the yeast data set:
-
+Here's another example using the yeast expression data set:
+%
 \begin{python}
 >>> data = np.loadtxt('yeast-subnetwork-clean.txt',skiprows=1,usecols=range(1,16))
 >>> data.shape   # check the dimensions of the resulting matrix
@@ -796,7 +960,7 @@ see
 \subsubsection{Histograms in Matplotlib}
 
 Matplotlib has a histogram drawing function. Here's how to use it:
-
+%
 \begin{python}
 >>> hist? # in Ipython calls the help function
 >>> h = hist(data[:,0]) # plot a histogram of the first variable (column) in our data set
@@ -804,12 +968,13 @@ Matplotlib has a histogram drawing function. Here's how to use it:
 >>> h = hist(data[:,0], bins=20) # plot histogram w/20 bins
 >>> h = hist(data[:,:2])  # histograms of the first two variables    
 \end{python}
+
 There's no built in density plot function, but we can create a function
 that will do the necessary calculations for us to create our own density
 plot. This uses a kernel density estimator function in the scipy library
 (included with EPD). Put the following code in a file called
 \lstinline!myplots.py! somewhere on your \lstinline!PYTHONPATH!:
-
+%
 \begin{python}
 # myplots.py
 
@@ -824,8 +989,9 @@ def density_trace(x):
     ypts = kde.evaluate(xpts) # evalude the estimate at the xpts
     return xpts,ypts
 \end{python}
-You can then use the \lstinline!density_trace! function as follows:
 
+You can then use the \lstinline!density_trace! function as follows:
+%
 \begin{python}
 >>> import myplots
 >>> h = hist(data[:,0], normed=True) # use normed=True so histogram 
@@ -833,34 +999,29 @@ You can then use the \lstinline!density_trace! function as follows:
 >>> x,y = myplots.density_trace(data[:,0])
 >>> plot(x,y, 'red')    
 \end{python}
+
 \subsubsection{Boxplots in Matplotlib}
 
 Box-and-whisker plots are straightforward in Matplotlib:
-
+%
 \begin{python}
 >>> b = boxplot(data[:,0])
 >>> clf()
 >>> b = boxplot(data[:,:5]) # boxplots of first 5 variables
 \end{python}
+%
 The \lstinline!boxplot! function has quite a few facilities for
 customizing your boxplots. For example, here's how we can create a
 notched box-plot using 1000 bootstrap replicates (we'll discuss the
 bootstrap in more detail in a later lecture) to calculate confidence
 intervals for the median.
-
+%
 \begin{python}
 >>> boxplot(data[:,0], notch=1, bootstrap=True)    
 \end{python}
 See the Matplotib docs for more info.
 
-\subsubsection{Scatter Plots in Matplotlib}
-
-Scatter plots are also easy to create:
-
-\begin{python}
->>> s = scatter(data[:,0], data[:,1])    
-\end{python}
-\subsection{3D Plots}
+\subsubsection{3D Scatter Plots in Matplotlib}
 
 Recent version of Matplotlib include facilities for creating 3D plots.
 Here's an example of a 3D scatter plot:
@@ -879,6 +1040,7 @@ Here's an example of a 3D scatter plot:
 <matplotlib.text.Text object at 0x1a0bbcd0>
 >>> show()
 \end{python}
+%
 Retyping all those commands is tedious and error prone so let's turn it
 into a function. Add the following code to \lstinline!myplots.py!:
 
@@ -908,132 +1070,133 @@ Now reload myplots and call the scatter3d function as so:
 >>> myplots.scatter3d(data[:,0], data[:,1], data[:,2], lab)
 >>> myplots.scatter3d(data[:,0], data[:,1], data[:,2],labels=('X','Y','Z'))
 \end{python}
-\section{Plotting Geographic Data using Basemap}
 
-There are a number of toolkits available for Matplotlib that extend the
-functionality of the package. The mplot3d is one of those toolkits which
-has now been incorporated into the standard distribution. Basemap is
-another toolkit that provides the ability to plot 2D data on maps. The
-Basemap toolkit supports a variety of mapping projections and coordinate
-transformations and has the ability to plot things likes water bodies
-and political boundaries.
+% \section{Plotting Geographic Data using Basemap}
 
-The EPD edition of Python includes Basemap but in the interest of space
-they have removed the high resolution maps that the normal Basemap
-distribution includes. In order to use those maps you can download a
-basemap binary (for Windows) or the source code (on OS X) from the
-\href{http://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/basemap-1.0.1/}{here}.
+% There are a number of toolkits available for Matplotlib that extend the
+% functionality of the package. The mplot3d is one of those toolkits which
+% has now been incorporated into the standard distribution. Basemap is
+% another toolkit that provides the ability to plot 2D data on maps. The
+% Basemap toolkit supports a variety of mapping projections and coordinate
+% transformations and has the ability to plot things likes water bodies
+% and political boundaries.
 
-On Windows just run the executable installer (make sure you get the
-version that is appropriate to your EPD distribution; either 32-bit or
-64-bit).
+% The EPD edition of Python includes Basemap but in the interest of space
+% they have removed the high resolution maps that the normal Basemap
+% distribution includes. In order to use those maps you can download a
+% basemap binary (for Windows) or the source code (on OS X) from the
+% \href{http://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/basemap-1.0.1/}{here}.
 
-On OS X, once you have downloaded the source tarball
-(\lstinline!basemap-1.0.1.tar.gz!), open up a bash shell, navigate to
-the directory where you saved the tarball, and type:
+% On Windows just run the executable installer (make sure you get the
+% version that is appropriate to your EPD distribution; either 32-bit or
+% 64-bit).
 
-\begin{python}[language=bash]
-tar xvzf basemap-1.0.1.tar.gz
-\end{python}
-This will decompress and unarchive the source code into a directory
-called \lstinline!basemap-1.0.1!. Navigate to the directory where the
-mapping data is stored:
+% On OS X, once you have downloaded the source tarball
+% (\lstinline!basemap-1.0.1.tar.gz!), open up a bash shell, navigate to
+% the directory where you saved the tarball, and type:
 
-\begin{python}[language=bash]
-cd basemap-1.0.1/lib/mpl_toolkits/basemap/data
-\end{python}
-And then copy all the \lstinline!.dat! files to your Python
-installation:
+% \begin{python}[language=bash]
+% tar xvzf basemap-1.0.1.tar.gz
+% \end{python}
+% This will decompress and unarchive the source code into a directory
+% called \lstinline!basemap-1.0.1!. Navigate to the directory where the
+% mapping data is stored:
 
-\begin{python}[language=bash]
-cp *.dat /Library/Frameworks/Python.framework/Versions/Current/lib/python2.7/site-packages/mpl_toolkits/basemap/data
-\end{python}
-\subsection{Using Basemap}
+% \begin{python}[language=bash]
+% cd basemap-1.0.1/lib/mpl_toolkits/basemap/data
+% \end{python}
+% And then copy all the \lstinline!.dat! files to your Python
+% installation:
 
-In our first basemap example we show how to plot the US lower 48 and we
-add a red dot to represent the city of Durham, NC. Save this code as
-\lstinline!mapex.py! and run it from the command line
-(\lstinline!python mapex.py!).
+% \begin{python}[language=bash]
+% cp *.dat /Library/Frameworks/Python.framework/Versions/Current/lib/python2.7/site-packages/mpl_toolkits/basemap/data
+% \end{python}
+% \subsection{Using Basemap}
 
-\begin{codeblock}[python]
-# Derived from: Tosi, Sandro. Plotting Geographical Data using Basemap
-# url: http://www.packtpub.com/article/plotting-geographical-data-using-basemap
+% In our first basemap example we show how to plot the US lower 48 and we
+% add a red dot to represent the city of Durham, NC. Save this code as
+% \lstinline!mapex.py! and run it from the command line
+% (\lstinline!python mapex.py!).
 
-import numpy as np
-from matplotlib import pyplot
-from mpl_toolkits.basemap import Basemap
+% \begin{codeblock}[python]
+% # Derived from: Tosi, Sandro. Plotting Geographical Data using Basemap
+% # url: http://www.packtpub.com/article/plotting-geographical-data-using-basemap
 
-# Lambert Conformal map of USA lower 48 states
-m = Basemap(llcrnrlon=-119, llcrnrlat=22, urcrnrlon=-64,
-  urcrnrlat=49, projection='lcc', lat_1=33, lat_2=45,
-  lon_0=-95, resolution='l', area_thresh=10000)
+% import numpy as np
+% from matplotlib import pyplot
+% from mpl_toolkits.basemap import Basemap
 
-# draw the coastlines of continental area
-m.drawcoastlines()
-# draw country boundaries
-m.drawcountries(linewidth=2)
-# draw states boundaries (America only)
-m.drawstates()
+% # Lambert Conformal map of USA lower 48 states
+% m = Basemap(llcrnrlon=-119, llcrnrlat=22, urcrnrlon=-64,
+%   urcrnrlat=49, projection='lcc', lat_1=33, lat_2=45,
+%   lon_0=-95, resolution='l', area_thresh=10000)
 
-# fill the background (the oceans)
-m.drawmapboundary(fill_color='aqua')
-# fill the continental area and lakes
-m.fillcontinents(color='coral',lake_color='aqua')
+% # draw the coastlines of continental area
+% m.drawcoastlines()
+% # draw country boundaries
+% m.drawcountries(linewidth=2)
+% # draw states boundaries (America only)
+% m.drawstates()
 
-# draw pt. indicating durham/raleigh area
-# Durham, latitude:  35deg 52min N, longitude:78deg 47min W
-dlat, dlong = 35.86, -78.78 # west is minus
+% # fill the background (the oceans)
+% m.drawmapboundary(fill_color='aqua')
+% # fill the continental area and lakes
+% m.fillcontinents(color='coral',lake_color='aqua')
 
-# this maps latitude and longitude to map coordinates
-mcoordx, mcoordy = m(dlong,dlat)
-pyplot.plot(mcoordx,mcoordy, 'ro') # draw red dot
-pyplot.text(mcoordx+36000, mcoordy-18000, 'Durham')
+% # draw pt. indicating durham/raleigh area
+% # Durham, latitude:  35deg 52min N, longitude:78deg 47min W
+% dlat, dlong = 35.86, -78.78 # west is minus
 
-# finally show the file
-pyplot.show()    
-\end{codeblock}
-%
-In our second example let's assume you've been studying the population
-genetics of the beautiful and rare North Carolina Blue Snouter (mammals
-of the order Rhinogradentia; see Stümpke 1967. The snouters: form and
-life of the Rhinogrades). You've been sampling snouter populations from
-across NC and you want to make a figure for a paper showing all your
-sampling locations. Download the file \lstinline!nc-sites.txt! from the
-course wiki, and place it in the same directory as the following module
-(\lstinline!mapex2.py!).
+% # this maps latitude and longitude to map coordinates
+% mcoordx, mcoordy = m(dlong,dlat)
+% pyplot.plot(mcoordx,mcoordy, 'ro') # draw red dot
+% pyplot.text(mcoordx+36000, mcoordy-18000, 'Durham')
 
-\begin{codeblock}[python]
-# mapex2.py
+% # finally show the file
+% pyplot.show()    
+% \end{codeblock}
+% %
+% In our second example let's assume you've been studying the population
+% genetics of the beautiful and rare North Carolina Blue Snouter (mammals
+% of the order Rhinogradentia; see Stümpke 1967. The snouters: form and
+% life of the Rhinogrades). You've been sampling snouter populations from
+% across NC and you want to make a figure for a paper showing all your
+% sampling locations. Download the file \lstinline!nc-sites.txt! from the
+% course wiki, and place it in the same directory as the following module
+% (\lstinline!mapex2.py!).
 
-import numpy as np
-from matplotlib import pyplot
-from mpl_toolkits.basemap import Basemap
+% \begin{codeblock}[python]
+% # mapex2.py
 
-m = Basemap(llcrnrlon=-85, llcrnrlat=33, urcrnrlon=-75,
-  urcrnrlat=37, projection='lcc', lat_0=35.774, lon_0=-78.634,
-  resolution='l', area_thresh=10000)
+% import numpy as np
+% from matplotlib import pyplot
+% from mpl_toolkits.basemap import Basemap
 
-m.drawcoastlines()
-m.drawcountries(linewidth=2)
-m.drawstates()
-m.drawmapboundary(fill_color='aqua')
-m.fillcontinents(color='coral',lake_color='aqua')
+% m = Basemap(llcrnrlon=-85, llcrnrlat=33, urcrnrlon=-75,
+%   urcrnrlat=37, projection='lcc', lat_0=35.774, lon_0=-78.634,
+%   resolution='l', area_thresh=10000)
 
-sites = np.loadtxt('nc-sites.txt')
+% m.drawcoastlines()
+% m.drawcountries(linewidth=2)
+% m.drawstates()
+% m.drawmapboundary(fill_color='aqua')
+% m.fillcontinents(color='coral',lake_color='aqua')
 
-for row in sites:
-    lat, lon = row[0], row[1]
-    x,y = m(lon, lat) # note how longitude (x-direction) comes first
-    # use blue +'s to plot sites
-    pyplot.plot(x,y, 'b+', markersize=8,markeredgewidth=2) 
+% sites = np.loadtxt('nc-sites.txt')
 
-pyplot.show()    
-\end{codeblock}
-%
-The \lstinline!mapex2.py! code will produce a figure like the one below.
+% for row in sites:
+%     lat, lon = row[0], row[1]
+%     x,y = m(lon, lat) # note how longitude (x-direction) comes first
+%     # use blue +'s to plot sites
+%     pyplot.plot(x,y, 'b+', markersize=8,markeredgewidth=2) 
 
-\begin{figure}[htbp]
-\centering
-%\includegraphics[width=0.6\columnwidth]{./figures/hands-on3/mapfig.pdf}
-\caption{Output of the mapex2.py module}
-\end{figure}
+% pyplot.show()    
+% \end{codeblock}
+% %
+% The \lstinline!mapex2.py! code will produce a figure like the one below.
+
+% \begin{figure}[htbp]
+% \centering
+% %\includegraphics[width=0.6\columnwidth]{./figures/hands-on3/mapfig.pdf}
+% \caption{Output of the mapex2.py module}
+% \end{figure}
