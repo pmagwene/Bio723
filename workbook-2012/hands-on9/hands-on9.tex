@@ -50,6 +50,8 @@ The R package |cluster| provides some slightly fancier clustering routines. The 
 
 Compare the results of different hierarchical clustering methods (single linkage, complete linkage, etc.) as applied to the iris data set using the hclust() or agnes() functions. For single and average linkage use both Euclidean and Manhattan distance as the dissimilarity measures.
 
+
+
 \subsection{Neighbor joining in R}
 
 The package |ape| provides an implementation of neighbor joining in R (and many other useful phylogenetic methods). Here's a couple of examples of using neighbor joining taken from the |ape| documentation:
@@ -75,6 +77,51 @@ dist <- dist.dna(woodmouse) # see the help on the dist.dna fxn
 tree.mouse <- nj(dist)
 plot(tree.mouse)
 \end{R}
+
+
+\section{Hierarchical Clusting in Python}
+
+The |scipy| library provide a variety of hierarchical clustering routines for Python.  These are found in the module |scipy.cluster.hierarchy|.  The clustering routines take as input an array giving the pairwise distances between the objects you want to cluster.  Functions for calculating various dissimilarity measures are found in |scipy.spatial.distance|.  The code below illustrates how to use these two packages to do single-linkage clustering.
+
+\begin{python}
+In [6]: import numpy as np
+In [7]: iris = np.loadtxt('iris.txt',skiprows=1,usecols=range(3))
+In [8]: iris.shape
+Out[8]: (150, 3)
+
+In [9]: import scipy.spatial.distance as dist
+In [10]: d = dist.pdist(iris, 'euclidean')
+
+In [11]: d.shape
+Out[11]: (11175,)
+
+In [12]: (150*149)/2  # check number of pairs of specimens
+Out[12]: 11175
+
+In [13]: import scipy.cluster.hierarchy as hier
+In [14]: ilink = hier.linkage(d)
+In [15]: dendro = hier.dendrogram(ilink)
+In [16]: dendro = hier.dendrogram(ilink, color_threshold=0.5) # colors the subtrees at a different threshold
+
+# get species names from data file
+In [17]: species = np.loadtxt('iris.txt', dtype=str, skiprows=1, usecols=[4]) 
+
+# redraw dendrogram w/species names as labels
+# root of tree to the left
+In [18]: dendro = hier.dendrogram(ilink, color_threshold=0.5,labels=species, orientation='right', leaf_font_size=10)
+\end{python}
+
+And here's the equivalent version using city block (i.e. Manhattan) distance and UPGMA.
+
+\begin{python}
+In [26]: d2 = dist.pdist(iris, 'cityblock')
+In [27]: iupgma = hier.average(d2)
+In [30]: dendro2 = hier.dendrogram(iupgma, labels=species, orientation='right', leaf_font_size=10)
+\end{python}
+
+See the SciPy documentation for the full details on \href{http://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html}{scipy.cluster.hierarchy} and \\
+\href{http://docs.scipy.org/doc/scipy/reference/spatial.distance.html}{scipy.spatial.distance}.
+
 
 
 
