@@ -1,0 +1,160 @@
+
+
+\section{Hierarchical Clustering in R}
+
+The function |hclust()| provides a simple mechanism for carrying out standard hierarchical clustering in R. The |method| argument determines the group distance function used (single linkage, complete linkage, average, etc.).
+
+The input to |hclust()| is a dissimilarity matrix. The function |dist()| provides some of the basic dissimilarity measures (e.g. Euclidean, Manhattan, Canberra; see method argument of |dist()|) but you can convert an arbitrary square matrix to a distance object by applying the |as.dist()| function to the matrix.
+
+\begin{R}
+> iris.data <- subset(iris, select=-Species) 
+> iris.cl <- hclust(dist(iris.data), method='single')
+> plot(iris.cl) # plot a dendrogram
+# let's improve the look a little bit
+> plot(iris.cl, labels=iris$Species, cex=0.7)
+> # use neg. values of hang to make labels on leaves line up
+> plot(iris.cl, labels=iris$Species,  hang=-0.1, cex=0.7)
+\end{R}
+
+Other functions of interested related to dendrograms include |cuttree()| for cutting the tree at a specified height (or number of groups) and |identify()| for graphically highlighting a cluster of interest in a dendrogram.
+
+\begin{R}
+> plot(iris.cl, labels=iris$Species, cex=0.7)
+> interesting.cluster <- identify(iris.cl) # use left-mouse to choose, right-mouse to stop choosing
+> interesting.cluster
+# [output ommitted]
+\end{R}
+
+Fancy formatting of dendrogram plots in R is awkward. You need to use the |plot()| function in combination with the |as.dendrogram()| function to access many options. See the help for 'dendrogram' in R for a discussion of options and type |example(dendrogram)| to see some possibilities. A few of them are illustrated here:
+
+\begin{R}
+> plot(as.dendrogram(iris.cl)) # contrast this with plot(iris.cl)
+> plot(as.dendrogram(iris.cl), horiz=T) # draw horizontally
+> # here's one way to change the labels
+> iris.cl$labels <- iris$Species
+> levels(iris.cl$labels) <- factor(c("S","Ve","Vi"))
+> iris.dend <- as.dendrogram(iris.cl)
+> plot(iris.dend)
+\end{R}
+
+The |heatmap()| function combines a false color image of a matrix with a dendrogram. Here's we apply it to the yeast-subnetwork data set from previous weeks.
+
+\begin{R}
+> yeast <- read.delim('yeast-subnetwork-clean.txt')
+> ymap <- heatmap(as.matrix(yeast), labRow=NA) # suppress the numerous row labels
+> ymap <- heatmap(as.matrix(yeast),labRow=rownames(yeast)) # w/row labels, kinda messy
+
+\end{R}
+
+The R package |cluster| provides some slightly fancier clustering routines. The basic agglomerative clustering methods in |cluster| are accessed via the function |agnes()| 
+
+Compare the results of different hierarchical clustering methods (single linkage, complete linkage, etc.) as applied to the iris data set using the hclust() or agnes() functions. For single and average linkage use both Euclidean and Manhattan distance as the dissimilarity measures.
+
+\subsection{Neighbor joining in R}
+
+The package |ape| provides an implementation of neighbor joining in R (and many other useful phylogenetic methods). Here's a couple of examples of using neighbor joining taken from the |ape| documentation:
+
+\begin{R}
+library(ape) # install ape if need be
+### From Saitou and Nei (1987, Table 1):
+x <- c(7, 8, 11, 13, 16, 13, 17, 5, 8, 10, 13, 10, 14, 5, 7, 10, 7, 11, 8, 11, 8, 12, 5, 6, 10, 9, 13, 8)
+M <- matrix(0, 8, 8)
+# create a symmetric matrix by filling upper and lower triangles
+# of the matrix M
+M[row(M) > col(M)] <- x
+M[row(M) < col(M)] <- x
+rownames(M) <- colnames(M) <- 1:8
+tree <- nj(M)
+plot(tree, "u")
+
+### a less theoretical example
+?woodmouse  # check out the info about the 
+            # woodmouse data set in the ape package
+data(woodmouse)
+dist <- dist.dna(woodmouse) # see the help on the dist.dna fxn
+tree.mouse <- nj(dist)
+plot(tree.mouse)
+\end{R}
+
+
+
+\section{Minimum Spanning Tree in R}
+
+The package \texttt{ape} has an \texttt{mst()} function. Several others packages, including vegan also have minimum spanning tree functions. The |mst()| function takes a dissimilarity matrix as its input and returns a square adjacency matrix, $A$, where $A_{ij} = 1$ if $(i,j)$ is an edge in the MST or 0 otherwise.
+
+Here's an application of the MST function to the cities example you completed above.
+
+\begin{R}
+> library(ape) # install ape first if necessary
+> city.mst <- mst(as.dist(cities))
+> city.mst # see the adjacency matrix return by mst
+\end{R}
+
+If you want to create a nice looking plot you can use the  |mat2listw()| function in the package |spdep|. |mat2listw|  converts the adjacency matrix into a form that you can extract the neighbor information from:
+
+\begin{R}
+> library(spdep) # install spdep first if necessary
+> plot(city.location, type='n', xlab='PCoord1', ylab='PCoord2')
+> text(city.location, labels=names(cities))
+
+# note British spelling of 'neighbours'
+> plot(mat2listw(city.mst)$neighbours, city.location, add=T) 
+\end{R}
+
+
+
+\section{K-means Clustering in R}
+
+The \texttt{kmeans()} function calcualtes standard k-means clusters in R.  The input is a data matrix (perhaps transformed before hand) and $k$, the number of clusters. Alternatively you can specify starting cluster centers. You can also run the algorithm multiple times with different random starting positions by using the \texttt{nstart} argument.
+
+\begin{R}
+# generate data set w/two groups (one of size 50, the other of size 75)
+# note the different means and std dev between the two groups
+> test.data <- rbind(matrix(rnorm(100, mean=0, sd=0.2),ncol=2), 
+                  matrix(rnorm(150,mean=1,sd=0.5),ncol=2))
+> colnames(test.data) <- c("x", "y")
+> plot(test.data)
+> cl <- kmeans(test.data, 2)
+> names(cl)
+[1] "cluster"  "centers"  "withinss" "size"    
+> cl$cluster #  which cluster each object is assigned to
+... output deleted ...
+> plot(test.data, col = cl$cluster)
+> cl$centers  # compare to the "true" means for the groups
+            x         y
+1 0.009479636 0.1182016
+2 1.109641398 1.0427396
+> points(cl$centers, col = 1:2, pch = 8, cex=2)
+
+> # what if we pick the wrong number of clusters?
+> cl <- kmeans(test.data, 5)
+> plot(test.data, col = cl$cluster)
+> points(cl$centers, col = 1:5, pch = 8, cex=2)
+
+> # as above but using nstart argument
+> cl <- kmeans(test.data, 5, nstart=25)
+> plot(test.data, col = cl$cluster)
+> points(cl$centers, col = 1:5, pch = 8, cex=2)
+\end{R}
+
+\subsection{Applying K-means to the iris data set}
+
+Now that we've seen how to apply k-mean clustering to a synthetic data set, let's go ahead and apply it to our old friend the iris data set. Note that this is a four dimensional data set so we'll need to pick a projection in which to depict the cluster.  The space of the first two principal components is a natural choice (but note that the fact that we're using the PCA space doesn't impact the k-means clustering in this context).
+
+\begin{R}
+# drop the fifth column (species names)
+# we'll assume we know how many groups there are    
+> k.iris <- kmeans(as.matrix(iris[,-5]), 3)    
+> iris.pca <- prcomp(iris[,-5])
+# the following plot colors the specimens by the group
+# they were assigned to by the k-means clustering
+> plot(iris.pca$x,col=k.iris$cluster)
+
+# this plot colors speciemsn by k-means grouping
+# and chooses plot symbol by real species grouping.
+# This can help us quickly pick out the misclasssified
+# specimens
+> plot(iris.pca$x, col=k.iris$cluster, pch=c(1,2,16)[iris[,5]])
+\end{R}
+
+
