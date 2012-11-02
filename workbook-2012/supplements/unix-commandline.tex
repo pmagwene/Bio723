@@ -1,15 +1,12 @@
 
-\section{Unix Tools and Concepts}
-
-
 \section{Platform specific issues}
 
-\subsection{OS X}
-If you use a Mac you're in luck, as your computer is already based on Unix.  All of the command line tools we'll use in this tutorial are already available to you.
+\subsubsection{OS X}
+If your computer has Linux or Mac OS X installed you already have a native Unix environment.  All of the command line tools we'll use in this tutorial are already available to you.
 
-\subsection{Windows}
+\subsubsection{Unix on Windows}
 
-If your computer runs Windows you can have access to a Unix-like environment by installing a program called \href{http://www.cygwin.com}{Cygwin}.  Cygwin is a free, open source package of programs that provides common Unix programs.  Download the installer program (setup.exe) from the Cygwin website and place it in |c:\cygwin| (you'll need to create this directory; I recommend that you use this directory as the installation directory as well).  
+If your computer runs Windows you can have access to a Unix-like environment by installing a program called Cygwin (\href{http://www.cygwin.com}{http://www.cygwin.com}).  Cygwin is free, open source, and provides a convenient installer for common Unix programs.  Download the installer program (\verb=setup.exe=) and place it in a \verb=c:\cygwin= directory (I recommend that you use this directory as the installation directory as well).  
 
 During the installation you will have the choice of installing additional tools. I recommend you install the following packages (use the search box to find them):
 \begin{itemize}
@@ -25,42 +22,33 @@ The first time you run Cygwin I recommend you start it with the default terminal
 
 \emph{NOTE:} all the commands that follow should be executed from within the cygwin bash shell (i.e. in the terminal window you get when you click the Cygwin or mintty shortcuts).
 
-Cygwin creates a set of subdirectories in `c:\cygwin` that mirrors the standard Unix file system (`/bin`, `/usr`, `/var`, `/home`, etc). When you start the Cygwin bash shell you will be in your home directory (`/home/<username>`). 
+Cygwin creates a set of subdirectories that mirrors the standard Unix file system (|/bin, /usr, /var, /home|, etc). When you start the bash shell you will be in your home directory (|/home/<username>|).
     
-Cygwin will treat the directory where you installed it (`c:\cygwin` if you followed my instructions above) as if that was the 'root' directory of the Unix file system. So when you type `cd /home` from the shell in Cygwin, you're really in `c:\cygwin\home`. To access the standard Windows drive names, Cygwin provides a mapping through a directory called `/cygdrive`. For example, to list the contents of `c:\Python27` from Cygwin you would type:
+Cygwin will treat the directory where you installed it (|c:\cygwin| if you followed my instructions above) as if that was the `root' directory of the Unix file system. So when you type |cd /home| from the shell in Cygwin, you're really in |c:\cygwin\home|. To access the standard Windows drive names, Cygwin provides a mapping through a directory called |/cygdrive|. For example, to list the contents of |c:\Python27| from Cygwin you would type:
 
 \begin{bash}
 $ ls /cygdrive/c/Python27
 \end{bash}
 
-\subsubsection{Setting up symbolic links and aliases in bash under Cyginw}
+\subsubsection{Setting up symbolic links and aliases in bash under Cygwin}
     
 The bash shell (the default shell under Cygwin) can be customized and configured to suit your needs.  Let's start by creating a convenient link between your cygwin home directory and your Windows home directory.
+%
+\begin{bash}
+$ cd ~  # makes sure your in your home directory
+$ ln -s /cygdrive/c/<username> ~/winhome
+\end{bash}
+% 
+|ln -s| is a command that create a ``symbolic'' or ``soft'' link between files and directories.  This makes it convenient to quickly navigate from your cygwin home directory as so:
 
-    $ cd ~  # makes sure your in your home directory
-    $ ln -s /cygdrive/c/<username> ~/winhome
-    
-`ln -s` is a command that create a "symbolic" or "soft" link between files and directories.  This makes it convenient to quickly navigate from your cygwin home directory as so:
-
-    $ cd ~/winhome
-    $ ls 
-    ... list of files and directories in your Windows home directory...
-    
-Let's make one more thing to customize our Cygwin working environment.  Using a programmer's text editor (e.g. SciTE, available under the Enthought directory on the Start Menu) enter the following text:
-
-    alias pweave="python c:/Python27/Scripts/Pweave.py"
-    
-Save this file as `c:\cygwin\home\<username>\.bash_profile`.  Now either open a new Cygwin window or type `source .bash_profile` from your home directory.  This `.bash_profile` file gets read every time you start Cygwin. An alias is a command short cut. Now when you type `pweave` at the bash prompt in Cygwin the full text within the double quotes of the alias is substituted. Now you can conveniently run Pweave from the Cygwin bash shell as:
-    
-    $ pweave -f "tex" myweavefile.Pnw
-    
-
-\section{Why should I bother learning to use the command line?}
-
-Why use the command line? Because if you learn to use it well, you'll be more efficient and productive.
+\begin{bash}
+$ cd ~/winhome
+$ ls 
+... list of files and directories in your home directory...    
+\end{bash}
 
 
-\subsubsection{The Unix philosophy}
+\section{The Unix philosophy}
 
 Doug McIlroy who invented the concept of the Unix `pipe' (discussed below) summarized the Unix philosphy as follows:
 
@@ -72,22 +60,15 @@ This is not some rigid set of specifications, but rather an approach to writing 
 
 \section{The Unix command line}
 
-A Unix/Linux command line environment is the de-facto standard for building bioinformatics pipelines. While the command line may not be particularly user friendly, various aspects of how Unix is designed make it very powerful fo constructing analysis pipelines.  We'll review some of those design aspects here.
+A Unix/Linux command line environment is the de-facto standard for building bioinformatics pipelines. While the command line may not be particularly user friendly, various aspects of how Unix is designed make it very powerful for constructing analysis pipelines.  We'll review some of those design aspects here.
 
 
-\subsubsection{Unix on Windows}
+\subsection{Unix tools}
 
-If your computer has Linux or Mac OS X installed you already have a native Unix environment.  If your computer runs Windows you can have access to a Unix-like environment by installing a program called Cygwin (\href{http://www.cygwin.com}{http://www.cygwin.com}).  Cygwin is free, open source, and provides a convenient installer for common Unix programs.  Download the installer program (\verb=setup.exe=) and place it in a \verb=c:\cygwin= directory (I recommend that you use this directory as the installation directory as well).  The Cygwin setup program will install an icon on your desktop that you can double click to open a bash shell. Cygwin creates a set of subdirectories that mirrors the standard Unix file system (\verb=/bin, /usr, /var, /home=, etc). When you start the bash shell you will be in your home directory (\verb=/home/<username>=).
-
-\subsubsection{Unix tools}
-
-You'll need the following tools. Under Cygwin these are all easily installed using the GUI installation interface. On Linux or OS X many of these are already installed by default.
+You'll need the following tools. Under Cygwin these are all easily installed using the GUI installation interface (or installed by default). On Linux or OS X many of these are already installed by default.
 
 \begin{itemize}
-    \item autoconf - used to build source code; found under `Devel' in the cygwin installer.
     \item less - a `pager' (convenient for viewing files)
-    \item gcc - provides a C language compiler; found under `Devel' in the cygwin installer.
-    \item make - used in building source code; found under `Devel' in the cygwin installer.
     \item curl - a package for retrieving files using a variety ofInternet protocols; found under `Net' in the cygwin installer.
     \item gzip - a file compression utility
     \item tar - a file archiving utility (usually used in conjunction with gzip)
@@ -395,202 +376,201 @@ $ awk '$3 == "gene" && ($5 - $4) < 300 && match($9, "Dubious") {print $0 }' sacc
 \end{bash}
 
 
-There's lots of powerful things you can do with |awk| one-liners, but writing short command files often makes things easier to understand. You can think of an |awk| command file as a set of |pattern {action}| statements.  Our command file  will create a table giving both the length of each chromosome and the number of genes on that chromosome. Save the following awk script in a file called |gcount.awk|.
+% There's lots of powerful things you can do with |awk| one-liners, but writing short command files often makes things easier to understand. You can think of an |awk| command file as a set of |pattern {action}| statements.  Our command file  will create a table giving both the length of each chromosome and the number of genes on that chromosome. Save the following awk script in a file called |gcount.awk|.
 
-\begin{codeblock}[awk]
-# gcount.awk
-# length of each chromosome
-$3 == "chromosome" {
-    clen[$1] = $5
-}
+% \begin{codeblock}[awk]
+% # gcount.awk
+% # length of each chromosome
+% $3 == "chromosome" {
+%     clen[$1] = $5
+% }
 
-# increment the gene count for the given chromosome
-$3 == "gene" {
-    ngenes[$1] += 1
-}
+% # increment the gene count for the given chromosome
+% $3 == "gene" {
+%     ngenes[$1] += 1
+% }
 
-# once we've processed all the records
-END {
-for (chr in clen) {
-    print chr "\t" clen[chr] "\t" ngenes[chr]
-    }
-}
-\end{codeblock}
+% # once we've processed all the records
+% END {
+% for (chr in clen) {
+%     print chr "\t" clen[chr] "\t" ngenes[chr]
+%     }
+% }
+% \end{codeblock}
 
-In the example above we create two arrays -- |clen| and |ngenes| -- to keep track of the chromosome lengths and number of genes on each chromosome. Arrays can be indexed by either integers or strings; when there indxed by strings we can think of them like Python dictionaries. We have two patterns -- whether the 3rd field equals 1) ``chromosome'' or 2) ``gene''. The final pattern, labeled |END|, says what to do once we've processed all the lines in the file.  To run this script do the following:
+% In the example above we create two arrays -- |clen| and |ngenes| -- to keep track of the chromosome lengths and number of genes on each chromosome. Arrays can be indexed by either integers or strings; when there indxed by strings we can think of them like Python dictionaries. We have two patterns -- whether the 3rd field equals 1) ``chromosome'' or 2) ``gene''. The final pattern, labeled |END|, says what to do once we've processed all the lines in the file.  To run this script do the following:
 
-\begin{bash}
-$ awk -f gcount.awk saccharomyces_cerevisiae.gff
-\end{bash}
+% \begin{bash}
+% $ awk -f gcount.awk saccharomyces_cerevisiae.gff
+% \end{bash}
 
-The |-f| option says to use the pattern/action pairs contained in the specified file.  One possible shortcoming (at least on my system) is that the output wasn't sorted.  That's easy to solve by piping the results to the sort command:
+% The |-f| option says to use the pattern/action pairs contained in the specified file.  One possible shortcoming (at least on my system) is that the output wasn't sorted.  That's easy to solve by piping the results to the sort command:
 
-\begin{bash}
-$ awk -f gcount.awk saccharomyces_cerevisiae.gff | sort
-\end{bash}
+% \begin{bash}
+% $ awk -f gcount.awk saccharomyces_cerevisiae.gff | sort
+% \end{bash}
 
-Our |gcount.awk| script works pretty well, but what if we wanted to count pseudogenes rather than genes, or tRNA features? In its current form the feature type is hardcoded into the script. Let's see how we can get rid of that constraint. Save the following awk script as |fcount.awk|.
+% Our |gcount.awk| script works pretty well, but what if we wanted to count pseudogenes rather than genes, or tRNA features? In its current form the feature type is hardcoded into the script. Let's see how we can get rid of that constraint. Save the following awk script as |fcount.awk|.
 
-\begin{codeblock}[awk]
-# fcount.awk
-BEGIN {
-# if var ftype has NOT been defined, assign it a default value
-if (!ftype)
-  ftype = "gene"
-}
+% \begin{codeblock}[awk]
+% # fcount.awk
+% BEGIN {
+% # if var ftype has NOT been defined, assign it a default value
+% if (!ftype)
+%   ftype = "gene"
+% }
 
-# length of each chromosome
-$3 == "chromosome" {
-    clen[$1] = $5
-}
+% # length of each chromosome
+% $3 == "chromosome" {
+%     clen[$1] = $5
+% }
 
-# increment the feature count for the given chromosome
-$3 == ftype {
-    ngenes[$1] += 1
-}
+% # increment the feature count for the given chromosome
+% $3 == ftype {
+%     ngenes[$1] += 1
+% }
 
-END {
-for (chr in clen) {
-    print chr "\t" clen[chr] "\t" ngenes[chr]
-    }
-}
-\end{codeblock}
+% END {
+% for (chr in clen) {
+%     print chr "\t" clen[chr] "\t" ngenes[chr]
+%     }
+% }
+% \end{codeblock}
 
-Here we introduced the |BEGIN| pattern. This pattern is carried out before any lines of the file are processed.  By default, this new script will count genes like our previous script did, but if you specify the variable |ftype| using the |-v| option on the command line it will count the specified feature type:
+% Here we introduced the |BEGIN| pattern. This pattern is carried out before any lines of the file are processed.  By default, this new script will count genes like our previous script did, but if you specify the variable |ftype| using the |-v| option on the command line it will count the specified feature type:
 
-\begin{code}[]
-# count pseudogenes
-$ awk -f fcount.awk  -v ftype="pseudogene" saccharomyces_cerevisiae.gff 
+% \begin{code}[]
+% # count pseudogenes
+% $ awk -f fcount.awk  -v ftype="pseudogene" saccharomyces_cerevisiae.gff 
 
-# counts ARS sequences (origins of replication)
-$ awk -f fcount.awk  -v ftype="ARS" saccharomyces_cerevisiae.gff
+% # counts ARS sequences (origins of replication)
+% $ awk -f fcount.awk  -v ftype="ARS" saccharomyces_cerevisiae.gff
 
-# count tRNA genes
-$ awk -f fcount.awk  -v ftype="tRNA" saccharomyces_cerevisiae.gff
-\end{code}
+% # count tRNA genes
+% $ awk -f fcount.awk  -v ftype="tRNA" saccharomyces_cerevisiae.gff
+% \end{code}
 
-As a final example of using |awk|, let's say you wanted to look for all gene features that include reference to a particular gene family in the attribute field (column 9 of the GFF file). You could do something like this:
+% As a final example of using |awk|, let's say you wanted to look for all gene features that include reference to a particular gene family in the attribute field (column 9 of the GFF file). You could do something like this:
 
-\begin{code}
-$ awk 'match($9,"FLO") && $3 == "gene" { print $0 }' \ 
-  saccharomyces_cerevisiae.gff  | less
-\end{code}
+% \begin{code}
+% $ awk 'match($9,"FLO") && $3 == "gene" { print $0 }' \ 
+%   saccharomyces_cerevisiae.gff  | less
+% \end{code}
 
-This works, but the output is a bit ugly because of how the attribute field is specified. Let's write a simple awk |function| that nicely formats the output, with each of the attributes appearing as a subline. Save the following script as |attribs.awk|.
+% This works, but the output is a bit ugly because of how the attribute field is specified. Let's write a simple awk |function| that nicely formats the output, with each of the attributes appearing as a subline. Save the following script as |attribs.awk|.
 
-\begin{codeblock}[awk]
-# attribs.awk
-# parse the attributes field of a GFF file
+% \begin{codeblock}[awk]
+% # attribs.awk
+% # parse the attributes field of a GFF file
 
-NF >= 9 {
-    # print the first 8 fields
-    print $1, $2, $3, $4, $5, $6, $7, $8
+% NF >= 9 {
+%     # print the first 8 fields
+%     print $1, $2, $3, $4, $5, $6, $7, $8
   
-    # break the attributes field up into individual attributes
-    n = split($9, attributes, ";")
-    for (i = 1; i <= n; i++){
-        tstr = attributes[i]
-        gsub(/%20/," ", tstr ) # spaces
-        gsub(/%2C/, ",", tstr) # commas
-        gsub(/%3B/, ";", tstr) # semi-colons
-        gsub(/%2F/, "/", tstr) # forward slash
-        print "\t\t" tstr
-        }
-    print "\n"
-}
-\end{codeblock}
+%     # break the attributes field up into individual attributes
+%     n = split($9, attributes, ";")
+%     for (i = 1; i <= n; i++){
+%         tstr = attributes[i]
+%         gsub(/%20/," ", tstr ) # spaces
+%         gsub(/%2C/, ",", tstr) # commas
+%         gsub(/%3B/, ";", tstr) # semi-colons
+%         gsub(/%2F/, "/", tstr) # forward slash
+%         print "\t\t" tstr
+%         }
+%     print "\n"
+% }
+% \end{codeblock}
 
-The awk function |gsub()| globally substitutes one string for another. In this case it's replacing HTML type encoding of spaces, commas, semi-colons, etc. with more human friendly versions of the same.
+% The awk function |gsub()| globally substitutes one string for another. In this case it's replacing HTML type encoding of spaces, commas, semi-colons, etc. with more human friendly versions of the same.
 
-We can use our |attribs.awk| script as follows:
-\begin{code}
-$ awk 'match($9,"FLO") && $3 == "gene" { print $0 }'  \
-  saccharomyces_cerevisiae.gff  | awk -f attribs.awk | less
-\end{code}
+% We can use our |attribs.awk| script as follows:
+% \begin{code}
+% $ awk 'match($9,"FLO") && $3 == "gene" { print $0 }'  \
+%   saccharomyces_cerevisiae.gff  | awk -f attribs.awk | less
+% \end{code}
 
-This produces output that is much nicer for a human reader to interpret, though less easy to parse computationally.
+% This produces output that is much nicer for a human reader to interpret, though less easy to parse computationally.
 
-The GFF3 format is used by many organism specific genome projects besides yeast. If we take care to write our scripts to operate on GFF3 files generically then we can apply scripts we write for one organism easily to another organism. Let's test this out by downloading the X-chromosome GFF3 file for \textit{Drosophila melanogaster} from FlyBase:
+% The GFF3 format is used by many organism specific genome projects besides yeast. If we take care to write our scripts to operate on GFF3 files generically then we can apply scripts we write for one organism easily to another organism. Let's test this out by downloading the X-chromosome GFF3 file for \textit{Drosophila melanogaster} from FlyBase:
 
-\begin{bash}
-$ curl -O ftp://ftp.flybase.net/genomes/dmel/current/gff/dmel-X-r5.41.gff.gz   
-$ gunzip dmel-X-r5.41.gff.gz  # unzip the compressed file
-\end{bash}
+% \begin{bash}
+% $ curl -O ftp://ftp.flybase.net/genomes/dmel/current/gff/dmel-X-r5.41.gff.gz   
+% $ gunzip dmel-X-r5.41.gff.gz  # unzip the compressed file
+% \end{bash}
 
-Now let's test our |attribs.awk| script with this new GFF file by generating a report on pseudogenes on the \textit{Drosophila} X-chromosome:
+% Now let's test our |attribs.awk| script with this new GFF file by generating a report on pseudogenes on the \textit{Drosophila} X-chromosome:
 
-\begin{bash}
-$ awk '$3 == "pseudogene"  {print $0}' dmel-X-r5.41.gff | awk -f attribs.awk > fly-X-pseudogenes.txt    
-\end{bash}
+% \begin{bash}
+% $ awk '$3 == "pseudogene"  {print $0}' dmel-X-r5.41.gff | awk -f attribs.awk > fly-X-pseudogenes.txt    
+% \end{bash}
 
-Use |less| or a text editor to view your report.
+% Use |less| or a text editor to view your report.
 
-\section{Tieing it all together with bash}
+% \section{Tieing it all together with bash}
 
-To this point all of our examples have involved single command lines or scripts, occasionally tied together with pipes.  This works well for quick analyses, but what if you wanted to run an analysis over and over again, say on a monthly basis as a genome project was updated, or as you generated new data as part of your research?  In that context a shell script might be useful. I'm going to assume you're using bash as your shell (the default on OS X, cygwin, and most Linux based systems).
+% To this point all of our examples have involved single command lines or scripts, occasionally tied together with pipes.  This works well for quick analyses, but what if you wanted to run an analysis over and over again, say on a monthly basis as a genome project was updated, or as you generated new data as part of your research?  In that context a shell script might be useful. I'm going to assume you're using bash as your shell (the default on OS X, cygwin, and most Linux based systems).
 
-You can confirm that your default shell is bash by doing something like:
-\begin{bash}
-$ sh --version
-GNU bash, version 3.2.48(1)-release (x86_64-apple-darwin10.0)
-Copyright (C) 2007 Free Software Foundation, Inc.
-\end{bash}
+% You can confirm that your default shell is bash by doing something like:
+% \begin{bash}
+% $ sh --version
+% GNU bash, version 3.2.48(1)-release (x86_64-apple-darwin10.0)
+% Copyright (C) 2007 Free Software Foundation, Inc.
+% \end{bash}
 
-Assuming, that you've got bash working on your system, enter the following code into your text-editor and save it with the filename |genome_reporter.sh| in the same directory where you've saved |fcount.awk| that we created earlier. Be careful that you enter the text as shown as |bash| is particularly picky about extra spaces around the equal sign (=) in variable assignment so if you get error messages when you try and run this script (see below), that's the first thing to check.
+% Assuming, that you've got bash working on your system, enter the following code into your text-editor and save it with the filename |genome_reporter.sh| in the same directory where you've saved |fcount.awk| that we created earlier. Be careful that you enter the text as shown as |bash| is particularly picky about extra spaces around the equal sign (=) in variable assignment so if you get error messages when you try and run this script (see below), that's the first thing to check.
 
-\begin{codeblock}[bash]
-#!/bin/bash
+% \begin{codeblock}[bash]
+% #!/bin/bash
 
-URL='http://downloads.yeastgenome.org/curation/chromosomal_feature/saccharomyces_cerevisiae.gff'
-BASEFILE='saccharomyces_cerevisiae.gff'
+% URL='http://downloads.yeastgenome.org/curation/chromosomal_feature/saccharomyces_cerevisiae.gff'
+% BASEFILE='saccharomyces_cerevisiae.gff'
 
-# get today's date
-TODAY=$(date -u +%Y-%m-%d)
+% # get today's date
+% TODAY=$(date -u +%Y-%m-%d)
 
-# create filename, prepended w/today's date
-FILENAME="$TODAY-$BASEFILE"
-REPORT="report-$FILENAME"
+% # create filename, prepended w/today's date
+% FILENAME="$TODAY-$BASEFILE"
+% REPORT="report-$FILENAME"
 
-# if the GFF file does not already exist then
-# use curl to download the file and save if with the name above
-if [ ! -e $FILENAME ]
-then
-    curl -o $FILENAME $URL
-fi
+% # if the GFF file does not already exist then
+% # use curl to download the file and save if with the name above
+% if [ ! -e $FILENAME ]
+% then
+%     curl -o $FILENAME $URL
+% fi
 
 
-# create report with a series of awk calls
-echo -e "Genome Report\nPrepared: $TODAY\n" > $REPORT
+% # create report with a series of awk calls
+% echo -e "Genome Report\nPrepared: $TODAY\n" > $REPORT
 
-echo "Total genes: " >> $REPORT
-awk '$3 == "gene" {print $0}' $FILENAME | wc -l >> $REPORT
+% echo "Total genes: " >> $REPORT
+% awk '$3 == "gene" {print $0}' $FILENAME | wc -l >> $REPORT
 
-echo -e "\nDubious ORFs: " >> $REPORT
-awk '$3 == "gene" && ($5 - $4) < 300 && match($9, "Dubious") {print $0 }' $FILENAME | wc -l >> $REPORT
+% echo -e "\nDubious ORFs: " >> $REPORT
+% awk '$3 == "gene" && ($5 - $4) < 300 && match($9, "Dubious") {print $0 }' $FILENAME | wc -l >> $REPORT
 
-echo -e "\nPseudogenes: " >> $REPORT
-awk -f fcount.awk  -v ftype="pseudogene" $FILENAME | wc -l >> $REPORT
+% echo -e "\nPseudogenes: " >> $REPORT
+% awk -f fcount.awk  -v ftype="pseudogene" $FILENAME | wc -l >> $REPORT
 
-echo -e "\nChromosome, length, genes per chromosome: " >> $REPORT
-awk -f fcount.awk $FILENAME | sort >> $REPORT    
-\end{codeblock}
+% echo -e "\nChromosome, length, genes per chromosome: " >> $REPORT
+% awk -f fcount.awk $FILENAME | sort >> $REPORT    
+% \end{codeblock}
 
-Note that the line |#!/bin/bash| needs to be the first line in the file. This tells the operating system to run this script using the bash shell. This line is sometimes referred to as the `she-bang' line by Unix programmers. We'll see next week how to set this for a Python program.
+% Note that the line |#!/bin/bash| needs to be the first line in the file. This tells the operating system to run this script using the bash shell. This line is sometimes referred to as the `she-bang' line by Unix programmers. We'll see next week how to set this for a Python program.
 
-Having entered and saved that script, make the script executable by typing:
-\begin{bash}
-$ chmod +x genome_reporter.sh
-\end{bash}
-from the command line.  Once you've done that you can run the script, from the same directory, by typing:
-\begin{bash}
-$ ./genome_reporter.sh
-\end{bash} 
-Assuming you don't have any errors the script will download the GFF file from the Saccharomyces Genome Database, save it with the date prefixed to the file name, and then generate a short report listing some useful summaries generated from the file.
+% Having entered and saved that script, make the script executable by typing:
+% \begin{bash}
+% $ chmod +x genome_reporter.sh
+% \end{bash}
+% from the command line.  Once you've done that you can run the script, from the same directory, by typing:
+% \begin{bash}
+% $ ./genome_reporter.sh
+% \end{bash} 
+% Assuming you don't have any errors the script will download the GFF file from the Saccharomyces Genome Database, save it with the date prefixed to the file name, and then generate a short report listing some useful summaries generated from the file.
 
-Most of the bottom half of the script should be easy to understand; it simply shows a bunch of |echo| and |awk| commands that you might have typed at the command line. In the top portion of the script we create a set of variables to hold the names of the files we'll be using. One new feature we haven't seen before is the use of the dollar sign (\verb|$|) to dereference variable names.  For example, the variable |FILENAME| is constructed by creating a string by joining together the strings held in the variables |TODAY| and |BASEFILE| (and separated by a dash |-|). Depending on the date on which the script is run it generates a different set of file names, as specified by the variables |TODAY|, |BASEFILE|, and |REPORT|.  The bottom half of the script is setup to generate the appropriate output given those changing variables. 
+% Most of the bottom half of the script should be easy to understand; it simply shows a bunch of |echo| and |awk| commands that you might have typed at the command line. In the top portion of the script we create a set of variables to hold the names of the files we'll be using. One new feature we haven't seen before is the use of the dollar sign (\verb|$|) to dereference variable names.  For example, the variable |FILENAME| is constructed by creating a string by joining together the strings held in the variables |TODAY| and |BASEFILE| (and separated by a dash |-|). Depending on the date on which the script is run it generates a different set of file names, as specified by the variables |TODAY|, |BASEFILE|, and |REPORT|.  The bottom half of the script is setup to generate the appropriate output given those changing variables. 
 
-One other feature to take note of is the |if-then-fi| conditional statement. The portion in the square brackets (\verb|[ ! -e $FILENAME ]|) asks whether the file for that date already exists. If so it doesn't bother downloading the file again, for efficiency reasons.
+% One other feature to take note of is the |if-then-fi| conditional statement. The portion in the square brackets (\verb|[ ! -e $FILENAME ]|) asks whether the file for that date already exists. If so it doesn't bother downloading the file again, for efficiency reasons.
 
-Like regular expressions, |bash| scripting can be quite involved. We'll create some additional |bash| scripts next class sessions and I'll provide some web links on the course wiki if you want to learn more about working with |bash|.
-
+% Like regular expressions, |bash| scripting can be quite involved. We'll create some additional |bash| scripts next class sessions and I'll provide some web links on the course wiki if you want to learn more about working with |bash|.
 
