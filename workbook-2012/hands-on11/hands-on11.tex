@@ -1,0 +1,332 @@
+
+
+\section{Randomization Tests in R}
+
+
+There are a number of packages (e.g. |coin|) that include functions for carrying out randomization/permutation tests in R. However, it's often just as easy to write a quick set of functions to carry out such tests yourself. We'll illustrate a simple example of this using the ``jackal" example from Manly (2006).
+
+Consider the following data set composed of measures of mandible lengths (in mm) for male and female golden jackals. This set of measurements was taken from a set of skeletons in the collections of the British Museum of Natural History.
+
+\begin{center}
+\begin{tabular}{lrrrrrrrrrr}
+\hline
+Males & 120 & 107 & 110 & 116 & 114 & 111 & 113 & 117 & 114 & 112 \\
+Females & 110 & 111 & 107 & 108 & 110 & 105 & 107 & 106 & 111 & 111\\
+\hline
+\end{tabular}    
+\end{center}
+
+Let's first create two vectors to represent this set of measurements and create a quick beanplot to visually compare the distributions.
+
+\begin{R}
+> males <- c(120,107,110,116,114,111,113,117,114,112)
+> females <- c(110,111,107,108,110,105,107,106,111,111)    
+> library(beanplot)
+> beanplot(males,females,side='b',col=list('blue','pink'),names=c("Male","Female"))
+> mean(males)
+[1] 113.4
+> mean(females)
+[1] 108.6
+> mean(males) - mean(females)
+[1] 4.8
+\end{R}
+
+The hypothesis we want to test is that male jackals have, on average, larger mandibles than female jackals. The beanplot we constructed and difference in the means would seem to suggest so but let's carry out some more formal tests. The obvious way to compare this set of measurements would be to carry out a t-test, which is approropriate if the samples are normally distributed with approximately equal variance. We have small samples here, so it's hard to know if the normal distribution holds. Instead we'll use a randomization test to compare the observed difference in the means (4.8) to the distribution of differences we would expect to observe if the labels `male' and `female' were randomly applied to samples of equal size from the data at hand.
+
+Let's create a function that takes a sample and randomly assigns the observations to two groups of a specified size. The function takes as input a vector of values (size $N$) and two integers representing the sample sizes ($n_1$ and $n_2$ where $n_1 + n_2 = N$) of the two groups to be compared.
+
+\begin{R}
+two.group <- function(x,n1,n2){
+  # sample w/out replacement
+  reordered <- sample(x, length(x)) # see help(sample) for more info
+  g1 <- reordered[seq(1,n1)]
+  g2 <- reordered[seq(n1+1,n1+n2)]
+  list(g1,g2)
+}    
+\end{R}
+
+Test out this function by calling it repeatedly as shown below. You'll see that it returns a random reordering of the original data, split into two groups:
+
+\begin{R}
+> jackals <- c(males,females)    
+> two.group(c(males,females),10,10)
+# ... output not shown ...
+> two.group(c(males,females),10,10) # call it again to get a different sample
+# ... output not shown ...
+\end{R}
+
+Now let's write a simple function that returns the mean difference between two samples:
+
+\begin{R}
+mean.diff <- function(x1,x2) {
+  mean(x1) - mean(x2)
+}    
+\end{R}
+
+Now let's write a generic randomization function:
+
+\begin{R}
+randomization <- function(x1,x2,fxn,nsamples=100){
+  stats <- c()
+  orig <- c(x1,x2)
+  for (i in 1:nsamples){
+    g <- two.group(orig, length(x1), length(x2))
+    stats <- c(stats, fxn(g[[1]],g[[2]]))
+  }
+  return (stats)
+}
+\end{R}
+
+We can then use the |randomization| function we wrote as follows to evaluate the signficance of the observed difference in means in the original sample:
+
+\begin{R}
+# generate 1000  samples of the mean.diff for randomized data    
+> rsample <- randomization(males,females,mean.diff,1000)    
+> hist(rsample)  # examine the distribution
+
+# in how many of the random samples is mean difference between the two groups
+# as great or larger than the observed difference in our original samples?
+# you might get a slightly different answer
+> sum(rsample >= 4.8)
+[1] 2  
+\end{R}    
+
+So our conclusion is that the probability of getting a mean difference between samples of this size is about $2/1000=0.002$.  Note that we can't generalize this to golden jackals as a whole because we know nothing about whether these samples actually represent random samples of the golden jackal population or biases that might have been imposed on the collection (e.g. maybe the collectors liked to single out particularly large males). However, if we saw a similar trend (males larger than females) in multiple museum collections we might see this as supporting evidence that the trend held true in general.
+
+Note that we wrote our |randomization| function two take an arbitrary function that takes as it's input two vectors of data. That means we can use it to estimate the randomized distribution of arbitrary statistics of interest. Here we illustrate that with a function that calculates the ratio of variances.
+
+\begin{R}
+ratio.var <- function(x1,x2){
+    var(x1)/var(x2)
+}    
+
+> ratio.var(males,females)  # ratio of variances for the original samples
+[1] 2.681034
+> vsample <- randomization(males,females,ratio.var, 1000)
+> hist(vsample)
+> mean(vsample)
+[1] 1.266088
+> sum(vsample >= 2.68)
+[1] 74
+> 74/1000.
+[1] 0.074
+\end{R}    
+
+In this case the observed ratio of variances isn't particularly unusual.  Let's make one more comparison. We know (or at least we should know!) that ratios of variances have an $F$-distribution so let's compare the distribution of ratios of variances from our randomized sample to that of a sample of the same size drawn from the $F$-distribution with the same degrees of freedom.
+
+\begin{R}
+> randomF <- rf(1000, 9, 9) # see help(rf)
+> plot(density(vsample),type='l',xlab="Ratio of variances")
+> lines(density(randomF),col='red')    
+\end{R}
+
+
+\section{Jackknifing in R}
+
+Jackknife estimates of simple statistics are also relatively straightforward to calculate in R. Here's an example of a simple jackknife function:
+
+\begin{R}
+jknife <- function(x, fxn, ci=0.95) {
+    theta <- fxn(x)
+    n <- length(x)
+    partials <- rep(0,n)
+    for (i in 1:n){
+       partials[i] <- fxn(x[-i])
+    }
+    pseudos <- (n*theta) - (n-1)*partials
+    jack.est <- mean(pseudos)
+    jack.se <- sqrt(var(pseudos)/n)
+    alpha = 1-ci
+    CI <- qt(alpha/2,n-1,lower.tail=FALSE)*jack.se
+    jack.ci <- c(jack.est - CI, jack.est + CI)
+    list(est=jack.est, se=jack.se, ci=jack.ci)   
+}
+\end{R}
+
+The |bootstrap| package (install if necessary) contains a very similar implementation of a jackknife function (|jackknife()|).
+
+Let's illustrate our jackknife function using samples drawn from a Poisson distribution. The Poisson is a discrete probability distribution that is often used to describe the probability of a number of events occuring in a fixed period of time, where the events are independent and occur with an average rate $\lambda$. The Poisson distribution is used to model processes like mutations in DNA sequences or atomic decay.  Both the mean and variance of a Poisson distribution are equal to $\lambda$. Let's see how well the jackknife does at estimating confidence intervals for  the mean and variance of a modest number of samples drawn from a Poisson.
+
+\begin{R}
+> psample <- rpois(25,4) # 25 obsevations from poisson with lambda = 4
+> psample  # your sample will be different
+ [1] 3 1 1 3 3 3 5 4 1 4 6 5 6 3 4 5 6 1 1 2 3 7 3 4 5
+> mean(psample)
+[1] 3.56
+> var(psample)
+[1] 3.173333
+> jknife(psample, mean)$ci
+[1] 2.824680 4.295320
+> jknife(psample, var)$ci
+[1] 1.716397 4.630270    
+\end{R}
+
+In both cases above, the true mean and variance were contained within the 95\% confidence intervals estimated by the jackknife. Let's do a little experiment to see how often that's true for samples of this size:
+
+\begin{R}
+# create 500 samples of size 25 drawn from Poisson w/lambda=4    
+> psamples <- matrix(rpois(25*500,4),ncol=25,byrow=T)
+> dim(psamples) 
+[1] 500  25 
+
+# create a convenience function   
+> get.ci <- function(x) { return(x$ci) }  #x$ci gives confidence interval
+
+# generate jackknife estimates for mean
+> j.mean <- apply(psamples, 1, jknife, mean)
+
+# make matrix that holds 95% confidence intervals of mean
+> mean.ci <- t(sapply(j.mean, get.ci))
+> mean.ci[1,]
+[1] 2.796265 4.323735
+> mean.ci[2,]
+[1] 3.562991 4.917009
+
+# check how often true mean is w/in CI
+> sum(mean.ci[,1] <=4 & mean.ci[,2] >= 4)
+[1] 463
+> 463/500  
+[1] 0.926
+# true mean is w/in estimate 95% CI about 93% of the time. 
+
+# now the same for variances
+> j.var <- apply(psamples, 1, jknife, var)
+> var.ci <- t(sapply(j.var, get.ci))
+> sum(var.ci[,1] <=4 & var.ci[,2] >= 4)
+[1] 449
+> 449/500.
+[1] 0.898
+# true variance is w/in 95% CI only 90% of time
+\end{R}
+
+
+In the case  of the confidence intervals for the mean, the jacknife estimator did a decent job -- the true mean is with the 95\% confidence interval about 93\% of the time.  In the case of the variance it did a less good job.  The jackknife confidence intervals works well when the estimator is normally distributed. This suggests that one way we might improve the jackknife CIs is by using a normalizing transformation, like the logarithm function:
+
+\begin{R}
+> log.var <- function(x){log(var(x))}    
+> j.log.var <- apply(psamples, 1, jknife, log.var)
+> log.var.ci <- t(sapply(j.log.var, get.ci))
+> sum(log.var.ci[,1] <=log(4) & log.var.ci[,2] >= log(4))
+[1] 472
+> 472/500.
+[1] 0.944   
+# a substantial improvement in the performance of the 95% CIs
+\end{R}
+
+This illustrates the type of simulation study you might do to check the robustness of the jackknife for a statistic of interest for a given class of distributions.
+
+\section{Bootstrapping in R}
+
+There are several packages that provide functions for doing bootstrapping in R. These include |bootstrap| and |boot|. We'll take a quick look at the functions in |bootstrap|.
+
+We'll use the same set of samples from the Poisson that we used before to illustrate the jackknife.
+
+\begin{R}
+> library(bootstrap)
+# generate 1000 bootstrap sample estiamte of var
+> b <- bootstrap(psample, 1000, var)   
+
+# standard bootstrap confidence limits
+# based on assumption of normality
+> c(mean(bstar)-1.96*sd(bstar), mean(bstar)+1.96*sd(bstar))
+[1] 1.774923 4.348151
+
+# estimate the bootstrap percentile confidence limits 
+> quantile(b$thetastar,c(0.025,0.975))
+    2.5%    97.5% 
+1.839583 4.373333 
+
+# for comparison remind ourself of what the jackknife CI was 
+> jknife(psample,var)$ci
+[1] 1.716397 4.630270
+\end{R}
+
+
+\section{LOESS Models}
+
+LOESS (aka LOWESS; `Locally weighted scatterplot smoothing') is a
+modeling technique that fits a curve (or surface) to a set of data using
+a large number of local regressions. Local weighted regressions are fit
+at numerous regions across the data range, using a weighting function
+that drops off as you move away from the center of the fitting region
+(hence the `local' aspect). LOESS combines the simplicity of least
+squares fitting with the flexibility of non-linear techniques and
+doesn't require the user to specify a functional form ahead of time in
+order to fit the model. It does however require relatively dense
+sampling in order to produce robust fits.
+
+Formally, at each point $x_i$ we estimate the regression coefficients
+$\hat{\beta}_j(x)$ as the values that minimize:
+\[\sum_{k=1}^n w_k(x_i)(y_k - \beta_0 - \beta_1 x_k - \ldots - \beta_d x_k^2)^2\]
+where $d$ is the degree of the polynomial (usually 1 or 2) and $w_k$ is
+a weight function. The most common choice of weighting function is
+called the ``tri-cube'' function which is defined as:
+
+\lstDeleteShortInline|
+\begin{align*}
+ w(x) & = (1-|x|^3)^3, \mbox{for}\ |x| < 1  \\
+      & = 0,\ \mbox{for}\ |x| \geq 1 
+\end{align*}
+\lstMakeShortInline|
+
+
+\medskip
+\begin{assignment}
+Write an R function that computes the tri-cube
+function described above. Create a plot of the tri-cube function over
+the range (--3,3). Create a second R function that calculates the
+Gaussian function $f(x) = e^{-x^2}$ and plot that function over the same
+range in the same plot. If you're struggling with writing the functions
+you may wish to review Chapter 6 of Paradis, R for Beginners (see wiki)
+and Chapters 9 (Grouping, loops and conditional execution) and 10
+(Writing your own functions) in the ``R Introduction'' included with R.
+\end{assignment}
+
+The primary parameter that a user must decide on when using LOESS is the
+size of the neighborhood function to apply (i.e.~over what distance
+should the weight function drop to zero). This is referred to as the
+``span'' in the R documentation, or as the parameter $\alpha$ in many of
+the papers that discuss LOESS. The appropriate span can be determined by
+experimentation or, more rigorously by cross-validation.
+
+We'll illustrate fitting a Loess model using data on Barack Obama's
+approval ratings over the period from November 2008 to September 2010
+(\lstinline!obama-polls.txt! available on the class wiki).
+
+\begin{R}
+> polls <- read.table('obama-polls.txt',header=T,sep="\t")
+> names(polls)
+[1] "Pollster"   "Dates"      "N.Pop"      "Approve"    "Disapprove" "Undecided" 
+> dim(polls)
+[1] 854   6    
+# polls in reverse chronological order so let's reverse them
+# so we can look at trend from earliest to most recent dates
+> approve <- rev(polls$Approve)
+> pollnum <- 1:length(approve)
+> loess.app <- loess(approve ~ pollnum)
+> pred.app <- predict(loess.app, pollnum)
+
+# illustrate Loess with a smaller neighborhood span
+> loess.app2 <- loess(approve ~ pollnum, span=0.25)
+> pred.app2 <- predict(loess.app2, pollnum)
+> lines(pollnum, pred.app2, lwd=2, col='cyan')
+\end{R}
+Take note of how the loess curve changed when we made the span smaller.
+By decreasing the span we've increased the sensitivity of the model
+(perhaps overfitting in this case).
+
+\medskip
+\begin{assignment}
+Write an R function that genereates a plot that
+simultaneously illustrates trends in both approval and disapproval
+ratings for Barack Obama, showing both the raw data and corresponding
+loess fits. Use colors and/or shapes to distinguish the two trends. Make
+sure both your x- and y-axes are scaled to show the full range of the
+data. Label your axes and create a title in the plot. Aim for a
+`publication quality' figure.
+\end{assignment}
+
+
+
+
+\end{document}
