@@ -15,10 +15,10 @@ We'll look at how to use mixtools using a data set on eruption times for the Old
 \begin{R}
 # allows us to refer to the variables within waiting time
 # without using the standard list "$" syntax
-> attach(faithful)    
+> attach(faithful)
 
 # create a nice histogram
-> hist(waiting, main = "Time between Old Faithful eruptions", 
+> hist(waiting, main = "Time between Old Faithful eruptions",
 xlab = "Minutes", ylab = "", cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.4)
 
 > library(mixtools)
@@ -26,8 +26,8 @@ xlab = "Minutes", ylab = "", cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.4)
 > wait.mix <- normalmixEM(waiting)
 
 > names(wait.mix)
-[1] "x"          "lambda"     "mu"         "sigma"      "loglik"     "posterior" 
-[7] "all.loglik" "restarts"   "ft"   
+[1] "x"          "lambda"     "mu"         "sigma"      "loglik"     "posterior"
+[7] "all.loglik" "restarts"   "ft"
 
 # lambda is what we called "pi" in the lecture notes
 > wait.mix[c("lambda","mu","sigma")]
@@ -40,6 +40,13 @@ xlab = "Minutes", ylab = "", cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.4)
 \end{R}
 
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{./figures/hands-on10/faithful-R.pdf}
+    \caption{A Gaussian mixture model for the Old Faithful dataset, estimated using the mixtools module in R.}\label{fig:faithfulR}
+\end{figure}
+
+
 \subsection{Installing MCLUST}
 The package |MCLUST| is one of another package that provides maximum likelihood based estimation of mixture models.  You will need to install the package (and it's dependencies) from the R GUI or using the |install.packages| command.
 
@@ -48,7 +55,7 @@ The package |MCLUST| is one of another package that provides maximum likelihood 
 We're going to use two data set to illustrate some of |MCLUST|'s capabilities -- the iris data set we've worked with before, and the bivariate version of the Old Faithful data set. We'll start off with  the old faithful data set.
 
 \begin{R}
-> plot(faithful$eruptions, faithful$waiting)    
+> plot(faithful$eruptions, faithful$waiting)
 \end{R}
 
 From visual inspection of the bivariate scatter plot, it looks like there two clusters. Let's apply the |Mclust| function and see what it suggests:
@@ -58,13 +65,13 @@ From visual inspection of the bivariate scatter plot, it looks like there two cl
 > fclust <- Mclust(faithful)
 > fclust
 
- best model: elliposidal, equal variance with 3 components    
+ best model: elliposidal, equal variance with 3 components
 \end{R}
 
 Now that we've running the mixture model, let's look at the results graphically. The following call to |plot| will produce a series of plots.
 
 \begin{R}
-> plot(fclust, data=faithful)    
+> plot(fclust)
 \end{R}
 
 The first plot gives is a diagnostic plot that shows the likelihood of the model as a function of  the number of groups (see BIC below). In general, when considering many possible models you want to pick the simplest model that has a highest likelihood. The second graphically represents the classification. The third plots highlights those objects for which the cluster assignment is most uncertain. The fourth plot gives a graphical representation of the Gaussian densities.
@@ -73,7 +80,7 @@ The |Mclust| function used a likelihood criterion called the ``Bayesian Informat
 
 \begin{R}
 > names(fclust)
- [1] "modelName"      "n"              "d"              "G"              "BIC"           
+ [1] "modelName"      "n"              "d"              "G"              "BIC"
  [6] "bic"            "loglik"         "parameters"     "z"              "classification"
 [11] "uncertainty"
 > ?mclust  # check out the docs to read about all the returned parameters
@@ -83,21 +90,21 @@ Of course you don't have to accept the number of clusters that the |Mclust| func
 
 \begin{R}
 > fclust2 <- Mclust(faithful, G=2)
-> plot(fclust2, data=faithful)    
+> plot(fclust2)
 \end{R}
 
-Now let's generate some diagnostic plots for the mixture model:
+% Now let's generate some diagnostic plots for the mixture model:
 
-\begin{R}
-> plot(fclust, data=faithful)    
-\end{R}
+% \begin{R}
+% > plot(fclust)
+% \end{R}
 
 If you wanted to generate some of those plots individually you can do the following:
 
 \begin{R}
-# generate a plot showing the classifications predicted by mixture model    
-> mclust2Dplot(data = faithful, what = "classification", identify = TRUE, 
-    parameters = fclust$parameters, z = fclust$z)    
+# generate a plot showing the classifications predicted by mixture model
+> mclust2Dplot(data = faithful, what = "classification", identify = TRUE,
+    parameters = fclust$parameters, z = fclust$z)
 \end{R}
 
 See the docs for the |mclust2Dplot| function for other options.
@@ -108,11 +115,17 @@ The |MCLUST| package includes the function |clPairs|, a very nice extension of t
 
 \begin{R}
 > names(iris) # remind yourself of the variables in the iris data set
-[1] "Sepal.Length" "Sepal.Width"  "Petal.Length" "Petal.Width"  "Species"    
+[1] "Sepal.Length" "Sepal.Width"  "Petal.Length" "Petal.Width"  "Species"
 
 # 5th variable is the Species classification
-> clPairs(data=iris[,-5], classification=iris[,5]) 
+> clPairs(data=iris[,-5], classification=iris[,5])
 \end{R}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{./figures/hands-on10/iris-clpairs.pdf}
+    \caption{Output of the \texttt{clpairs} function for the iris data set.}\label{fig:clpairs}
+\end{figure}
 
 Let's see what |Mclust| makes of the iris data set:
 
@@ -121,7 +134,7 @@ Let's see what |Mclust| makes of the iris data set:
 > iclust
 
  best model: ellipsoidal, equal shape with 2 components
-> plot(iclust, data=iris[,-5])    
+> plot(iclust)
 \end{R}
 
 Blind to the actual group structure the BIC suggests just two components, whereas we know there are three groups (though \textit{I. versicolor} is thought to be an allopolyploid hybrid; see Kim et al. (2007) Ann Bot, 100: 219-224. ). Examine the first graph produced by the |plot| call above to see how the 2 and 3 component models compare with respect to the BIC.
@@ -130,7 +143,7 @@ Now let's see how the mixture model does when we give it the true number of clus
 
 \begin{R}
 > iclust3 <- Mclust(iris[,-5], G=3)
-> plot(iclust3,data=iris[,-5])    
+> plot(iclust3)
 \end{R}
 
 To calculate the classification error rate we can compare the estimated clustering to the "true" (known) classification with the |classError| function (|?classError| for details):
@@ -141,13 +154,13 @@ $misclassified
 [1] 69 71 73 78 84
 
 $errorRate
-[1] 0.03333333  
+[1] 0.03333333
 \end{R}
 
 The |uncerPlot| command allows us to visualize the uncertainty implied by the mixture model to see how uncertain the model was about the misclassified samples.
 
 \begin{R}
-> uncerPlot(iclust3$z, iris[,5])    
+> uncerPlot(iclust3$z, iris[,5])
 \end{R}
 
 In the uncertainty plot the vertical lines indicate the misclassified samples. As you can see those tend to be among the observations that the mixture model was most uncertain about with respect to which component they belonged to.
@@ -178,22 +191,22 @@ In [6]: classifier = mixture.GMM(n_components = 2)
 In [7]: fit = classifier.fit(f[:,1])
 
 In [22]: fit.means_  # means of the estimated subdistributions
-Out[22]: 
+Out[22]:
 array([[ 80.12056513],
        [ 54.6623402 ]])
 
 In [23]: fit.covars_  # (co)variances of the estimated substrituions
-Out[23]: 
+Out[23]:
 array([[ 34.08969904],
        [ 34.95662279]])
 
 In [66]: fit.weights_   #  weighting factors (pi in slides)
-Out[66]: array([ 0.63770034,  0.36229966])       
+Out[66]: array([ 0.63770034,  0.36229966])
 
 In [32]: x = linspace(40, 100, 200) # points at which to evaluate the model
 
 # plot histogram using prob density rather than straight up frequency
-In [33]: hist(f[:,1], normed=True, alpha=0.2, color='gray') 
+In [33]: hist(f[:,1], normed=True, alpha=0.2, color='gray')
 
 # draw the PDFs for the two estimated subdistributions
 # notice how we multiply each normal PDF by it's weight
@@ -204,6 +217,48 @@ In [73]: xlabel("Waiting Time")
 In [74]: ylabel("Density")
 In [75]: title("Time between Old Faithful eruptions")
 \end{python}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{./figures/hands-on10/faithful-python.pdf}
+    \caption{A Gaussian mixture model for the waiting time variable in the Old Faithful dataset, estimated using the scikit-learn module in Python.}\label{fig:faithfulpy}
+\end{figure}
+
+Now let's look at the binary data:
+%
+\begin{python}
+In [4]: plot(f[:,0], f[:,1], 'k.')  # 'k.' gives small black dots as plot points
+In [8]: xlabel("Eruption time (mins)")
+In [9]: ylabel("Waiting time to next eruption (mins)")
+
+# specify covariance_type = 'full' to estimate complete covariance matrices
+In [10]: classifier2 = mixture.GMM(n_components=2, covariance_type='full')
+In [11]: fit2 = classifier2.fit(f)
+
+# setup grid to evaluate mixture model over
+In [12]: x = linspace(1.5,5,200)
+In [13]: y = linspace(40,100,100)
+In [14]: X,Y = meshgrid(x, y)
+In [23]: XY = np.c_[X.ravel(), Y.ravel()] # like R's c()
+
+# evaluate the mixture model over the grid
+In [24]: Z = log(-fit2.eval(XY)[0])
+In [25]: Z = Z.reshape(X.shape)
+In [26]: cntr = contour(X, Y, Z)
+\end{python}
+Check out the |scikit-learn| docs for more details and examples.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{./figures/hands-on10/faithful2d-python.pdf}
+    \caption{A Gaussian mixture model for 2D Old Faithful dataset, estimated using the scikit-learn module in Python.}\label{fig:faithfulpy2}
+\end{figure}
+
+
+\begin{assignment}
+Download the dataset |ddata.txt| from the course wiki. This data set consists of 64 variables measured on 720 specimens. Use the various clustering and ordination techniques you've learned over the course of the semester to explore this data set and estimate the number of clusters in the data.  Use code and figures to support your conclusion.  Hint: you might consider using a lower dimensional approximation of the data to facilitate your analyses.
+
+\end{assignment}
 
 
 \section{Multidimensional scaling in R}
@@ -239,7 +294,7 @@ Harding and Sokal (1998; PNAS 85:9370-9372; see course wiki) used cluster analys
 Harding and Sokal provide a table of genetic distances that they used in their analyses. Use R to reconstruct the cluster analysis they report (Fig. 1) and repeat this analysis using neighbor joining. In a similar manner use both metric scaling and the Shepard-Kruskal and Sammon criteria for non-metric scaling to do an MDS analysis (similar to Harding and Sokal's fig. 2).  Try to also recreated the MST shown in their figure 2.
 
 \medskip
-Submit your figures and a brief paragraph describing what differences, if any, you found in your re-analysis of Harding and Sokal data. Are these differences significant (i.e. do they change your interpretation of the data)?
+Submit your code as an R markdown document, and include a brief paragraph describing what differences, if any, you found in your re-analysis of Harding and Sokal data. Are these differences significant (i.e. do they change your interpretation of the data)?
 
 \end{assignment}
 
