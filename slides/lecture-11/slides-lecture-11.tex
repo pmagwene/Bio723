@@ -49,8 +49,8 @@ Randomization tests and related methods allow one to address these questions for
 
 In general, resampling methods are:
 \begin{itemize}
-    \item Computer intensive 
-    \item Require few assumptions about the distributional properties 
+    \item Computer intensive
+    \item Require few assumptions about the distributional properties
     \item Robust
 \end{itemize}
 
@@ -93,22 +93,22 @@ Are the mean values for the two sexes different?
 \begin{frame}
   \frametitle{Randomization tests: Example cont}
 
-The means for the two sexes are: 
+The means for the two sexes are:
 \begin{itemize}
     \item $\bar{x}_{male} = 113.4$
-    \item $\bar{x}_{female} = 108.6$ 
+    \item $\bar{x}_{female} = 108.6$
 \end{itemize}
 
 Standard deviations:
 \begin{itemize}
-    \item $s_{male} = 3.72$ 
+    \item $s_{male} = 3.72$
     \item $s_{female} = 2.27$.
 \end{itemize}
 \medskip
 
 To construct the randomization test:
 \begin{itemize}
-    \item generate a large number of samples where we randomly reallocate 10 of the specimens to the male group and the remaining 10 we designate as female. 
+    \item generate a large number of samples where we randomly reallocate 10 of the specimens to the male group and the remaining 10 we designate as female.
     \item for each randomized sample calculate the difference in means between the male and female groups
     \item Examine the distribution of the randomization distribution and ask whether the observed difference in means is atypical.
 
@@ -193,7 +193,7 @@ Calculate pseudovalues of $S$, $s^*$, leaving out a single observation at a time
 \begin{itemize}
     \item Let $\bar{x} = 1/n \sum_{i=1}^{n}x_i$ denote the mean for a sample of size $n$.
 
-    \item Let 
+    \item Let
 \[
 \bar{x}_{-j} = \frac{1}{n-1} \sum_{i \neq 1}^{n}x_i
 \]
@@ -208,9 +208,8 @@ x_j = n\bar{x} - (n-1)\bar{x}_{-j}
 \end{itemize}
 
 \end{frame}
-%@nonl
-%@-node:pmagwene.20061128100749:motivation
-%@+node:pmagwene.20061128103843:motivation II
+
+
 
 \begin{frame}
   \frametitle{Motivation for Jackknifing II}
@@ -228,7 +227,7 @@ x_j = n\bar{x} - (n-1)\bar{x}_{-j}
 
     \item By analogy with the previous formula we define the $j$th \textbf{pseudovalue} as:
 \[
-\widehat{\Theta^*}_j = n \widehat{\Theta} - (n-1)\widehat{\Theta}_j 
+\widehat{\Theta^*}_j = n \widehat{\Theta} - (n-1)\widehat{\Theta}_j
 \]
 
 
@@ -236,9 +235,8 @@ x_j = n\bar{x} - (n-1)\bar{x}_{-j}
 \end{itemize}
 
 \end{frame}
-%@nonl
-%@-node:pmagwene.20061128103843:motivation II
-%@+node:pmagwene.20061128104108:motivation III
+
+
 \begin{frame}
   \frametitle{Motivation for Jackknifing III}
 
@@ -277,7 +275,7 @@ Suppose we have a random sample of size $n=20$ that consists of the following ob
 Let's use the jackknife to estimate confidence intervals for the standard deviation, $\sigma$ of this sample.
 
 \begin{itemize}
-    \item We calculate the jackknife pseudovalues, $\widehat{\sigma^*_1}, \ldots, \widehat{\sigma^*_20}$
+    \item We calculate the jackknife pseudovalues, $\widehat{\sigma^*_1}, \ldots, \widehat{\sigma^*_{20}}$
     \item The mean of the jackknife pseudovalues, $\widehat{\sigma^*} = 1.096$.
     \item The variance of the pseudovalues, $Var(\widehat{\Theta^*}_j) = 1.488$
     \item The standard error of the pseudovalues, $\sqrt{\frac{Var(\widehat{\Theta^*}_j)}{n}} = 0.273$.
@@ -317,7 +315,7 @@ Limitations:
 
 \begin{frame}
   \frametitle{Bootstrap: Overview}
-  
+
 \begin{block}{Basic Idea}
 \begin{itemize}
     \item In the absence of a priori knowledge about a population, the distribution of values in random samples is the best guide to the distribution of values in the population as a whole.
@@ -332,7 +330,7 @@ Generate a large number of \textbf{bootstrap samples} by repeatedly resampling t
 
 \end{block}
 
-  
+
 
 \end{frame}
 %@nonl
@@ -341,7 +339,7 @@ Generate a large number of \textbf{bootstrap samples} by repeatedly resampling t
 
 \begin{frame}
   \frametitle{Bootstrap: Standard confidence limits}
-  
+
 Simple method for obtaining bootstrap confidence limits is to assume that $\widehat{\Theta}$ has an approximately normal distribution and the bootstrap sampling gives a good approximation to the standard deviation of the statistic of interest.
 \medskip
 
@@ -351,15 +349,15 @@ Standard Bootstrap Confidence Limits:
 \mbox{Estimate} \pm z_{\alpha/2} (\mbox{bootstrap standard deviation})
 \]
 
-where 'Estimate' is the estimate of the parameter of interest based on the initial sample and the 'bootstrap standard deviation' is based on the variance of the bootstrap samples.
+where `Estimate' is the estimate of the parameter of interest based on the initial sample and the `bootstrap standard deviation' is based on the variance of the bootstrap samples.
 
 \end{frame}
 %@nonl
 %@-node:pmagwene.20061128115932:bootstrap CIs: standard limits
 %@+node:pmagwene.20061128115932.1:bootstrap CIs: percentile limits
 \begin{frame}
-  \frametitle{Bootrap: Percentile confidence limits}
-  
+  \frametitle{Bootstrap: Percentile confidence limits}
+
 Calculate confidence intervals directly from the bootstrap samples themselves.
 
 \begin{itemize}
@@ -380,7 +378,7 @@ Efron's percentile confidence limits:
 
 \begin{frame}
   \frametitle{Bootstrap: Examples}
-  
+
 Consider the same sample used to illustrate the jackknife with observations: 3.56, 0.69, 0.10, 1.84, 3.93, 1.25, 0.18, 1.13, 0.27, 0.50, 0.01, 0.61, 0.82, 1.70, 0.39, 0.11, 1.20, 1.21, 0.72
 \medskip
 
@@ -396,7 +394,7 @@ Let's use the bootstrap to estimate the confidence interval for the standard dev
     \end{itemize}
     \item Standard 95\% confidence limits: $1.06 \pm 1.96(0.25) = (0.57, 1.55)$
 \end{itemize}
-        
+
 
 \end{frame}
 %@nonl
@@ -416,7 +414,7 @@ Limitations:
 \begin{itemize}
     \item Works best when observed sample is moderately large
     \item Requires a fair amount of computing power (not typically a problem these days)
-    \item Variety of complex procedure for estimating confidence intervals, none clearly preferable in all situations
+    \item Variety of complex procedures for estimating confidence intervals, none clearly preferable in all situations
 \end{itemize}
 
 \end{frame}
@@ -432,15 +430,15 @@ Limitations:
 \begin{itemize}
     \item Jackknife can be viewed as approximation to bootstrap
     \item Jackknife less computationally intensive to calculate
-    \item Jackknife can fail if the statistic of interest is not `smooth' (small changes in data cause only small changes in the statistic) 
-\end{itemize}    
+    \item Jackknife can fail if the statistic of interest is not `smooth' (small changes in data cause only small changes in the statistic)
+\end{itemize}
 
 \end{frame}
 
 %===========================================================
 \begin{frame}
-  \frametitle{Loess Regression}
-  
+  \frametitle{LOESS Regression}
+
 \begin{itemize}
     \item A type of non-parametric regression
     \item Basic idea -- fit a curve (or surface) to a set of data by fitting a large number of \emph{local regressions}.
@@ -449,41 +447,41 @@ Limitations:
 
 \begin{center}
 \includegraphics[height=1.25in]{loess-example.pdf}
-\end{center}  
+\end{center}
 
 
 \end{frame}
 
 %===========================================================
 \begin{frame}
-  \frametitle{Graphical overview of Loess fitting, I}  
+  \frametitle{Graphical overview of LOESS fitting, I}
 
 {\tiny from Cleveland (1993)}
 \begin{center}
 \includegraphics[height=3in]{loess1.pdf}
-\end{center}  
+\end{center}
 
 \end{frame}
 
 %===========================================================
 \begin{frame}
-  \frametitle{Graphical overview of Loess fitting, II}  
+  \frametitle{Graphical overview of LOESS fitting, II}
 
 {\tiny from Cleveland (1993)}
 \begin{center}
 \includegraphics[height=3in]{loess2.pdf}
-\end{center}  
+\end{center}
 
 \end{frame}
 
 %===========================================================
 \begin{frame}
-  \frametitle{Graphical overview of Loess fitting, III}  
+  \frametitle{Graphical overview of LOESS fitting, III}
 
 {\tiny from Cleveland (1993)}
 \begin{center}
 \includegraphics[height=3in]{loess3.pdf}
-\end{center}  
+\end{center}
 
 \end{frame}
 
