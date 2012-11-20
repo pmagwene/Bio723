@@ -1,0 +1,11 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+%%
+\node (Y) at (90bp,41bp) [draw,ellipse] {$Y$};
+  \node (X) at (18bp,18bp) [draw,ellipse] {$X$};
+  \node (Z) at (162bp,18bp) [draw,ellipse] {$Z$};
+  \draw [->,-triangle 90] (X) ..controls (43.422bp,26.024bp) and (53.552bp,29.353bp)  .. (Y);
+  \draw [->,-triangle 90] (X) ..controls (46.533bp,15.476bp) and (60.013bp,14.452bp)  .. (72bp,14bp) .. controls (87.989bp,13.398bp) and (92.011bp,13.398bp)  .. (108bp,14bp) .. controls (116.33bp,14.314bp) and (125.39bp,14.905bp)  .. (Z);
+  \draw [->,-triangle 90] (Y) ..controls (115.42bp,32.976bp) and (125.55bp,29.647bp)  .. (Z);
+%
+\end{tikzpicture}

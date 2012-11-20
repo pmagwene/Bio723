@@ -1,0 +1,7 @@
+digraph G {
+    graph [rankdir=LR];
+    node [shape="circle"];
+    edge [style="-triangle 90"];
+    X -> Y -> Z;
+    X -> Z;
+    }
