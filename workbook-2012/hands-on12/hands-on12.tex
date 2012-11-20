@@ -12,7 +12,7 @@ This represents an instantaneous rate of change of $Y$. We'll implement this wit
 \begin{python}
 def update(ynow, alpha, beta):
     delta = beta - alpha * ynow
-    return ynow + delta
+    return max(0, ynow + delta) # constrains values to be >= 0
 \end{python}
 %
 
@@ -119,7 +119,7 @@ This should generate a figure identical to our previous one.
 
 \section{Autoregulation}
 
-Now that we've got a simple simulation working, let's get a little fancier. We'll implement a model where $Y$ negative regulates it's own transcript levels. This time we'll dive write into writing a simle function to represent the negative autoregulation case:
+Now that we've got a simple simulation working, let's get a little fancier. We'll implement a model where $Y$ negatively regulates its own transcript levels. This time we'll dive right into writing a simle function to represent   autoregulation:
 %
 \begin{python}
 def autoreg(xs, alpha, beta, kx, alphaneg, ky, yinit=0):
@@ -130,7 +130,7 @@ def autoreg(xs, alpha, beta, kx, alphaneg, ky, yinit=0):
         tbeta = 0
         if x > kx:
             tbeta = beta
-        if y > ky:
+        if ynow > ky:
             talpha = alphaneg
         ynew = update(ynow, talpha, tbeta)
         ys.append(ynew)
@@ -205,15 +205,6 @@ The first FFL we'll examine is a `coherent FFL' -- coherent because both the sho
 
 \begin{figure}[!ht]
 \centering
-% \begin{dot2tex}[options=-tmath]
-% digraph G {
-%     graph [rankdir=LR];
-%     node [shape="circle"];
-%     edge [style="-triangle 90"];
-%     X -> Y -> Z;
-%     X -> Z;
-%     }
-% \end{dot2tex}
 \begin{tikzpicture}[node distance=2cm, auto,>=triangle 45]
   \node (X) {$X$};
   \node [right of=X] (Y) {$Y$};
@@ -304,4 +295,148 @@ As shown in Fig.~\ref{fig:noisyffl}, $Z$ is effectively buffered from the noise.
 \medskip
 \begin{assignment}
 Write an Python function that generates a coherent FFL with OR logic at $Z$ (i.e. $Z$ is on if either $X$ or $Y$ are above their respective thresholds), and illustrate this network motif for a variety of parameter settings.  How does the behavior of the coherent FFL with OR logic differ from the similar topology with AND logic?
+\end{assignment}
+
+
+\subsection{Incoherent FFLs}
+
+Now we'll examine the behavior of an incoherent FFL, as illustrated in the figure below. As before, $X$ is an activator of both $Y$ and $Z$, but now $Y$ represses $Z$.
+
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}[node distance=2cm, auto,>=triangle 45]
+  \node (X) {$X$};
+  \node [right of=X] (Y) {$Y$};
+  \node [right of=Y] (Z) {$Z$};
+  \draw[->] (X) --  (Y);
+  \draw[-|] (Y) -- (Z);
+  \draw[->] (X) to [bend right=30] (Z);
+\end{tikzpicture}
+\caption{An incoherent FFL.}
+\end{figure}
+
+\begin{python}
+def incoh_ffl_and(xs, yalpha=0.1, ybeta=0.1, kxy=0.5, zalpha=0.1, zbeta=0.1, kxz=0.5, kyz=0.5):
+    ynow = 0
+    ys = []
+    znow = 0
+    zs = []
+    for x in xs:
+        yb = 0
+        if x > kxy:
+            yb = ybeta
+        ynew = update(ynow, yalpha, yb)
+        ys.append(ynew)
+
+        zb = 0
+        if (x > kxz) and (ynow < kyz):
+            zb = zbeta
+        znew = update(znow, zalpha, zb)
+        zs.append(znew)
+
+        ynow = ynew
+        znow = znew
+    return ys, zs
+\end{python}
+%
+And we'll test our new function as follows:
+%
+\begin{python}
+xs = pulse(10,40,180) + pulse(70,140,180)
+ys, zs = incoh_ffl_and(xs, kyz=0.75)
+
+p1, = plot(xs)
+p2, = plot(ys)
+p3, = plot(zs)
+
+legend([p1,p2,p3,p4],["$X$","$Y$","$Z$"])
+xlabel("time")
+ylim(0,2)
+\end{python}
+%
+This produces Fig.~\ref{fig:incohfll}.  Incoherent FFLs are capable of producing pulsatile behaviors. Notice how the length of the pulses in $Z$ are insensitive to longer input signals $X$ (they are however sensitive to very short pulses in $X$).
+%
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.33\columnwidth]{./figures/hands-on12/fig-incohffl.png}
+    \caption{Behavior of an incoherent FFL with AND logic at $Z$.}\label{fig:incohfll}
+\end{figure}
+
+\section{Repressilator}
+
+Elowitz and Liebler (Nature, 403(6767):335-8) proposed that a synthetic network motif that they called the `repressilator' could generate sustained oscillatory behavior. This network motif consists of three genes that mutually repressor each other, as illustrated in Fig.~\ref{fig:repressilator}.
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}[node distance=2cm, auto,>=triangle 45]
+  \node (X) {$X$};
+  \node [right of=X] (Y) {$Y$};
+  \node [right of=Y] (Z) {$Z$};
+  \draw[-|] (X) --  (Y);
+  \draw[-|] (Y) -- (Z);
+  \draw[-|] (Z) to [bend right=30] (X);
+\end{tikzpicture}
+\caption{The repressilator network motif.}\label{fig:repressilator}
+\end{figure}
+%
+Let's implement the repressilator motif as a Python function:
+\begin{python}
+def repressilator(xalpha, xbeta, yalpha, ybeta, zalpha, zbeta, kxy=0.5, kyz=0.5, kzx=0.5, xinit=1, yinit=1, zinit=1, nticks=500):
+    xnow = xinit
+    xs = []
+    ynow = yinit
+    ys = []
+    znow = zinit
+    zs = []
+
+    for i in range(nticks):
+        if xnow < kxy:
+            ya, yb = yalpha, ybeta
+        else:
+            ya, yb = yalpha, 0
+        ynew = update(ynow, ya, yb)
+        ys.append(ynew)
+
+        if ynow < kyz:
+            za, zb = zalpha, zbeta
+        else:
+            za, zb = zalpha, 0
+        znew = update(znow, za, zb)
+        zs.append(znew)
+
+        if znow < kzx:
+            xa, xb = xalpha, xbeta
+        else:
+            xa, xb = xalpha, 0
+        xnew = update(xnow, xa, xb)
+        xs.append(xnew)
+
+        ynow = ynew
+        znow = znew
+        xnow = xnew
+
+    return xs, ys, zs
+\end{python}
+%
+And we can test it as we've done previously:
+\begin{python}
+xs,ys,zs = repressilator(0.1,1, 0.1,2, 0.1,2)
+p1, = plot(xs)
+p2, = plot(ys)
+p3, = plot(zs)
+
+legend([p1,p2,p3,],["$X$","$Y$","$Z$"])
+xlabel("time")
+\end{python}
+%
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.33\columnwidth]{./figures/hands-on12/fig-repressilator.png}
+    \caption{Behavior of the repressilator network motif.}\label{fig:repressdynamics}
+\end{figure}
+
+
+
+\medskip
+\begin{assignment}
+Spend some time exploring the parameter space of the repressilator motif.  Under what conditions does the system \emph{NOT} oscillate?  What parameters can you change to get longer oscillations (i.e. longer intervals between peak values for a given gene)?  Generate graphs to illustrate the cases above.
 \end{assignment}
