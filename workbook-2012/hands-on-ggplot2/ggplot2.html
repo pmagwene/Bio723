@@ -1,0 +1,3115 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="en" xml:lang="en">
+<head>
+<title>ggplot2</title>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-08-19 15:54:40 EDT"/>
+<meta name="author" content="Colin Maxwell"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+<div id="content">
+
+<h1 class="title">ggplot2</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Why use ggplot2? </a></li>
+<li><a href="#sec-2">2 ggplot resources </a></li>
+<li><a href="#sec-3">3 Using ggplot2 to make a scatter plot </a></li>
+<li><a href="#sec-4">4 ggplot </a></li>
+<li><a href="#sec-5">5 geoms </a>
+<ul>
+<li><a href="#sec-5_1">5.1 point </a></li>
+<li><a href="#sec-5_2">5.2 violin </a></li>
+<li><a href="#sec-5_3">5.3 box </a></li>
+<li><a href="#sec-5_4">5.4 histograms </a></li>
+<li><a href="#sec-5_5">5.5 density </a></li>
+<li><a href="#sec-5_6">5.6 line </a></li>
+<li><a href="#sec-5_7">5.7 tile </a></li>
+</ul>
+</li>
+<li><a href="#sec-6">6 scales </a>
+<ul>
+<li><a href="#sec-6_1">6.1 Choosing a discrete or continuous scale </a></li>
+<li><a href="#sec-6_2">6.2 Arguments to scales </a></li>
+<li><a href="#sec-6_3">6.3 Kinds of x and y scales </a></li>
+<li><a href="#sec-6_4">6.4 Continuous color scales </a></li>
+<li><a href="#sec-6_5">6.5 Discrete colors </a></li>
+</ul>
+</li>
+<li><a href="#sec-7">7 stats </a>
+<ul>
+<li><a href="#sec-7_1">7.1 fun.y </a></li>
+<li><a href="#sec-7_2">7.2 fun.data </a></li>
+<li><a href="#sec-7_3">7.3 smoothed data </a></li>
+</ul>
+</li>
+<li><a href="#sec-8">8 facets </a></li>
+<li><a href="#sec-9">9 themes </a>
+<ul>
+<li><a href="#sec-9_1">9.1 Default themes </a></li>
+<li><a href="#sec-9_2">9.2 Axis labels and title </a></li>
+<li><a href="#sec-9_3">9.3 Text orientation </a></li>
+<li><a href="#sec-9_4">9.4 Legends </a></li>
+</ul>
+</li>
+<li><a href="#sec-10">10 multiple plots per page </a></li>
+<li><a href="#sec-11">11 How to define your own ggfunction? </a></li>
+<li><a href="#sec-12">12 Homework </a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Why use ggplot2? </h2>
+<div class="outline-text-2" id="text-1">
+
+<ul>
+<li>
+It's not just a plotting package, it's a conceptual lifestyle!
+</li>
+<li>
+Rather than giving you a prepackaged set of plots, ggplots gives you
+the ability to 'speak' data visualization.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> ggplot resources </h2>
+<div class="outline-text-2" id="text-2">
+
+<dl>
+<dt>A good reference</dt><dd>
+<a href="http://docs.ggplot2.org/current/">http://docs.ggplot2.org/current/</a>
+</dd>
+<dt>A poorly written book</dt><dd>
+ggplot2: Elegant Graphics for Data Analysis by Hadley Wickham ebook at Duke libraries
+</dd>
+<dt>A wicked set of plots about Baltimore</dt><dd>
+
+<p>
+<a href="http://www.r-bloggers.com/visualizing-baltimore-with-r-and-ggplot2-crime-data/">http://www.r-bloggers.com/visualizing-baltimore-with-r-and-ggplot2-crime-data/</a>
+</p></dd>
+</dl>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Using ggplot2 to make a scatter plot </h2>
+<div class="outline-text-2" id="text-3">
+
+<p>The goal of this section is to motivate why you might want to use
+ggplot rather than the R base graphics. To begin with, we'll load the
+package ggplot2 that contains the functions we'll need for the first
+section and two data.frames of data: we've already seen the iris
+dataset. The second dataset is the color, cut, clarity, caret and
+price of about 60,000 diamonds. Since the diamonds data is so big,
+we'll take a subsample of 1,000 points:
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #008b8b;">library</span>(ggplot2); data(iris); data(diamonds)
+diamonds.sampled <span style="color: #008b8b;">&lt;-</span> diamonds[ sample(1:nrow(diamonds), 1000),]
+</pre>
+
+
+
+
+
+<p>
+As a first example, let's think about a scatter plot, to begin with,
+we'll use the R base package. When we tell R to make a scatterplot,
+we have to tell it what the 'X' values will be and what the 'Y'
+values will be:
+</p>
+
+
+
+<pre class="src src-R">plot( x = iris$Sepal.Length, y = iris$Petal.Length)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file1.png"  alt="r/file1.png" />
+</p>
+<p>
+You can imagine an algorithm that tells R to go to each line in the
+table of values, find the column for the Sepal length, then the
+column for the petal length, and finally, to draw a dot where those
+two things intersect. Another way of saying this is that the
+horizonal coordinates are mapped onto a particular column of the
+data (the sepal length) and the vertical coordinates are mapped onto
+another column (the petal length).
+</p>
+<p>
+We could embellish our plot a bit by adding some colors to
+correspond to the species. However, this actually involves a fair
+bit of somewhat obscure code:
+</p>
+
+
+
+
+<pre class="src src-R"><span style="color: #b22222;">#</span><span style="color: #b22222;">Set up a vector of color keywords for R to index
+</span>COLORS = c(<span style="color: #8b2252;">"red"</span>, <span style="color: #8b2252;">"blue"</span>, <span style="color: #8b2252;">"green"</span>)
+
+<span style="color: #b22222;">#</span><span style="color: #b22222;">Since factors are encoded as numbers and a list of levels, we can index
+</span><span style="color: #b22222;">#</span><span style="color: #b22222;">the color vector using the numeric version of the species
+</span>plot( x = iris$Sepal.Length, y = iris$Petal.Length,
+      col = COLORS[ as.numeric( iris$Species ) ] )
+
+<span style="color: #b22222;">#</span><span style="color: #b22222;">Finally, we can add a legend
+</span>legend( <span style="color: #8b2252;">"topleft"</span>, pch = 1, col = COLORS, legend = levels( iris$Species ) )
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file2.png"  alt="r/file2.png" />
+</p>
+<p>
+Now we have three mappings: one from sepal length to X, one from
+petal length to Y, and one from species to color. In the lingo of
+ggplots, these mappings are called 'aesthetic mappings' and the way
+that these mappings are drawn on the plot is called the 'geometry,'
+or the 'geom.' Using ggplot, we can make the same plot, but with a
+little different syntax:
+</p>
+
+
+
+<pre class="src src-R">ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 col = Species)
+       )+
+    geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file3.png"  alt="r/file3.png" />
+</p>
+<p>
+The function 'ggplot' takes two arguments: the first is a data.frame
+that your plot will be made out of (iris in this case). The second is a function called
+'aes' that sets up the aesthetic mappings. In this case, we told
+ggplot that we wanted the sepal length on the x axis, the petal
+length on the y axis, and the colors to be encoded by the
+species. However, we could choose any number of other aesthetic
+mappings. We could use shape:
+</p>
+
+
+
+<pre class="src src-R">ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 shape = Species)
+       )+
+    geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file4.png"  alt="r/file4.png" />
+</p>
+
+<p>
+Or size:
+</p>
+
+
+
+<pre class="src src-R">ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 size = Species)
+       )+
+    geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file5.png"  alt="r/file5.png" />
+</p>
+<p>
+ggplot is also smart enough to render continuous variables as colors or sizes:
+</p>
+
+
+
+<pre class="src src-R">ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 size = Petal.Width)
+       )+
+    geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file6.png"  alt="r/file6.png" />
+</p>
+
+
+
+<pre class="src src-R">ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 col = Petal.Width)
+       )+
+    geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file7.png"  alt="r/file7.png" />
+</p>
+<p>
+We could even make a difficult to interpret plot showing all five
+data columns:
+</p>
+
+
+
+<pre class="src src-R">ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 col = Petal.Width,
+                 size = Sepal.Width,
+                 shape = Species)
+       )+
+    geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file8.png"  alt="r/file8.png" />
+</p>
+<p>
+There's quite a lot of advantages to this approach rather than trying
+to replicate this plot with base graphics:
+</p>
+<ol>
+<li>
+the legend is automatically drawn for you.
+
+</li>
+<li>
+the code is very easy to change. Rather than having to figure out
+how to manually map a point size onto a variable using some
+difficult R code, it's just as simple as saying to set the 'size'
+equal to a 'variable'.
+
+</li>
+<li>
+it's easy to swap around variables from one aesthetic mapping to another.
+
+</li>
+</ol>
+
+<p>And this is just the beginning!
+</p>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> ggplot </h2>
+<div class="outline-text-2" id="text-4">
+
+<p>Probably the biggest obstacle to learning ggplot-style graphics is
+that it requires learning a different syntax for plotting. The
+following sections break down a ggplot into it's component parts.
+</p>
+<p>
+We've already seen the function 'ggplot' itself. The first argument is
+always a data frame. The data frame is the one that ggplot will use to
+look for all the mappings that you define in the subsequent pieces of
+the plot. The nice thing about this is that there is no need to use
+the dollar sign notation. (You can get a similar behavior in base
+plots by specifying the 'data' argument)
+</p>
+<p>
+The second argument is always a function called 'aes.' aes takes named
+arguments. Each argument name is the 'aesthetic' that you want mapped
+to a particular column in the data. The way you specify the mapping is
+by writing the aesthetic (ie size) '=' the column name. (Note that the column names aren't in quotes) For example, if we want the diamond's caret to be on the x axis and the diamond's price to be on the y axis, we would write:
+</p>
+
+
+
+<pre class="src src-R">ggplot(diamonds.sampled, aes(x=carat, y = price))
+</pre>
+
+
+
+
+
+<p>
+If you call just this function, nothing will be plotted because we haven't told ggplots how to
+display the aesthetic mappings we've made. To do this, we need a geom.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> geoms </h2>
+<div class="outline-text-2" id="text-5">
+
+
+<p>
+There are many different geoms you can use to plot your data. I'll
+walk you through the most common below, but be sure to consult the
+ggplot documentation to see the full range of tools in your toolbox.
+</p>
+
+</div>
+
+<div id="outline-container-5_1" class="outline-3">
+<h3 id="sec-5_1"><span class="section-number-3">5.1</span> point </h3>
+<div class="outline-text-3" id="text-5_1">
+
+
+<p>
+Probably the simplest geom to work with is the point. In ggplot land,
+all geoms are encoded as R functions. The syntax used to add them to a
+plot is simply a '+' sign:
+</p>
+
+
+
+<pre class="src src-R">ggplot(diamonds.sampled, aes(x=carat, y = price))+geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file12.png"  alt="r/file12.png" />
+</p>
+<p>
+geoms are modular, so you can add as many of them to a plot as you
+want (as you'll see below). Each geom has particular aesthetics that
+must be defined in the plot in order for it to be plotted. In the case
+of geom<sub>point</sub>, the only required aesthetics are 'x' and 'y'. However,
+pretty much any conceivable way you can think of to change a point can
+be set as an aesthetic mapping (as we saw above).
+</p>
+<p>
+Alternatively, if you just want all the points to be plotted in a
+particular way, you can set any aspect of their aesthetics outside of
+an aes function call:
+</p>
+
+
+
+<pre class="src src-R">ggplot(diamonds.sampled, aes(x=carat, y = price)) + geom_point(col = <span style="color: #8b2252;">'red'</span>, alpha = 0.1)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file13.png"  alt="r/file13.png" />
+</p>
+<p>
+The nice thing about ggplot is that once we have these pieces to play
+with, we can start messing around to create a whole variety of plots.
+For example, by setting the x value to discrete values and the y value to
+continuous values, we get what people call a 'strip plot':
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/stripplot.png"  alt="r/stripplot.png" />
+</p>
+<p>
+However, this plot is pretty hard to read because there's so much
+data. One solution to this is that points can be 'jittered' to avoid overplotting:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_point(position=position_jitter( width = 0.05, height = 0) )
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file14.png"  alt="r/file14.png" />
+</p>
+<p>
+You have to play around to get the right amount of jitter:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_point(position=position_jitter( width = 0.2, height = 0) )
+</pre>
+
+
+
+
+
+<p>
+<img src="r/morejitter.png"  alt="r/morejitter.png" />
+</p>
+<p>
+Setting the point transparency is also a good way to deal with overplotting
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_point(position=position_jitter( width = 0.1, height = 0),
+               alpha = 0.1)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file15.png"  alt="r/file15.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5_2" class="outline-3">
+<h3 id="sec-5_2"><span class="section-number-3">5.2</span> violin </h3>
+<div class="outline-text-3" id="text-5_2">
+
+
+<p>
+Another approach to the problem of overplotting in strip charts is to
+do a 'violin' plot instead:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_violin()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/violin.png"  alt="r/violin.png" />
+</p>
+<p>
+As I mentioned above, ggplot is modular. So, there's nothing stopping
+us from using more than one geom. For example, we could plot the
+points in addition to the violin plot. Notice that I set the fill of
+the violins and the color of the violins to make what I think is a
+more pleasing plot:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_violin(fill=<span style="color: #228b22;">NA</span>, col=<span style="color: #8b2252;">'blue'</span>)+
+    geom_point(position=position_jitter( width = 0.1, height = 0),
+                 alpha = 0.1)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/violin2.png"  alt="r/violin2.png" />
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-5_3" class="outline-3">
+<h3 id="sec-5_3"><span class="section-number-3">5.3</span> box </h3>
+<div class="outline-text-3" id="text-5_3">
+
+
+<p>
+If your data are more or less normally distributed, a boxplot can be
+substituted for a stripplot or a violin plot:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_boxplot()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file20.png"  alt="r/file20.png" />
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-5_4" class="outline-3">
+<h3 id="sec-5_4"><span class="section-number-3">5.4</span> histograms </h3>
+<div class="outline-text-3" id="text-5_4">
+
+<p>If your data aren't normally distributed, and if you care about the
+absolute frequency of the data, a histogram is always nice.
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(fill=cut, x=price))+
+    geom_histogram()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file23.png"  alt="r/file23.png" />
+</p>
+<p>
+Make sure you play around with the number of bins you use:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(fill=cut, x=price))+
+    geom_histogram(binwidth = 1000)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file23-2.png"  alt="r/file23-2.png" />
+</p>
+<p>
+There's two other ways to make a histogram: bins can be plotted beside
+one another:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(fill=cut, x=price))+
+    geom_histogram(position = <span style="color: #8b2252;">"dodge"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file24.png"  alt="r/file24.png" />
+</p>
+<p>
+Or stacked on top for a kind of moving pie chart
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(fill=cut, x=price))+
+    geom_histogram(position = <span style="color: #8b2252;">"fill"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file25.png"  alt="r/file25.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5_5" class="outline-3">
+<h3 id="sec-5_5"><span class="section-number-3">5.5</span> density </h3>
+<div class="outline-text-3" id="text-5_5">
+
+
+<p>
+If you don't want to determine the number of bins and you don't care
+about the absolute number of observations for a particular value, a density plot is
+sometimes appropriate:
+</p>
+
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(col=cut, x=price))+
+    geom_density()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file22.png"  alt="r/file22.png" />
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-5_6" class="outline-3">
+<h3 id="sec-5_6"><span class="section-number-3">5.6</span> line </h3>
+<div class="outline-text-3" id="text-5_6">
+
+
+<p>
+To demonstrate some aspects of ggplot, we'll use some data that I've
+generated. The data is the optical density (OD) of some yeast cultures
+seeded into a 96 well plate. There are three different yeast strains,
+four different media conditions, and eight different initial dilutions
+of the saturated culture into fresh media. First, we'll read in the
+data and make some subsets for ease of plotting:
+</p>
+
+
+
+<pre class="src src-R">growth=read.csv(<span style="color: #8b2252;">"http://people.duke.edu/~csm29/growth_curves.csv"</span>, as.is =<span style="color: #228b22;">TRUE</span>)
+growth$ammonium <span style="color: #008b8b;">&lt;-</span> paste(sapply(strsplit(growth$media, <span style="color: #8b2252;">""</span>), <span style="color: #8b2252;">"["</span>, 1), <span style="color: #8b2252;">"ammonium"</span>)
+growth$dextrose <span style="color: #008b8b;">&lt;-</span> paste(sapply(strsplit(growth$media, <span style="color: #8b2252;">""</span>), <span style="color: #8b2252;">"["</span>, 3), <span style="color: #8b2252;">"dextrose"</span>)
+
+growth.PMY1529 <span style="color: #008b8b;">&lt;-</span> subset(growth, (strain == <span style="color: #8b2252;">"PMY1529"</span>) &amp; (initial_dilution == 270))
+growth.270 <span style="color: #008b8b;">&lt;-</span> subset(growth, (initial_dilution == 270))
+</pre>
+
+
+
+
+
+<p>
+Since there are four media types, plotting the subset of the data that
+contains a single dilution amount and a single strain has four obvious
+lines corresponding to the media:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.PMY1529, aes(x=time, y=OD))+geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/pmy1529_point.png"  alt="r/pmy1529_point.png" />
+</p>
+<p>
+However, if we just try to substitute a line for a point, we get
+something that looks unintelligible:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.PMY1529, aes(x=time, y=OD))+geom_line()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file16.png"  alt="r/file16.png" />
+</p>
+<p>
+This is because you must specify what 'group' of values that ggplot
+should connect. To see this, we'll take an additional subset of the
+data to restrict ourselves to just one media type. As long as there's
+only one set of data to deal with, our approach worked OK:
+</p>
+
+
+
+<pre class="src src-R">ggplot(subset(growth.PMY1529, media == <span style="color: #8b2252;">"HAHD"</span>),
+       aes(x=time, y=OD))+geom_line()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file16-2.png"  alt="r/file16-2.png" />
+</p>
+<p>
+The way you tell ggplot to connect different sets of points in the
+data is to set the 'group' aesthetic:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.PMY1529, aes(x=time, y=OD, group=media))+geom_line()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file17.png"  alt="r/file17.png" />
+</p>
+<p>
+Instead of setting the group aesthetic, we could also just set the
+color to be the media type. ggplot is smart enough to connect like
+colored points when using geom<sub>line</sub>.
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.PMY1529, aes(x=time, y=OD, col=media))+geom_line()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file17-2.png"  alt="r/file17-2.png" />
+</p>
+<p>
+However, if we wanted to split by all media types, but color by only the
+dextrose concentration, we could specify both a color and a group:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.PMY1529, aes(x=time, y=OD, col=dextrose, group=media))+geom_line()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file18.png"  alt="r/file18.png" />
+</p>
+<p>
+And, of course, you can specify mappings until the plot gets hard to read.
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        lty=dextrose,
+                        group=plate_pos))+geom_line()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file19.png"  alt="r/file19.png" />
+</p>
+<p>
+Strangely, you can't do a similar trick with the boxplots. For
+example, say that I wanted each 'x' to be colored by 'color' and
+grouped by 'clarity:'
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price, col=color, group=clarity))+
+    geom_boxplot()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file20-2.png"  alt="r/file20-2.png" />
+</p>
+<p>
+The reasons why this is the case are complicated, but it's good to be
+aware of the fact. The best you can do have both 'color' and 'x':
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut, y=price, col=color))+
+    geom_boxplot()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file20-3.png"  alt="r/file20-3.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5_7" class="outline-3">
+<h3 id="sec-5_7"><span class="section-number-3">5.7</span> tile </h3>
+<div class="outline-text-3" id="text-5_7">
+
+
+<p>
+Sometimes you have two variables that are evaluated for a third
+variable on an evenly spaced grid (think of a fitness landscape). In
+this case, you can use the 'tile' geom in order to color tiles
+according to the value at that coordinate:
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #b22222;">#</span><span style="color: #b22222;">This is a function to make a dataframe of a two variabled function
+</span><span style="color: #0000ff;">pp</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span> (n,r=4) {
+ x <span style="color: #008b8b;">&lt;-</span> seq(-r*pi, r*pi, len=n)
+ df <span style="color: #008b8b;">&lt;-</span> expand.grid(x=x, y=x)
+ df$r <span style="color: #008b8b;">&lt;-</span> sqrt(df$x^2 + df$y^2)
+ df$z <span style="color: #008b8b;">&lt;-</span> cos(df$r^2)*exp(-df$r/6)
+ df
+}
+<span style="color: #b22222;">#</span><span style="color: #b22222;">Note that the aesthetic set is the 'fill' not the 'color'
+</span>ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file21.png"  alt="r/file21.png" />
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> scales </h2>
+<div class="outline-text-2" id="text-6">
+
+
+<p>
+A column of your data is mapped onto an aesthetic. The aesthetic is
+then translated into colors and positions on the plot by a 'scale.'
+This translation is done automatically, but you can adjust various
+parts of the process by calling the 'scale' functions.
+</p>
+<p>
+For x, y, alpha, size, linetype, and aesthetics, scales come in two
+flavors "discrete" and "continuous." Continuous scales can be any real
+number, whereas discrete scales can be labelled using
+integers. Practically, what this means is that a discrete scale will
+have every value named with a unique label, whereas continuous scales
+will be labelled at periodic points with ticks.
+</p>
+<p>
+ggplot uses a consistent naming system to make remembering all the functions
+that you use to adjust these scales easy: scale_"AESTHETIC.NAME"_"SCALE.TYPE."
+</p>
+<p>
+So for the 'x' aesthetic, you have
+'scale<sub>x</sub><sub>discrete'</sub>, 'scale<sub>x</sub><sub>continuous'</sub>, 'scale<sub>x</sub><sub>log10'</sub>,
+'scale<sub>x</sub><sub>reverse'</sub>, 'scale<sub>x</sub><sub>sqrt'</sub>, 'scale<sub>x</sub><sub>date'</sub>, etc.
+</p>
+
+</div>
+
+<div id="outline-container-6_1" class="outline-3">
+<h3 id="sec-6_1"><span class="section-number-3">6.1</span> Choosing a discrete or continuous scale </h3>
+<div class="outline-text-3" id="text-6_1">
+
+
+<p>
+Since ggplot is relatively smart, numerical columns are automatically
+mapped onto continous scales. For this reason, adding on
+"scale<sub>x</sub><sub>continuous</sub>" doesn't do anything. 
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=price))+
+    geom_histogram()+
+    scale_x_continuous()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file26.png"  alt="r/file26.png" />
+</p>
+<p>
+On the other hand, if you specified a discrete scale ggplot would
+label each value in the vector individually. It would first generate a
+factor of the variable 'price', which would mean that there would be
+(thousands) of unique variables before it tried to compute a
+histogram. The results are non-sensical and are shown below. Don't run
+it because it takes forever.
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #b22222;">#</span><span style="color: #b22222;">Don't run
+</span>ggplot( diamonds.sampled, aes(x=price))+
+    geom_histogram()+
+    scale_x_discrete()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file27.png"  alt="r/file27.png" />
+</p>
+<p>
+Likewise, if a column contains character values, it's automatically
+mapped to a discrete value:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut))+
+    geom_histogram()+
+    scale_x_discrete()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/discrete_scale.png"  alt="r/discrete_scale.png" />
+</p>
+<p>
+However, the opposite will yield an error since there's not really a
+good way to go from discrete to continuous values.
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=cut))+
+    geom_histogram()+
+    scale_x_continuous()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/error.png"  alt="r/error.png" />
+</p>
+<p>
+Everything that I mentioned about x and y scales is also true for
+shape, linetype, and all the others I listed above.
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    scale_shape_discrete()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/discrete_scale2.png"  alt="r/discrete_scale2.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6_2" class="outline-3">
+<h3 id="sec-6_2"><span class="section-number-3">6.2</span> Arguments to scales </h3>
+<div class="outline-text-3" id="text-6_2">
+
+
+<p>
+You can specify how the scales are named by passing a string to the
+appropriate scale function. This argument doesn't need to be named:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    scale_x_continuous(<span style="color: #8b2252;">"carrots"</span>)+
+    scale_y_continuous(<span style="color: #8b2252;">"$$"</span>)+
+    scale_shape_discrete(<span style="color: #8b2252;">"beauty"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/axis_titles.png"  alt="r/axis_titles.png" />
+</p>
+<p>
+One thing that you can do with scales is determine the range of data
+that you will plot. To do this, specify the limits argument in the
+appropriate scale:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    scale_x_continuous(limits=c(0,1))+
+    scale_y_continuous(limits=c(0,5000))
+</pre>
+
+
+
+
+
+<p>
+<img src="r/limits.png"  alt="r/limits.png" />
+</p>
+<p>
+There's also shorthand functions for this:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    xlim(0,1)+
+    ylim(0,5000)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/discrete_scale.png"  alt="r/discrete_scale.png" />
+</p>
+<p>
+You can also control where you want tick marks to appear:
+</p>
+
+
+
+<pre class="src src-R">ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    scale_x_continuous(breaks=(1:30)/10)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/ticks.png"  alt="r/ticks.png" />
+</p>
+<p>
+There's also some formatting options, such as percentages, dates, or
+dollars. These are found in the 'scales' library and stored as
+formatting functions. You tell the scale what formatting function you
+want. You can also write your own. Consult the documentation for details.
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #008b8b;">library</span>(scales)
+
+ggplot( diamonds.sampled, aes(x=carat*1000, y=price, shape=cut))+
+    geom_point()+
+    scale_y_continuous(labels=dollar)+
+    scale_x_continuous(labels=comma)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/labels.png"  alt="r/labels.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6_3" class="outline-3">
+<h3 id="sec-6_3"><span class="section-number-3">6.3</span> Kinds of x and y scales </h3>
+<div class="outline-text-3" id="text-6_3">
+
+
+<p>
+A common task with x and y scales is to make one of the scales
+logarithmic. You can do this by adding on the functions
+'scale<sub>x</sub><sub>log10'</sub> or 'scale<sub>y</sub><sub>log10'</sub>:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.PMY1529, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        lty=dextrose,
+                        group=plate_pos))+
+    geom_line()+
+    scale_y_log10()+
+    scale_x_log10()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file28.png"  alt="r/file28.png" />
+</p>
+<p>
+Similarly, you can do square roots automatically:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.PMY1529, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        lty=dextrose,
+                        group=plate_pos))+
+    geom_line()+
+    scale_y_sqrt()+
+    scale_x_sqrt()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/sqrt_scale.png"  alt="r/sqrt_scale.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6_4" class="outline-3">
+<h3 id="sec-6_4"><span class="section-number-3">6.4</span> Continuous color scales </h3>
+<div class="outline-text-3" id="text-6_4">
+
+
+<p>
+Color scales have a few things that are different about them that need
+to be treated separately from other types of scales. The aesthetics
+'fill' and 'color' which control the fill and outline colors of
+shapes, respectively, also have two different types of scales
+depending on whether the column of data they map is discrete or
+continuous. However, you can make discrete and continuous color scales
+in several differnt ways, which leads to several different functions.
+</p>
+<p>
+Continuous color mappings default to mapping between blue and black:
+</p>
+
+
+
+<pre class="src src-R">ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()+
+    scale_fill_gradient()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/default_fill.png"  alt="r/default_fill.png" />
+</p>
+<p>
+You can change the two colors that mark the high and low end of the
+data by specifying the arguments 'high' and 'low' to the function
+scale<sub>fill</sub><sub>gradient</sub> (or scale<sub>color</sub><sub>gradient</sub> depending on the aesthetic)
+</p>
+
+
+
+<pre class="src src-R">ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()+
+    scale_fill_gradient(low = <span style="color: #8b2252;">"blue"</span>, high = <span style="color: #8b2252;">"yellow"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file29.png"  alt="r/file29.png" />
+</p>
+<p>
+If you want three colors, use 'scale<sub>fill</sub><sub>gradient2'</sub>
+</p>
+
+
+
+<pre class="src src-R">ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()+
+    scale_fill_gradient2(low = <span style="color: #8b2252;">"blue"</span>, mid = <span style="color: #8b2252;">"black"</span>, high = <span style="color: #8b2252;">"yellow"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file30.png"  alt="r/file30.png" />
+</p>
+<p>
+For more use 'scale<sub>fill</sub><sub>gradientn'</sub>
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #b22222;">#</span><span style="color: #b22222;">Annoyingly, you have to use the British spelling of 'color'
+</span>
+ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()+
+    scale_fill_gradientn(colours = c(<span style="color: #8b2252;">"blue"</span>, <span style="color: #8b2252;">"black"</span>, <span style="color: #8b2252;">"yellow"</span>, <span style="color: #8b2252;">"red"</span>))
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file31.png"  alt="r/file31.png" />
+</p>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6_5" class="outline-3">
+<h3 id="sec-6_5"><span class="section-number-3">6.5</span> Discrete colors </h3>
+<div class="outline-text-3" id="text-6_5">
+
+
+<p>
+Discrete color scales are just like discrete x or y values. If the
+column is a character vector, the default scale will be discrete.
+</p>
+<p>
+The default discrete ggplot colors are some easy to distinguish pastels.
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file32.png"  alt="r/file32.png" />
+</p>
+<p>
+You can easily change this to greyscale with 'scale<sub>color</sub><sub>grey'</sub>:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_grey()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file33.png"  alt="r/file33.png" />
+</p>
+<p>
+Just like with axis labels, this is where you can change what the
+scale is called:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_grey(<span style="color: #8b2252;">"Magwene lab\nstrain number"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file34.png"  alt="r/file34.png" />
+</p>
+
+<p>
+If you don't like the default R colors, but don't want to bother to
+specify your own, the package RColorBrewer has some nice defaults. The
+following code displays the available color scales:
+</p>
+<p>
+You can use the function "display.brewer.all" to plot all the scales
+that are available for plotting.
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #008b8b;">library</span>(RColorBrewer)
+display.brewer.all()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file35.png"  alt="r/file35.png" />
+</p>
+<p>
+ggplot lets you choose what palette you want to use by either an
+integer and the type of scale (sequential, qualitative, or diverging;
+the groups above correspond to these types):
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_brewer(palette = 2, type = <span style="color: #8b2252;">"seq"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file36.png"  alt="r/file36.png" />
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_brewer(palette = 2, type = <span style="color: #8b2252;">"div"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file36-2.png"  alt="r/file36-2.png" />
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_brewer(palette = 2, type = <span style="color: #8b2252;">"qual"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file36-3.png"  alt="r/file36-3.png" />
+</p>
+
+<p>
+Or the name of the palette (shown above):
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_brewer(palette = <span style="color: #8b2252;">"Set1"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file37.png"  alt="r/file37.png" />
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> stats </h2>
+<div class="outline-text-2" id="text-7">
+
+<p>One of the really powerful things about ggplot is that it will do
+automatic calculations on your data and display the results. The way
+that this is formalized is through a 'statistic' that is calculated
+before the data is passed to a geom. For geom<sub>density</sub> and
+geom<sub>histogram</sub>, this is done automatically in a logical way (ie the
+frequency or the number is computed for each bin). However,
+sometimes you want the ability to summarize your data yourself. In
+this case you need to use 'stat<sub>summary'</sub>. This is a function that
+takes two basic arguments: a function and a string telling ggplot what
+geom to use. The function is passed a vector of y values for every
+unique x value. Because of this, stat<sub>summary</sub> only works for discrete
+x scales. Some examples will make this more clear.
+</p>
+
+</div>
+
+<div id="outline-container-7_1" class="outline-3">
+<h3 id="sec-7_1"><span class="section-number-3">7.1</span> fun.y </h3>
+<div class="outline-text-3" id="text-7_1">
+
+<p>Let's pretend that we want to compute some summary statistic on the
+growth curve data. Maybe the data is noisy and we want to bin it
+before visualizing it. The code below cuts the data into 20 bins and
+plots the results. Note that there are now multiple y values for each
+x value.
+</p>
+
+
+
+<pre class="src src-R">time.quantiles <span style="color: #008b8b;">&lt;-</span> ecdf(growth.270$time)( growth.270$time )
+growth.270$binned.time<span style="color: #008b8b;">&lt;-</span> cut(time.quantiles, breaks = seq(0,1.1, 0.05))
+
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file38.png"  alt="r/file38.png" />
+</p>
+<p>
+A quick google search reminds me how to change the orientation of the
+x axis text (see below for a brief discussion of themes).
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    geom_point()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file39.png"  alt="r/file39.png" />
+</p>
+<p>
+The argument fun.y in stat<sub>summary</sub> tells ggplot what function to call
+for each X value. Since we defined a color scale, ggplot also first
+splits the data by the strain. This is true in general: the statistic
+is computed on data that has first been split by each of the aesthetic
+mappings specified.
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = <span style="color: #8b2252;">"mean"</span>, geom = <span style="color: #8b2252;">"point"</span>)+
+    scale_y_continuous(<span style="color: #8b2252;">"Mean OD"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file40.png"  alt="r/file40.png" />
+</p>
+<p>
+Of course, we could also choose a different function rather than the mean.
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = <span style="color: #8b2252;">"median"</span>, geom = <span style="color: #8b2252;">"point"</span>) +
+    scale_y_continuous(<span style="color: #8b2252;">"Median OD"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file41.png"  alt="r/file41.png" />
+</p>
+<p>
+We can also define our own functions. The function must take a vector and return
+a single number. In this case, I defined a function that will return 1
+plus a small random number if the OD is over 0.5 and 0 plus a small
+random number if it's less than 0.5. 
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #0000ff;">my.fxn</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span>(x){
+    <span style="color: #a020f0;">if</span>(x &gt; 0.5){
+        <span style="color: #a020f0;">return</span>( 1 + runif(n = 1, max = 0.1))
+    }
+    <span style="color: #a020f0;">else</span>{
+        <span style="color: #a020f0;">return</span>( 0 + runif(n = 1, max=0.1))
+    }
+}
+
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = <span style="color: #8b2252;">"my.fxn"</span>, geom = <span style="color: #8b2252;">"point"</span>)+
+      scale_y_continuous(<span style="color: #8b2252;">"Discretized OD"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file42.png"  alt="r/file42.png" />
+</p>
+<p>
+You might think that you could substitute the line geom for the point
+geom, but you can't.
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = <span style="color: #8b2252;">"median"</span>, geom = <span style="color: #8b2252;">"line"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file43.png"  alt="r/file43.png" />
+</p>
+<p>
+The reason is that the geom is passed the split data that the statistic was computed on which
+is length 1. This results in no lines being drawn since a line needs
+two points. To correct this, we have to specify the group that we want
+the lines to be drawn over:
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = <span style="color: #8b2252;">"median"</span>, geom = <span style="color: #8b2252;">"line"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file44.png"  alt="r/file44.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7_2" class="outline-3">
+<h3 id="sec-7_2"><span class="section-number-3">7.2</span> fun.data </h3>
+<div class="outline-text-3" id="text-7_2">
+
+
+<p>
+There's a second way to call stat<sub>summary</sub>. Rather than using 'fun.y',
+you can specify 'fun.data'. The difference between these two functions
+is that fun.y will automatically create a variable called 'y' based on
+the summary statistic for every unique x value that is then passed to the geom specified. 
+Look at the documentation and note that most geoms require a variable
+called 'y' to be defined in the data.frame.
+</p>
+<p>
+On the other hand, fun.data gives you more flexibility in what data
+variables are created, which means that you can use it with more
+geoms. The downside to this is that you have to be
+careful to specify what variables get created. So, the following code
+won't work:
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = <span style="color: #8b2252;">"median"</span>, geom = <span style="color: #8b2252;">"point"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file45.png"  alt="r/file45.png" />
+</p>
+<p>
+To see why this is, recall that in R vectors can have a 'names'
+attribute accessible by the 'names' function. The code below
+demonstrates that the result of the default 'median' function is an
+unnamed vector. 
+</p>
+
+
+
+<pre class="src src-R">test <span style="color: #008b8b;">&lt;-</span> median( seq(0,100) )
+print( names(test) )
+</pre>
+
+
+
+
+
+<pre class="example">
+
+NULL
+</pre>
+
+
+<p>
+However, we can easily set the name to 'y'.
+</p>
+
+
+
+<pre class="src src-R">names(test) <span style="color: #008b8b;">&lt;-</span> <span style="color: #8b2252;">"y"</span>
+print( names(test) )
+</pre>
+
+
+
+
+
+<pre class="example">
+
+[1] "y"
+</pre>
+
+
+<p>
+In fact, we can define a function that does so automatically, and this
+function can then be passed to fun.data to give the behavior that we
+wanted.
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #0000ff;">named.median</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span>(x){
+    out <span style="color: #008b8b;">&lt;-</span> median(x)
+    names(out) <span style="color: #008b8b;">&lt;-</span> <span style="color: #8b2252;">"y"</span>
+    out
+}
+
+print(names(named.median(1:100)))
+</pre>
+
+
+
+
+
+<pre class="example">
+
+[1] "y"
+</pre>
+
+
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = <span style="color: #8b2252;">"named.median"</span>, geom = <span style="color: #8b2252;">"point"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file48.png"  alt="r/file48.png" />
+</p>
+<p>
+In this case, it would be easier to just call
+fun.y. However, some geoms require aesthetic variable mappings besides
+just 'y.' 'geom<sub>errorbar'</sub>, 'geom<sub>pointrange'</sub>, 'geom<sub>ribbon'</sub>, and 'geom<sub>crossbar'</sub> all
+require mappings called 'ymax' and 'ymin' in addition to 'y'. In order
+to use these geoms with our data, we need to define a function outputs
+a named vector with all three of these names:
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #0000ff;">interquartile</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span>(x){
+    out <span style="color: #008b8b;">&lt;-</span> quantile(x, probs = c(0.25, 0.5, 0.75))
+    names(out) <span style="color: #008b8b;">&lt;-</span> c(<span style="color: #8b2252;">"ymin"</span>, <span style="color: #8b2252;">"y"</span>, <span style="color: #8b2252;">"ymax"</span>)
+    out
+}
+
+print( interquartile(1:100) )
+</pre>
+
+
+
+
+
+<pre class="example">
+
+ ymin     y  ymax 
+25.75 50.50 75.25
+</pre>
+
+
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = <span style="color: #8b2252;">"interquartile"</span>, geom = <span style="color: #8b2252;">"errorbar"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file49.png"  alt="r/file49.png" />
+</p>
+<p>
+You can then combine this plot with a line for a 'trend with
+errorbars' kind of graph (note the addition of the 'group' aesthetic):
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = <span style="color: #8b2252;">"interquartile"</span>, geom = <span style="color: #8b2252;">"errorbar"</span>)+
+    stat_summary(fun.y = <span style="color: #8b2252;">'median'</span>, geom=<span style="color: #8b2252;">'line'</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file50.png"  alt="r/file50.png" />
+</p>
+<p>
+You can also adjust any of the attributes of the geom that is
+called through stat<sub>summart</sub>. For example, we can increase the line width and decrease the
+errorbar width. (You can find out what you can do with each geom by
+reading the documentation).
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = <span style="color: #8b2252;">"interquartile"</span>, geom = <span style="color: #8b2252;">"errorbar"</span>, width=0.5)+
+    stat_summary(fun.y = <span style="color: #8b2252;">'median'</span>, geom=<span style="color: #8b2252;">'line'</span>, lwd=1.5)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file51.png"  alt="r/file51.png" />
+</p>
+<p>
+Another cool geom is a ribbon:
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = <span style="color: #8b2252;">"interquartile"</span>, geom = <span style="color: #8b2252;">"ribbon"</span>, alpha = 0.1)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file52.png"  alt="r/file52.png" />
+</p>
+<p>
+Of course, you can use other functions for fun.data. Two of the most
+common ones are a 95% confidence interval of the mean based on either
+a normal distribution or a bootstrap. These are packaged with ggplot2
+and are called 'mean<sub>cl</sub><sub>normal'</sub> and 'mean<sub>cl</sub><sub>boot'</sub> respectively. Note
+that these are just run of the mill functions that you can call
+yourself, they just happen to output named vectors:
+</p>
+
+
+
+<pre class="src src-R">print( mean_cl_boot( seq(0,100,1)) )
+</pre>
+
+
+
+
+
+<pre class="example">
+   y     ymin     ymax
+1 50 44.09827 55.38812
+</pre>
+
+
+
+
+
+<pre class="src src-R">print( mean_cl_normal( seq(0,100,1)) )
+</pre>
+
+
+
+
+
+<pre class="example">
+   y     ymin     ymax
+1 50 44.21578 55.78422
+</pre>
+
+
+<p>
+In this case, I used the 'pointrange' geom:
+</p>
+
+
+
+<pre class="src src-R">ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = <span style="color: #8b2252;">"mean_cl_boot"</span>, geom = <span style="color: #8b2252;">"pointrange"</span>)+
+    stat_summary(fun.y = <span style="color: #8b2252;">"mean"</span>, geom=<span style="color: #8b2252;">"line"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file54.png"  alt="r/file54.png" />
+</p>
+<p>
+You can also define a function to make a boxplot. It requires three
+additional aesthetic mappings: 'lower', 'middle', and 'upper'.
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #0000ff;">my.boxplot</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span>(x){
+    out <span style="color: #008b8b;">&lt;-</span> c(mean(x), quantile(x, probs = c(0.05, 0.95, 0.25, 0.5, 0.75)))
+    names(out) <span style="color: #008b8b;">&lt;-</span> c(<span style="color: #8b2252;">"y"</span>, <span style="color: #8b2252;">"ymin"</span>, <span style="color: #8b2252;">"ymax"</span>, <span style="color: #8b2252;">"lower"</span>, <span style="color: #8b2252;">"middle"</span>, <span style="color: #8b2252;">"upper"</span>)
+    out
+}
+
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = <span style="color: #8b2252;">"my.boxplot"</span>, geom = <span style="color: #8b2252;">"boxplot"</span>, fill = <span style="color: #228b22;">NA</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file55.png"  alt="r/file55.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7_3" class="outline-3">
+<h3 id="sec-7_3"><span class="section-number-3">7.3</span> smoothed data </h3>
+<div class="outline-text-3" id="text-7_3">
+
+
+<p>
+ggplot also gives you a nice way of plotting linear models with your
+data. The function is called stat<sub>smooth</sub>. The default behavior is to
+plot a loess regression:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    stat_smooth()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file56.png"  alt="r/file56.png" />
+</p>
+<p>
+However, you can actually specify any linear model you want. The
+linear model type is specifed by the method argument. For example,
+here's a normal linear model:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    stat_smooth( method = <span style="color: #8b2252;">"lm"</span>, formula = y~x)+
+    geom_point()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file57.png"  alt="r/file57.png" />
+</p>
+<p>
+You can also do logistic regression or anything else calling for a
+generalized linear model. See the stat<sub>smooth</sub> documentation for an example.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> facets </h2>
+<div class="outline-text-2" id="text-8">
+
+
+<p>
+One of the coolest things about ggplots is the ability to split the
+data into facets before making a plot. This is a really good way to
+convey data because you only have to remember one set of axes but you
+get to see lots of subsets of the data. For example, to reduce
+overplotting in one of the plots we made above, we could split our data by the type of media:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_wrap(~media)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file58.png"  alt="r/file58.png" />
+</p>
+<p>
+This plot very naturally compares between the different strains. We
+can easily reverse it, though and compare between medias:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=media,
+                        group=plate_pos))+
+    geom_line()+
+    facet_wrap(~strain)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file59.png"  alt="r/file59.png" />
+</p>
+<p>
+There's two kinds of faceting that you can do: "facet<sub>wrap</sub>" and
+"facet<sub>grid</sub>". Facet wrap makes a ribbon of tiles in order to split
+your data. This is most appropriate when the facets don't need to be
+plotted in any particular order. On the other hand, facet<sub>grid</sub> can be
+used if the order does matter. For example we can make a grid of
+ammonium and dextrose concentrations:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, as.table=<span style="color: #228b22;">TRUE</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file60.png"  alt="r/file60.png" />
+</p>
+<p>
+Notice that the facets are a bit out of order. I wanted the 'high
+ammonium, high dextrose' condition in the upper left corner. The order
+that facets go in (and in general, the order that discrete scales are
+plotted in) is determined by the order of their levels. To get
+the behavior we want, we just have to specify the order that we want
+the levels to go in:
+</p>
+
+
+
+<pre class="src src-R">growth.270 <span style="color: #008b8b;">&lt;-</span> subset(growth,(initial_dilution == 270))
+growth.270$ammonium <span style="color: #008b8b;">&lt;-</span> factor(growth.270$ammonium, levels = c(<span style="color: #8b2252;">"L ammonium"</span>, <span style="color: #8b2252;">"H ammonium"</span>))
+growth.270$dextrose <span style="color: #008b8b;">&lt;-</span> factor(growth.270$dextrose, levels = c(<span style="color: #8b2252;">"H dextrose"</span>, <span style="color: #8b2252;">"L dextrose"</span>))
+
+
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file61.png"  alt="r/file61.png" />
+</p>
+<p>
+Another neat option is to get an additional column corresponding to
+the margins of the faceted variables:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file62.png"  alt="r/file62.png" />
+</p>
+<p>
+In this case, adding the margins makes clear that changing the
+dextrose concentrations in the presence of low or high ammonium doesn't change
+much in terms of growth rate but that changing the ammonium
+concentrations in the presence of low or high dextrose leads to higher
+growth rate as well as a higher saturation density.
+</p>
+<p>
+You can also add additional variables onto the facetting variables in
+order to display additional facets of the data. For example, here is
+the original plate map for the growth data:
+</p>
+
+
+
+
+<pre class="src src-R">ggplot( growth, aes(x=time,y=OD,label=strain, group=plate_pos))+geom_line()+
+    facet_grid(initial_dilution+row~col+ammonium+dextrose+strain)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/platemap.png"  alt="r/platemap.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> themes </h2>
+<div class="outline-text-2" id="text-9">
+
+
+<p>
+ggplot gives you almost unlimited control over the nitty gritty
+details of the non-data elements of you plot by changing options in the
+'theme' function. The full list of options you can specify is found here:
+</p>
+<p>
+<a href="http://docs.ggplot2.org/current/theme.html">http://docs.ggplot2.org/current/theme.html</a>
+</p>
+<p>
+Each option controls the appearance of an aspect of the plot. As you see in the documentation, each argument takes a different
+class. These range from strings to functions. For example, if the part
+of the plot that you want to control is text (an axis label or a
+title, for example), the type of argument that you need to call is the
+function 'element<sub>text'</sub>. This function in turn has arguments for all
+parts of the appearance of the text (the size, orientation, etc.)
+There's way more here than I want to go into so I'll just go over a couple of my favorites.
+</p>
+
+</div>
+
+<div id="outline-container-9_1" class="outline-3">
+<h3 id="sec-9_1"><span class="section-number-3">9.1</span> Default themes </h3>
+<div class="outline-text-3" id="text-9_1">
+
+
+<p>
+There's a philosophy behind the default ggplot theme (the grey
+background is to not make too much whitespace which draws your eyes,
+and the guidelines help you determine exactly where individual
+datapoints are). 
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    theme_grey()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file63.png"  alt="r/file63.png" />
+</p>
+<p>
+However, I feel like it's rather ugly. For single
+facets, I like 'theme<sub>classic</sub>,' which makes the plot look like more
+traditional. It's also more compatible with greyscale color mappings:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    theme_classic()+
+    scale_color_grey()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file63-2.png"  alt="r/file63-2.png" />
+</p>
+<p>
+However, it doesn't look as nice with facets, since it doesn't give
+you the bounding box for the plots:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)+
+    theme_classic()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file64.png"  alt="r/file64.png" />
+</p>
+<p>
+In this case, I prefer 'theme<sub>bw'</sub>
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)+
+    theme_bw()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file65.png"  alt="r/file65.png" />
+</p>
+<p>
+These theme functions are a good place to understand how themes work
+in ggplot. If you just type in the function name with no parentheses
+you can see the code that defines them:
+</p>
+
+
+
+<pre class="src src-R">theme_grey
+</pre>
+
+
+
+
+
+
+<pre class="example">function (base_size = 12, base_family = "") 
+{
+    theme(line = element_line(colour = "black", size = 0.5, linetype = 1, 
+        lineend = "butt"), rect = element_rect(fill = "white", 
+        colour = "black", size = 0.5, linetype = 1), text = element_text(family = base_family, 
+        face = "plain", colour = "black", size = base_size, hjust = 0.5, 
+        vjust = 0.5, angle = 0, lineheight = 0.9), axis.text = element_text(size = rel(0.8), 
+        colour = "grey50"), strip.text = element_text(size = rel(0.8)), 
+        axis.line = element_blank(), axis.text.x = element_text(vjust = 1), 
+        axis.text.y = element_text(hjust = 1), axis.ticks = element_line(colour = "grey50"), 
+        axis.title.x = element_text(), axis.title.y = element_text(angle = 90), 
+        axis.ticks.length = unit(0.15, "cm"), axis.ticks.margin = unit(0.1, 
+            "cm"), legend.background = element_rect(colour = NA), 
+        legend.margin = unit(0.2, "cm"), legend.key = element_rect(fill = "grey95", 
+            colour = "white"), legend.key.size = unit(1.2, "lines"), 
+        legend.key.height = NULL, legend.key.width = NULL, legend.text = element_text(size = rel(0.8)), 
+        legend.text.align = NULL, legend.title = element_text(size = rel(0.8), 
+            face = "bold", hjust = 0), legend.title.align = NULL, 
+        legend.position = "right", legend.direction = NULL, legend.justification = "center", 
+        legend.box = NULL, panel.background = element_rect(fill = "grey90", 
+            colour = NA), panel.border = element_blank(), panel.grid.major = element_line(colour = "white"), 
+        panel.grid.minor = element_line(colour = "grey95", size = 0.25), 
+        panel.margin = unit(0.25, "lines"), strip.background = element_rect(fill = "grey80", 
+            colour = NA), strip.text.x = element_text(), strip.text.y = element_text(angle = -90), 
+        plot.background = element_rect(colour = "white"), plot.title = element_text(size = rel(1.2)), 
+        plot.margin = unit(c(1, 1, 0.5, 0.5), "lines"), complete = TRUE)
+}
+&lt;environment: namespace:ggplot2&gt;
+</pre>
+
+
+
+<p>
+The function wraps a call to the function 'theme' which has a large
+number of arguments that specifies how the plot looks. You can
+subsequently call the same function 'theme' to change of those
+arguments. So, if we wanted the plot background to be a different
+color, we could adjust it:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)+
+    theme_classic()+
+    theme(plot.background = element_rect(fill = <span style="color: #8b2252;">"black"</span>))
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file65.png"  alt="r/file65.png" />
+</p>
+<p>
+Another nice thing is that you can easily define functions for later
+use. We can get a clue how to do this by looking at the code for
+theme<sub>bw</sub>:
+</p>
+
+
+
+<pre class="src src-R">theme_bw
+</pre>
+
+
+
+
+
+
+<pre class="example">function (base_size = 12, base_family = "") 
+{
+    theme_grey(base_size = base_size, base_family = base_family) %+replace% 
+        theme(axis.text = element_text(size = rel(0.8)), axis.ticks = element_line(colour = "black"), 
+            legend.key = element_rect(colour = "grey80"), panel.background = element_rect(fill = "white", 
+                colour = NA), panel.border = element_rect(fill = NA, 
+                colour = "grey50"), panel.grid.major = element_line(colour = "grey90", 
+                size = 0.2), panel.grid.minor = element_line(colour = "grey98", 
+                size = 0.5), strip.background = element_rect(fill = "grey80", 
+                colour = "grey50"), strip.background = element_rect(fill = "grey80", 
+                colour = "grey50"))
+}
+&lt;environment: namespace:ggplot2&gt;
+</pre>
+
+
+
+<p>
+The function theme is invoked again, but this time with the funny
+operator "%+replace+%". "%+replace+%" operates like a "+" sign or a
+"-" sign in order to perform an operation. In this case, what it does
+is replace the aspects in the theme<sub>grey</sub> that are specified in the
+second call to theme. The advantage to doing this rather than just
+calling theme directly is that it lets you keep control of the font
+and the font size which are specified through the arguments
+"base<sub>size</sub>" and "base<sub>family</sub>"
+</p>
+<p>
+With this in mind, I made a function to generate plots that have that
+dramatic black background that you see sometimes in presentations:
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #0000ff;">theme_dramatic_black</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span>(base_size = 12, base_family = <span style="color: #8b2252;">""</span>){
+    theme_grey(base_size = base_size, base_family = base_family) %+replace%
+        theme(
+            panel.background = element_rect(fill = <span style="color: #228b22;">NA</span>, color=<span style="color: #8b2252;">"white"</span>),
+            plot.background = element_rect(fill = <span style="color: #8b2252;">"black"</span>),
+            axis.title.y=element_text(color=<span style="color: #8b2252;">"white"</span>),
+            axis.title.x=element_text(color=<span style="color: #8b2252;">"white"</span>),
+            axis.text.x=element_text(color=<span style="color: #8b2252;">"white"</span>),
+            axis.text.y=element_text(color=<span style="color: #8b2252;">"white"</span>),
+            legend.key=element_rect(color=<span style="color: #228b22;">NA</span>, fill = <span style="color: #228b22;">NA</span>),
+            legend.text=element_text(color=<span style="color: #8b2252;">"white"</span>),
+            legend.background=element_rect(color=<span style="color: #8b2252;">"black"</span>, fill=<span style="color: #8b2252;">"black"</span>),
+            strip.background=element_rect(color=<span style="color: #8b2252;">"white"</span>, fill = <span style="color: #228b22;">NA</span>),
+            strip.text = element_text(color=<span style="color: #8b2252;">"white"</span>),
+            panel.grid.minor = element_line(color=<span style="color: #228b22;">NA</span>),
+            panel.grid.major = element_line(size = 0.1, color = <span style="color: #8b2252;">"white"</span>)
+            )
+}
+
+ggplot( growth.270, aes(x=time,
+                          y=OD,
+                          col=strain,
+                          group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)+
+    theme_dramatic_black()
+</pre>
+
+
+
+
+
+<p>
+<img src="r/dramatic_black.png"  alt="r/dramatic_black.png" />
+</p>
+<p>
+Since we wrapped the the function correctly, we can now easily adjust
+the text size, and the font:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                          y=OD,
+                          col=strain,
+                          group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)+
+    scale_x_continuous(label = comma)+
+    theme_dramatic_black(base_size = 16, base_family = <span style="color: #8b2252;">"Garamond"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/dramatic_black2.png"  alt="r/dramatic_black2.png" />
+</p>
+<p>
+This function could then be easily called to apply the same settings
+to every plot in our presentation.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9_2" class="outline-3">
+<h3 id="sec-9_2"><span class="section-number-3">9.2</span> Axis labels and title </h3>
+<div class="outline-text-3" id="text-9_2">
+
+
+<p>
+A very common task is to change the labels on the plot. You can either
+do that using the 'scale' functions as above, or with some dedicated
+functions:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)+
+    theme_bw()+
+    ggtitle(<span style="color: #8b2252;">"My title"</span>)+
+    ylab(<span style="color: #8b2252;">"Y axis title"</span>)+
+    xlab(<span style="color: #8b2252;">"X axis title"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file66.png"  alt="r/file66.png" />
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_3" class="outline-3">
+<h3 id="sec-9_3"><span class="section-number-3">9.3</span> Text orientation </h3>
+<div class="outline-text-3" id="text-9_3">
+
+
+
+
+<p>
+I often find that my x axis labels run into each other (especially
+with facets). You can easily change this by setting the rotation and
+the x axis justification:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)+
+    theme_bw()+
+    ggtitle(<span style="color: #8b2252;">"Gowth curves"</span>)+
+    xlab(<span style="color: #8b2252;">"Time (seconds)"</span>)+
+    theme(axis.text.x = element_text(angle=90, hjust = 1, vjust = 0.5))
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file67.png"  alt="r/file67.png" />
+</p>
+<p>
+The options available for the axis text are options passed to the
+function 'element<sub>text</sub>.' Play around with the angle and justifications
+to see how they work.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9_4" class="outline-3">
+<h3 id="sec-9_4"><span class="section-number-3">9.4</span> Legends </h3>
+<div class="outline-text-3" id="text-9_4">
+
+
+<p>
+The only legend option I find myself using is to put it on the bottom
+of the plot:
+</p>
+
+
+
+<pre class="src src-R">ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = <span style="color: #228b22;">TRUE</span>)+
+    theme_dramatic_black()+
+    ggtitle(<span style="color: #8b2252;">"Gowth curves"</span>)+
+    xlab(<span style="color: #8b2252;">"Time (seconds)"</span>)+
+    theme(legend.position = <span style="color: #8b2252;">"bottom"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file68.png"  alt="r/file68.png" />
+</p>
+<p>
+But note the changes made to the legend text and box above.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> multiple plots per page </h2>
+<div class="outline-text-2" id="text-10">
+
+
+<p>
+If you are using base graphics, you can set the number of plots per
+page using the 'mfrow' option to the function 'par':
+</p>
+
+
+
+<pre class="src src-R">par(mfrow = c(2,2))
+plot( x = iris$Sepal.Length, y = iris$Petal.Length, col = COLORS[ as.numeric( iris$Species ) ])
+plot( x = iris$Sepal.Width, y = iris$Petal.Length, col = COLORS[ as.numeric( iris$Species ) ])
+plot( x = iris$Sepal.Length, y = iris$Petal.Width, col = COLORS[ as.numeric( iris$Species ) ])
+plot( x = iris$Sepal.Width, y = iris$Petal.Width, col = COLORS[ as.numeric( iris$Species ) ])
+</pre>
+
+
+
+
+
+<p>
+<img src="r/mfrow.png"  alt="r/mfrow.png" />
+</p>
+<p>
+However, if you try this with ggplot, you'll end up with one plot per
+page. This is because ggplot makes use of a different plotting system
+than base graphics called 'grid.' There's a couple ways to get
+multiple plots in a page. You read the 'grid' documentation and figure
+out how to use the 'viewports' functions. Or, there's a convenience
+function called 'grid.arrange' in the 'gridExtra' package that makes
+this task much simpler.
+</p>
+<p>
+One nice thing about ggplots is that it lets you save your plots as
+variables without evaluation for plotting later. This makes code much
+more readable in some situations. To begin with, we'll define the four
+plots we made above with ggplot:
+</p>
+
+
+
+<pre class="src src-R">p1 <span style="color: #008b8b;">&lt;-</span> ggplot(iris, aes(x=Sepal.Length, y = Petal.Length, col=Species))+geom_point()
+p2 <span style="color: #008b8b;">&lt;-</span> ggplot(iris, aes(x=Sepal.Width, y = Petal.Length, col=Species))+geom_point()
+p3 <span style="color: #008b8b;">&lt;-</span> ggplot(iris, aes(x=Sepal.Width, y = Petal.Width, col=Species))+geom_point()
+p4 <span style="color: #008b8b;">&lt;-</span> ggplot(iris, aes(x=Sepal.Length, y = Petal.Width, col=Species))+geom_point()
+</pre>
+
+
+
+
+
+
+<p>
+Each of these plots is now stored in their respective variables. You
+can plot them using the 'print' function:
+</p>
+
+
+
+<pre class="src src-R">print(p1)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file69.png"  alt="r/file69.png" />
+</p>
+<p>
+Now that we have four plots stored, we can print them in rows using
+the 'grid.arrange' function:
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #008b8b;">library</span>(grid); <span style="color: #008b8b;">library</span>(gridExtra)
+
+grid.arrange(p1, p2, p3, p4,
+             nrow=2)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file70.png"  alt="r/file70.png" />
+</p>
+<p>
+This is pretty nice, but it would be good to just plot the legend
+once. To do this, we'll first suppress the legends for the four plots
+we made using theme:
+</p>
+
+
+
+<pre class="src src-R">p1 <span style="color: #008b8b;">&lt;-</span> p1+theme(legend.position = <span style="color: #8b2252;">"none"</span>)
+p2 <span style="color: #008b8b;">&lt;-</span> p2+theme(legend.position = <span style="color: #8b2252;">"none"</span>)
+p3 <span style="color: #008b8b;">&lt;-</span> p3+theme(legend.position = <span style="color: #8b2252;">"none"</span>)
+p4 <span style="color: #008b8b;">&lt;-</span> p4+theme(legend.position = <span style="color: #8b2252;">"none"</span>)
+</pre>
+
+
+
+
+
+<p>
+Next, we'll use a function to pull out only the legend from the
+function call that made the orignal p1.
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #0000ff;">g_legend</span><span style="color: #008b8b;">&lt;-</span><span style="color: #a020f0;">function</span>(a.gplot){
+    tmp <span style="color: #008b8b;">&lt;-</span> ggplot_gtable(ggplot_build(a.gplot))
+    leg <span style="color: #008b8b;">&lt;-</span> which(sapply(tmp$grobs, <span style="color: #a020f0;">function</span>(x) x$name) == <span style="color: #8b2252;">"guide-box"</span>)
+    legend <span style="color: #008b8b;">&lt;-</span> tmp$grobs[[leg]]
+    <span style="color: #a020f0;">return</span>(legend)
+}
+p1.original = ggplot(iris, aes(x=Sepal.Length, y = Petal.Length, col=Species))+geom_point()
+plotLegend = g_legend(p1.original)
+</pre>
+
+
+
+
+
+<p>
+The next code is a little confusing, but what it does is simple. In
+order to compute how wide the legend column in the plot should be, we
+sum the attribute 'width' of the object plot legend. Next we combine
+the four plots we defined above using the function 'arrangeGrob.' The
+function works just like grid.arrange, except you get to save the
+object. This results in a combined plot of the four plots in a grid
+saved as 'combinedPlots.'
+</p>
+<p>
+Finally, we call grid.arrange with the two plots we want: the grid of
+four plots and the legend. The only tricky part is that we need to
+tell grid how wide to make everything. The function unit.c combines
+unit objects analogously to the way that the function 'c' combines
+numbers. The first argument to unit.c is "unit(1, "npc") - lwidth". "npc" stands
+for normalized parental coordinates, which just means the size of the
+plot. Since the plot is size 1 in npc, subtracting the plot width
+gives us how much room we need for our combined plots. Likewise the
+second argument is how wide we want the legend to be, which is just
+'lwidth'.
+</p>
+
+
+
+<pre class="src src-R">lwidth = sum(plotLegend$width)
+combinedPlots <span style="color: #008b8b;">&lt;-</span> arrangeGrob(p1, p2, p3, p4, nrow=2)
+
+grid.arrange(combinedPlots,
+             plotLegend, 
+             widths=unit.c(unit(1, <span style="color: #8b2252;">"npc"</span>) - lwidth, lwidth), nrow=1
+             )
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file70.png"  alt="r/file70.png" />
+</p>
+<p>
+So that's all very complicated, why go over it? Basically so that I can
+show you how to make my favorite ggplot: a scatterplot with marginal
+density plots. First, we'll define three plots and a legend. Note that
+the yDen plot has had it's coordinates flipped (the x becomes y and
+vice versa) using the function coord<sub>flip</sub>. This is because it's going
+to show the marginal distribution of y values and we want the density
+to be oriented 'up-down' and not 'left-right.' Also notice that I
+tacked on geom<sub>density2d</sub> to the xy plot. You'll see what that does below.
+</p>
+
+
+
+<pre class="src src-R">xy <span style="color: #008b8b;">&lt;-</span> ggplot(iris, aes(x=Petal.Width, y=Sepal.Length, col = Species))+
+    geom_point()+
+    geom_density2d()+
+    theme_classic()
+xDen <span style="color: #008b8b;">&lt;-</span> ggplot(iris, aes(x=Petal.Width, fill = Species, col=Species))+
+    geom_density(alpha=0.1)+
+    theme_classic()+
+    xlab(<span style="color: #8b2252;">""</span>)
+yDen <span style="color: #008b8b;">&lt;-</span> ggplot(iris, aes(x=Sepal.Length, fill = Species, col=Species))+
+    geom_density(alpha=0.1)+
+    coord_flip()+
+    theme_classic()+
+    xlab(<span style="color: #8b2252;">""</span>)
+leg <span style="color: #008b8b;">&lt;-</span> g_legend( xDen )
+</pre>
+
+
+
+
+
+
+<p>
+Next, we'll use grid.arrange to put everything in the order we want.
+</p>
+
+
+
+<pre class="src src-R">grid.arrange(xDen+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+             leg,
+             xy+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+             yDen+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+             nrow = 2, ncol = 2,
+             widths = unit(c(2,1), c(<span style="color: #8b2252;">"null"</span>, <span style="color: #8b2252;">"null"</span>)),
+             heights = unit(c(1,2), c(<span style="color: #8b2252;">"null"</span>, <span style="color: #8b2252;">"null"</span>))
+             )
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file71.png"  alt="r/file71.png" />
+</p>
+<p>
+The result is pretty cool! You can see how the data correlate with
+each other as well as how well each variable differentiates between
+the different groups.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-11" class="outline-2">
+<h2 id="sec-11"><span class="section-number-2">11</span> How to define your own ggfunction? </h2>
+<div class="outline-text-2" id="text-11">
+
+
+<p>
+But what if you wanted to make a whole series of these plots for each
+of the combinations of the variables? In this case, you would want to
+write a function. You might think that you could just replace the
+variable 'iris' with 'plotData' and go from there. However, this
+approach yields an error:
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #0000ff;">scatterWithMargins</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span>(plotData, x, y, color){
+    xy <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes(x=x, y=y, col = color))+
+        geom_point()+
+        geom_density2d()+
+        theme_classic()
+    xDen <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes(x=x, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        theme_classic()+
+        xlab(<span style="color: #8b2252;">""</span>)
+    yDen <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes(x=y, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        coord_flip()+
+        theme_classic()+
+        xlab(<span style="color: #8b2252;">""</span>)
+    leg <span style="color: #008b8b;">&lt;-</span> g_legend( xDen )
+    grid.arrange(xDen+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 leg,
+                 xy+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 yDen+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 nrow = 2, ncol = 2,
+                 widths = unit(c(2,1), c(<span style="color: #8b2252;">"null"</span>, <span style="color: #8b2252;">"null"</span>)),
+                 heights = unit(c(1,2), c(<span style="color: #8b2252;">"null"</span>, <span style="color: #8b2252;">"null"</span>))
+                 )
+}
+
+scatterWithMargins(iris, Sepal.Length, Sepal.Width, Species) 
+</pre>
+
+
+
+
+
+<pre class="example">
+
+Error in eval(expr, envir, enclos) (from #2) : object 'x' not found
+</pre>
+
+
+<p>
+This is because when the function ggplot sets itself up, it always
+looks in the global environment for variables. That means that even
+though you told it to look in the data frame 'plotData', it's actually
+trying to find the variable 'x' in the global environment. Again, it
+doesn't matter if you understand R well enough for that to mean much
+to you, the upshot is that when you use ggplot in a function, you need
+to specify a different kind of 'aes' in the ggplot function call:
+'aes<sub>string'</sub>. aes<sub>string</sub> sets up aesthetic mappings with strings that
+name the columns of the data that you want the aesthetic set to. This
+means that the variable names must always be quoted. When you make
+these changes, your function will work hunky dory.
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #0000ff;">scatterWithMargins</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span>(plotData, x, y, color){
+    xy <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes_string(x=x, y=y, col = color))+
+        geom_point()+
+        geom_density2d()+
+        theme_classic()
+    xDen <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes_string(x=x, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        theme_classic()+
+        xlab(<span style="color: #8b2252;">""</span>)
+    yDen <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes_string(x=y, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        coord_flip()+
+        theme_classic()+
+        xlab(<span style="color: #8b2252;">""</span>)
+    leg <span style="color: #008b8b;">&lt;-</span> g_legend( xDen )
+    grid.arrange(xDen+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 leg,
+                 xy+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 yDen+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 nrow = 2, ncol = 2,
+                 widths = unit(c(2,1), c(<span style="color: #8b2252;">"null"</span>, <span style="color: #8b2252;">"null"</span>)),
+                 heights = unit(c(1,2), c(<span style="color: #8b2252;">"null"</span>, <span style="color: #8b2252;">"null"</span>))
+                 )
+}
+
+scatterWithMargins(iris, <span style="color: #8b2252;">"Sepal.Length"</span>, <span style="color: #8b2252;">"Sepal.Width"</span>, <span style="color: #8b2252;">"Species"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="r/file72.png"  alt="r/file72.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-12" class="outline-2">
+<h2 id="sec-12"><span class="section-number-2">12</span> Homework </h2>
+<div class="outline-text-2" id="text-12">
+
+<p>Used stat<sub>summary</sub> to make a tiled plot of the platemap which shows
+the maximum growth rate (cellGrowth).
+</p></div>
+</div>
+<div id="postamble">
+<p class="author"> Author: Colin Maxwell
+</p>
+<p class="date"> Date: 2013-08-19 15:54:40 EDT</p>
+<p class="creator">HTML generated by org-mode 7.3 in emacs 23</p>
+</div>
+</div>
+</body>
+</html>
