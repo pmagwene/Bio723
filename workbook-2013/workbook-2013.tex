@@ -1,0 +1,110 @@
+\documentclass[10pt,oneside,bigheadings,tablecaptionabove]{scrbook}
+\usepackage{scrpage2}
+
+\input{layoutpreamble.tex}
+\input{fontpreamble.tex}
+\input{packages.tex}
+\input{codepreamble.tex}
+\input{macros.tex}
+\input{titlepage.tex}
+
+
+
+\usepackage[colorlinks=true,
+            citecolor=blue,
+            linkcolor=black,
+            breaklinks=true,
+            linktocpage]{hyperref}
+
+
+\usepackage[capitalize]{cleveref} % should always be loaded after hyperref
+
+
+%% Document
+\begin{document}
+\savegeometry{oldgeom}
+
+
+\clearscrheadfoot
+\pagestyle{scrheadings}
+\newgeometry{twocolumn=false,a5paper,%landscape,
+            top=0.5in,
+            headheight=0.15in,
+            headsep=0.25in,
+            bottom=0.25in,
+            left=0.2in,
+            right=0.2in,
+            footskip=0in}
+
+\titleLL
+\clearpage
+%\restoregeometry
+\loadgeometry{oldgeom}
+
+
+\tableofcontents
+\clearpage
+
+
+\clearscrheadfoot
+\setheadcolor{DarkRed!3}
+\ihead{\tikzhead\headmark}
+\ohead{\pagemark}
+\setkomafont{pagehead}{\normalfont\sffamily}
+\setkomafont{pagenumber}{\normalfont\sffamily}
+\pagestyle{scrheadings}
+\renewcommand*{\chapterpagestyle}{scrheadings}
+
+
+\chapter{Getting your feet wet with R}
+\input{./hands-on1/hands-on1.tex}
+
+% \chapter{Vector Operations and Exploring Bivariate Relationships in R}
+% \input{./hands-on2/hands-on2.tex}
+
+% \chapter{Matrices and matrix operations in R}
+% \input{./hands-on3/hands-on3.tex}
+
+% \chapter{Multiple Regression in R}
+% \input{./hands-on4/literate-programming.tex}
+% \input{./hands-on4/hands-on4.tex}
+
+% \chapter{Eigenanalysis and PCA in R}
+% \input{./hands-on5/hands-on5.tex}
+
+% \chapter{Singular value decomposition}
+% \input{./hands-on6/hands-on6.tex}
+
+% \chapter{ANOVA and Discriminant Analysis}
+% \input{./hands-on7/hands-on7.tex}
+
+% \chapter{Introduction to Python}
+% \input{./hands-on8/hands-on8.tex}
+
+% \chapter{Clustering Methods}
+% \input{./hands-on9/hands-on9.tex}
+
+% \chapter{Mixture Modeling and Multidimensional Scaling}
+% \input{./hands-on10/hands-on10.tex}
+
+% \chapter{Randomization, Boostrap, and LOESS}
+% \input{./hands-on11/hands-on11.tex}
+
+% \chapter{Simulating Gene Networks}
+% \input{./hands-on12/hands-on12.tex}
+
+% \chapter{Building a Bioinformatics Pipeline}
+% \input{./hands-on13/hands-on13.tex}
+
+\appendix
+\chapter{The Unix Command Line}
+\input{./supplements/unix-commandline.tex}
+
+
+%
+%
+% \bibliography{../researchjournal-refs.bib}
+% \bibliographystyle{cbe}
+
+\end{document}
+
