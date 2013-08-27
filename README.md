@@ -17,7 +17,7 @@ The [Bio 723 Wiki](https://github.com/pmagwene/Bio723/wiki) is hosted on GitHub.
 
 # Syllabus
 
-A PDF version of the course syllabus is available [here](https://github.com/pmagwene/Bio723/raw/master/syllabus/2011-sci-comp-syllabus.pdf). As with all syllabi, it's a coarse guide, not a set of marching instructions. It too will evolve over the semester.
+A PDF version of the course syllabus is available [here](https://github.com/pmagwene/Bio723/raw/master/syllabus/2013-sci-comp-syllabus.pdf). As with all syllabi, it's a coarse guide, not a set of marching instructions. It too will evolve over the semester.
 
 # Getting started
 

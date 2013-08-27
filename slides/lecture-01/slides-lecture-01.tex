@@ -39,12 +39,11 @@ Phone: 613-8159
 		\end{itemize}
 		\item Introduction to R
 		\begin{itemize}
-			\item Advantages of R and Python
-			\item R and Python Resources
+			\item R resources
 			\item Important programming concepts
-			\item Introduction to data types and data structures in R and Python
-			\item Literate programming
+			\item Introduction to data types and data structures in R 
 		\end{itemize}
+        \item Literate programming
 		\item Hands-On Session
 \end{itemize}
 
@@ -116,7 +115,7 @@ November 26 & Building Bioinformatics Pipelines II; Putting the concepts to work
 
 \item Introduce multivariate statistics from a geometric perspective, emphasizing the geometry of vector spaces.
 
-\item Develop a good working knowledge of R (a statistical computing environment), Python (a general purpose programming language), and Unix-like command lines (de facto standard environment for most bioinformatics pipelines).
+\item Develop a good working knowledge of R (a statistical computing environment), Python (a general purpose programming language), and Unix-like command line (de facto standard for building bioinformatics pipelines).
 
 \item Provide the tools and knowledge to conduct reproducible computational and statistical research.
 
@@ -708,6 +707,120 @@ $years.in.school
 
 \end{frame}
 %===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Literate Programming}
+
+``Literate programming'' is a concept coined by Donald Knuth, a preeminent computer scientist:
+
+\begin{itemize}
+
+ \item Programs are useless with descriptions
+ \item Descriptions should be literate, not comments in code or typical reference manuals. 
+ \item The code in the descriptions should work.
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Literate Programming and Reproducible Research}
+
+How literate programming can help to ensure your research is reproducible:
+
+\begin{itemize}
+
+ \item The steps of your analyses are explicitly described, both as written text and the code and function calls used.
+ \item Analyses can easily checked for correctness and reproduced from your literate code.
+ \item Your literate code can serve as a template for future analyses, saving you time and the trouble of remembering all the gory details.
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Tools for literate programming in R and Python}
+
+How literate programming can help to ensure your research is reproducible:
+
+\begin{itemize}
+ \item R -- knitr; tool for weaving together R code and text to produce `computable' documents that can be output as HTML or \LaTeX.
+ \item Python -- Ipython ``notebooks''; Mathematica like interactive computing environments that intermingle code, graphics, and text.
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}[fragile]
+  \frametitle{A Literate programming Example}
+
+Literate programming tools typically use simple markup conventions in which you weave your code into your description by putting it between delimiter blocks
+
+\smallskip
+Example:
+
+\begin{Code}{r}
+
+Here are some trivial R examples that will help to
+illustrate how knitr works:
+
+<<>>=
+z <- 1:10
+mean(z)
+summary(z)
+z[z > 5]
+@
+
+The above text was a code block woven into my 
+description. It gets evaluated and integrated into 
+the output. Cool, eh?    
+\end{Code}
+
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{knitr output}
+
+Output produced by knitr and \LaTeX\ for the code on the previous slide:
+
+
+\begin{center}
+\fcolorbox{black}{bg}{%
+\begin{minipage}{.8\textwidth}
+\includegraphics[width=\textwidth,trim=1.75in 6in 1.75in 1.5in,clip=true]{knitr-ex1.pdf}
+\end{minipage}}
+\end{center}
+
+
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Fancier knitr output}
+
+Here's a somewhat fancier example of what knitr can produce:
+
+\begin{center}
+\fcolorbox{black}{bg}{%
+\begin{minipage}{.8\textwidth}
+\includegraphics[width=\textwidth,trim=0in 4.9in 0in 0in,clip=true]{knitr-ex2.pdf}
+\end{minipage}}
+\end{center}
+
+
+\end{frame}
+%===========================================================
+
+
 
 
 

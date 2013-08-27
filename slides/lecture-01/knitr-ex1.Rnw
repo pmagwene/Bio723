@@ -1,0 +1,18 @@
+\documentclass{article}
+\begin{document}
+
+Here are some trivial R examples that will help to
+illustrate how knitr works:
+
+<<>>=
+z <- 1:10
+mean(z)
+summary(z)
+z[z > 5]
+@
+
+The above text was a code block woven into my 
+description. It gets evaluated and integrated into 
+the output. Cool, eh?    
+
+\end{document}
