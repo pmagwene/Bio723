@@ -5,3 +5,20 @@
 \input{./hands-on1/visualizing-unidistns.tex}
 
 \input{./hands-on1/intro-litprogramming.tex}
+
+
+\begin{assignment}
+Find an example univariate data set of your choice from the literature. Read it into R using either |scan| or |read.table|. Plot the data using either a histogram or a density plot. Try several different bin widths or kernel sizes. Discuss why you think the plot and bin width/kernel you chose is the best way to represent your data. Also provide an example of a misspecification of the kernel or the bin width. Submit your assignment as a knitr literate programming document. Be sure to include a line of code to read in your data based on a relative path name and submit the accompanying data file. 
+
+\medskip
+
+Note that the |scan| and |read.table| functions can also take a url as input as illustrated below:
+%
+\begin{tinycode}
+> algae <- scan(url("http://biology.duke.edu/magwenelab/algae.txt", "r"))
+\end{tinycode}
+%
+Unfortunately, that only works with normal HTTP connections, \emph{not} HTTPS, so you can't open files directly from the Bio 723 Github site.
+
+
+\end{assignment}
