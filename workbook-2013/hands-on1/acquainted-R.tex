@@ -610,19 +610,22 @@ Of course R has a built in \lstinline!mean()! function.
 \begin{R}
 mean(turtles$width) [1] 95.4375
 \end{R}
-One of the advantages of the built in \lstinline!mean()! function is
-that it knows how to operate on lists as well as vectors:
+
+What if you wanted to calculate the mean of each variables in the data set?  R has a set of `apply' functions (lapply, sapply, mapply, etc) that facilitate applying a function repeatedly to different variables in a list or data frame.  |sapply| is the one you'll probably use most often.  Here's how to use |sapply| to calculate means for the turtle data set:
 
 \begin{R}
-> mean(turtles)
-      sex    length     width    height
-       NA 124.68750  95.43750  46.33333
+> sapply(turtles, mean)
+      sex    length     width    height 
+       NA 124.68750  95.43750  46.33333 
 Warning message:
-argument is not numeric or logical: returning NA in: mean.default(X[[1]], ...)
+In mean.default(X[[1L]], ...) :
+  argument is not numeric or logical: returning NA
 \end{R}
-Can you figure out why the above produced a warning message? Let's take
-a look at some more standard statistical functions:
+Can you figure out why the above produced a warning message?  Spend some time reading the documentation for |lapply| and |sapply|, as they will become increasingly handy as you get into writing your own R functions.
 
+
+Let's take a look at some more standard statistical functions:
+%
 \begin{R}
 > min(turtles$width)
 [1] 74

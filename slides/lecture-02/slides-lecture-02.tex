@@ -5,11 +5,11 @@
 %===========================================================
 % Title Info
 \title{Scientific Computing for Biologists}
-\subtitle{Data as Vectors} % (optional)
+\subtitle{Data as Vectors: Geometry of Bivariate Relationships} % (optional)
 
 \author[P. Magwene]{Instructor: Paul M. Magwene}
 
-\date{04 September 2012}
+\date{03 September 2013}
 
 \begin{document}
 %===========================================================
@@ -22,6 +22,7 @@
   \frametitle{Overview of Lecture}
 
 \begin{itemize}
+        \item Variable space/Subject space representations
 		\item Vector Geometry
 		\begin{itemize}
 			\item Vectors are directed line segments
@@ -35,8 +36,7 @@
 			\item Dot product and projection
 		\end{itemize}
 		\item Vector representations of multivariate data
-		\begin{itemize}
-		  \item Variable space/Subject space representations
+        \begin{itemize}
 			\item Mean as projection in subject space
 			\item Bivariate regression in geometric terms
 			\item Difference in group means as a regression problem
@@ -57,6 +57,92 @@
 	 \end{itemize}
 \end{frame}
 %===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Variable Space Representation of a Data Set}
+
+Consider a data set in which we've measured variables $\mathbf{X} = {X_1, X_2,\ldots,X_p}$, on a set of subjects (objects) $a_1,...,a_n$.
+
+\begin{center}
+    \begin{tabular}{l|cc}
+
+ & $X_1$ & $X_2$ \\ \hline
+
+$a_1$ & 0.9 & 1.4 \\
+$a_2$ & 1.1 & 1.7 \\
+$\vdots$ & $\vdots$ & $\vdots$ \\
+$a_n$ & 0.5 &  1.55
+
+    \end{tabular}
+\end{center}
+
+Such data is most often represented by drawing the objects as points in space of dimension $p$. This is the \emph{variable space representation} of the data.
+
+\begin{center}
+
+\begin{tikzpicture}[x=0.25cm, y=0.25cm]
+
+\draw[->] (-8,0) -- (8,0);
+\draw (8,0) node[right,font=\footnotesize] {$X_1$};
+
+\draw[->] (0,-4) -- (0,4);
+\draw (0,4) node[above,font=\footnotesize] {$X_2$};
+
+\draw plot[only marks, mark=ball] coordinates { (-3.5,-1) (-3,-2) (-1,-1.5) (-1,0.25) (0,-1.5) (0,0.1) (0.5,1.6) (1,2.5) (2,0.5) (2,3) (3,2.5) };
+
+\end{tikzpicture}
+\end{center}
+
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Subject Space Representation of a Data Set}
+
+\begin{small}
+
+An alternate representation is to consider the variables in the space of the subjects. This is the \emph{subject space} representation.
+% \begin{itemize}
+% \item trickier to visualize because high dimensional
+% \end{itemize}
+
+\medskip
+
+How do we come up with a useful representation of variables in subject space?
+\begin{itemize}
+ % \item Any pair of non-parallel vectors (of arbitrary dimension) defines a plane.
+ \item Let the variables be represented by centered vectors
+ \begin{itemize}
+    \item lengths of vectors are proportional to standard deviation
+    \item angle between vectors represents association or similarity
+ \end{itemize}
+\end{itemize}
+\end{small}
+
+\begin{center}
+
+\begin{tikzpicture}[x=0.5cm, y=0.5cm]
+
+\draw[thick,->] (0,0) -- (3,2);
+\draw (3,2) node[right] {$\vec{X_1}$};
+
+\draw[thick,->] (0,0) -- (5,-1);
+\draw (5,-1) node[above] {$\vec{X_2}$};
+
+\end{tikzpicture}
+\end{center}
+
+This representation of variables as vectors in the space of the subjects is the view that we'll develop over the next few lectures.
+
+
+\end{frame}
+%===========================================================
+
+
+
 
 %===========================================================
 \begin{frame}
@@ -435,7 +521,13 @@ C_{\vec{x}}(\vec{y}) = \frac{\vec{x} \cdot \vec{y}}{|\vec{x}|} = |\vec{y}|\cos \
 \begin{frame}
   \frametitle{Vector Projection II}
 
-$\vec{y}$ can be decomposed into a a vector parallel to $\vec{x}$, $\widehat{y} = P_{\vec{x}}(\vec{y})$, and a vector perpendicular to $\vec{x}$, $\widehat{y}_{\bot}$.
+$\vec{y}$ can be decomposed into two parts:
+
+1. a vector parallel to $\vec{x}$, $\widehat{y} = P_{\vec{x}}(\vec{y})$, 
+
+\smallskip
+
+2. a vector perpendicular to $\vec{x}$, $\widehat{y}_{\bot}$.
 
 \[
 \vec{y} = \widehat{y} + \widehat{y}_{\bot}
@@ -449,7 +541,7 @@ $\vec{y}$ can be decomposed into a a vector parallel to $\vec{x}$, $\widehat{y} 
 \draw (0,-1.5) -- (0,4);
 
 \draw[thick,red,dashed,->] (0,0) -- (3,0);
-\draw (3,0) node[below,font=\tiny] {$\vec{x}$};
+\draw (3,0) node[below,font=\small] {$\vec{x}$};
 
 \draw[thick,blue,->] (0,0) -- (2,3);
 \draw (2,3) node[left] {$\vec{y}$};
@@ -482,91 +574,46 @@ $\vec{y}$ can be decomposed into a a vector parallel to $\vec{x}$, $\widehat{y} 
 \end{frame}
 %===========================================================
 
-
 %===========================================================
 \begin{frame}
-  \frametitle{Variable Space Representation of a Data Set}
+  \frametitle{Geometry of the Mean in Variables Space}
 
-Consider a data set in which we've measured variables $\mathbf{X} = {X_1, X_2,\ldots,X_p}$, on a set of subjects (objects) $a_1,...,a_n$.
+The mean, as you know, is the `optimal' (in a least square sense) single number summary of a variable of interest.
 
-\begin{center}
-	\begin{tabular}{l|cc}
 
- & $X_1$ & $X_2$ \\ \hline
-
-$a_1$ & 0.9 & 1.4 \\
-$a_2$ & 1.1 & 1.7 \\
-$\vdots$ & $\vdots$ & $\vdots$ \\
-$a_n$ & 0.5 &  1.55
-
-	\end{tabular}
-\end{center}
-
-Such data is most often represented by drawing the objects as points in space of dimension $p$. This is the \emph{variable space representation} of the data.
+\medskip
 
 \begin{center}
-
-\begin{tikzpicture}[x=0.25cm, y=0.25cm]
-
-\draw[->] (-8,0) -- (8,0);
-\draw (8,0) node[right,font=\footnotesize] {$X_1$};
-
-\draw[->] (0,-4) -- (0,4);
-\draw (0,4) node[above,font=\footnotesize] {$X_2$};
-
-\draw plot[only marks, mark=ball] coordinates { (-3.5,-1) (-3,-2) (-1,-1.5) (-1,0.25) (0,-1.5) (0,0.1) (0.5,1.6) (1,2.5) (2,0.5) (2,3) (3,2.5) };
-
-\end{tikzpicture}
-\end{center}
-
-
-\end{frame}
-%===========================================================
-
-%===========================================================
-\begin{frame}
-  \frametitle{Subject Space Representation of a Data Set}
-
-\begin{small}
-
-An alternate representation is to consider the variables in the space of the subjects. This is the \emph{subject space} representation.
-\begin{itemize}
-\item trickier to visualize because high dimensional
-\end{itemize}
-
-How then do we come up with a useful representation of variables in subject space?
-\begin{itemize}
- \item Any pair of non-parallel vectors (of arbitrary dimension) defines a plane.
- \item Let the variables be represented by centered vectors
- \begin{itemize}
-    \item lengths of vectors are proportional to standard deviation
- 	\item angle between vectors represents association or similarity
- \end{itemize}
-\end{itemize}
-\end{small}
-
-\begin{center}
-
 \begin{tikzpicture}[x=0.5cm, y=0.5cm]
 
-\draw[thick,->] (0,0) -- (3,2);
-\draw (3,2) node[right] {$\vec{X_1}$};
+\draw[thick,-] (0,0) -- (10,0);
+\draw (10,0) node[right] {$\mathbf{x}$};
 
-\draw[thick,->] (0,0) -- (5,-1);
-\draw (5,-1) node[above] {$\vec{X_2}$};
+\draw plot[only marks, mark=ball] coordinates { (1,0) (4,0) (2,0) (7,0) (3,0) (9,0) (3.5,0) (9.5,0) (8,0) (4.5,0) };
+
+\draw[thick,red,->] (5.15,-2) -- (5.15,0);
+\draw (5.15,-2) node[below] {$\bar{x}$};
+
 
 \end{tikzpicture}
 \end{center}
 
 
+
+The mean, $\bar{x}$, minimizes the quantity:
+
+\begin{equation*}
+ \sum_{i=1}^{n}(x_i-\bar{x})^2
+\end{equation*}
+
 \end{frame}
 %===========================================================
+
+
 
 %===========================================================
 \begin{frame}
   \frametitle{Geometry of the Mean in Subject Space}
-
-The mean, as you know, is the `optimal' (in a least square sense) single number summary of a variable of interest.
 
 \begin{itemize}
 
@@ -574,20 +621,13 @@ The mean, as you know, is the `optimal' (in a least square sense) single number 
 
 \item The above can be written as $|\vec{\mathbf{x}}-\vec{\mathbf{1}}\bar{x}|^2$ where $\vec{\mathbf{1}} = [1,1,\ldots,1]'$
 
-\item We are looking, therefore, for the scalar multiple, $\bar{x}$, of the unit vector that minimizes $|\vec{\mathbf{x}}-\vec{\mathbf{1}}\bar{x}|^2$
+\item We are looking, therefore, for the scalar multiple, $\bar{x}$, of the unit vector that minimizes $|\vec{\mathbf{x}}-\vec{\mathbf{1}}\bar{x}|^2 = |\vec{e}|$
 
 \end{itemize}
-\end{frame}
-%===========================================================
 
-%===========================================================
-\begin{frame}
-  \frametitle{Geometry of the Mean in Subject Space II}
-
-Geometric derivation of the sample mean:
+\smallskip
 
 \begin{center}
-
 \begin{tikzpicture}[x=0.5cm, y=0.5cm]
 
 \draw[thick,->] (0,0) -- (6,0);
@@ -605,13 +645,40 @@ Geometric derivation of the sample mean:
 \end{tikzpicture}
 \end{center}
 
-
 \end{frame}
 %===========================================================
 
+% %===========================================================
+% \begin{frame}
+%   \frametitle{Geometry of the Mean in Subject Space II}
+
+% Geometric derivation of the sample mean:
+
+% \begin{center}
+% \begin{tikzpicture}[x=0.5cm, y=0.5cm]
+
+% \draw[thick,->] (0,0) -- (6,0);
+% \draw (6,0) node[above,font=\tiny] {$\vec{\mathbf{1}} $};
+
+% \draw[thick,red,->] (0,0) -- (4,0);
+% \draw (4,0) node[below,font=\footnotesize] {$P_{\vec{\mathbf{1}}}(\vec{\mathbf{x}}) = [\bar{x}, \bar{x},\ldots,\bar{x}]$};
+
+% \draw[thick,->] (0,0) -- (4,3);
+% \draw (4,3) node[above] {$\vec{\mathbf{x}}$};
+
+% \draw[dashed,blue,->] (4,0) -- (4,3);
+% \draw (4,3) node[below right,font=\footnotesize] {$\vec{e} = \vec{\mathbf{x}} - P_{\vec{\mathbf{1}}}(\vec{\mathbf{x}}) = [x_1-\bar{x}, x_2 - \bar{x},\ldots,x_n - \bar{x}]$};
+
+% \end{tikzpicture}
+% \end{center}
+
+
+% \end{frame}
+% %===========================================================
+
 %===========================================================
 \begin{frame}
-  \frametitle{Geometry of the Mean in Subject Space III}
+  \frametitle{Geometry of the Mean in Subject Space II}
 
 \begin{itemize}
 \item Recall that:
@@ -711,8 +778,14 @@ Let $X$ and $Y$ be mean centered variables, and let $\vec{x}$ and $\vec{y}$ be t
 \end{tikzpicture}
 \end{center}
 
+We can write the correlation in vectors terms:
 \[
-\mathsf{cor}(X,Y) = r_{XY} = \cos \theta = \frac{\vec{x} \cdot \vec{y}}{|\vec{x}||\vec{y}|}
+\mathsf{corr}(X,Y) = r_{XY} = \cos \theta = \frac{\vec{x} \cdot \vec{y}}{|\vec{x}||\vec{y}|}
+\]
+
+Compare to conventional algebraic formula:
+\[
+r_{XY} =  \frac{E[(X - \bar{x})(Y - \bar{y}]}{\sigma_x \sigma_y}
 \]
 
 
@@ -740,6 +813,48 @@ See Wickens Chapt 3 for the general derivation for uncentered variables.
 
 \end{frame}
 %===========================================================
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Geometry of Bivariate Regression}
+
+Geometric interpretation of regression as projection:
+
+\begin{center}
+
+\begin{tikzpicture}[x=0.5cm, y=0.5cm]
+
+\draw[thick,->] (0,0) -- (6,0);
+\draw (6,0) node[below] {$\vec{x} $};
+
+\draw[thick,red,->] (0,0) -- (4,0);
+\draw (4,0) node[below left] {$\vec{\widehat{y}}$};
+
+\draw[thick,->] (0,0) -- (4,3);
+\draw (2,1.5) node[above left] {$\vec{y}$};
+
+\draw[dashed,blue,->] (4,0) -- (4,3);
+\draw (4,1.5) node[right] {$\vec{e}$};
+
+\draw (0,0) +(0:0.5cm) arc (0:37:0.5cm);
+\path (0,0) ++(18:0.7cm) node[font=\footnotesize] {$\theta$};
+
+\end{tikzpicture}
+
+\[
+\vec{\widehat{y}} = b\vec{x}
+\]
+\begin{eqnarray*}
+b &=& ?
+\end{eqnarray*}
+
+\end{center}
+
+\end{frame}
+%===========================================================
+
+
 
 %===========================================================
 \begin{frame}[allowframebreaks]
@@ -889,9 +1004,52 @@ R = \cos \theta \\
 
 \end{center}
 
+The better the goodness-of-fit, the smaller the angle, $\cos \theta$, and the shorter residual vector, $\vec{e}$.
+
 \end{frame}
 %===========================================================
 
+%===========================================================
+\begin{frame}
+  \frametitle{Two-group ANOVA as Regression}
+
+We can also use a geometric perspective to test whether the mean of a variable differs between two groups of subjects.
+
+\begin{itemize}
+\item Setup a `dummy variable' as the predictor $X_g$.   We assign all subjects in group 1 the value 1 and all subjects in group 2 the value -1 on the dummy variable.  We then regress the variable of interest, $Y$, on $X_g$.  
+
+\item When the means are different in the two groups, $X_g$ will be a good predictor of the variable of interest, hence $\vec{y}$ and $\vec{x_g}$ will have a small angle between them.
+
+\item When the means in the two groups are similar, the dummy variable will not be a good predictor.  Hence the angle between $\vec{y}$ and $\vec{x_g}$ will be large.
+
+\end{itemize}
+
+\begin{center}
+
+\begin{tikzpicture}[x=0.2cm, y=0.2cm]
+
+% different means
+\draw[thick,->] (-10,0) -- (-4,0);
+\draw (-4,0) node[below] {$\vec{x_g}$};
+
+\draw[thick,->] (-10,0) -- (-3,1);
+\draw (-4,1.5) node[above left] {$\vec{y}$};
+\draw (-10,-2) node[below,font=\footnotesize] {Different means};
+
+% Similar means
+\draw[thick,->] (0,0) -- (6,0);
+\draw (6,0) node[below] {$\vec{x_g}$};
+
+\draw[thick,->] (0,0) -- (1,3.5);
+\draw (1,3) node[above left] {$\vec{y}$};
+\draw (4,-2) node[below,font=\footnotesize] {Similar means};
+
+\end{tikzpicture}
+
+\end{center}
+
+\end{frame}
+%===========================================================
 
 
 
