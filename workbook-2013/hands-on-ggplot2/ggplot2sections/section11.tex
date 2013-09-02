@@ -1,0 +1,112 @@
+% Created 2013-08-21 Wed 17:12
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{How to define your own ggfunction?}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+
+But what if you wanted to make a whole series of these plots for each
+of the combinations of the variables? In this case, you would want to
+write a function. You might think that you could just replace the
+variable `iris' with `plotData' and go from there. However, this
+approach yields an error:
+
+\begin{verbatim}
+
+scatterWithMargins <- function(plotData, x, y, color){
+    xy <- ggplot(plotData, aes(x=x, y=y, col = color))+
+        geom_point()+
+        geom_density2d()+
+        theme_classic()
+    xDen <- ggplot(plotData, aes(x=x, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        theme_classic()+
+        xlab("")
+    yDen <- ggplot(plotData, aes(x=y, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        coord_flip()+
+        theme_classic()+
+        xlab("")
+    leg <- g_legend( xDen )
+    grid.arrange(xDen+theme(legend.position = "none"),
+                 leg,
+                 xy+theme(legend.position = "none"),
+                 yDen+theme(legend.position = "none"),
+                 nrow = 2, ncol = 2,
+                 widths = unit(c(2,1), c("null", "null")),
+                 heights = unit(c(1,2), c("null", "null"))
+                 )
+}
+
+scatterWithMargins(iris, Sepal.Length, Sepal.Width, Species)
+\end{verbatim}
+
+
+This is because when the function ggplot sets itself up, it always
+looks in the global environment for variables. That means that even
+though you told it to look in the data frame `plotData', it's actually
+trying to find the variable `x' in the global environment. Again, it
+doesn't matter if you understand R well enough for that to mean much
+to you, the upshot is that when you use ggplot in a function, you need
+to specify a different kind of `aes' in the ggplot function call:
+`aes$_{\mathrm{string}}$'. aes$_{\mathrm{string}}$ sets up aesthetic mappings with strings that
+name the columns of the data that you want the aesthetic set to. This
+means that the variable names must always be quoted. When you make
+these changes, your function will work hunky dory.
+
+\begin{verbatim}
+
+scatterWithMargins <- function(plotData, x, y, color){
+    xy <- ggplot(plotData, aes_string(x=x, y=y, col = color))+
+        geom_point()+
+        geom_density2d()+
+        theme_classic()
+    xDen <- ggplot(plotData, aes_string(x=x, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        theme_classic()+
+        xlab("")
+    yDen <- ggplot(plotData, aes_string(x=y, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        coord_flip()+
+        theme_classic()+
+        xlab("")
+    leg <- g_legend( xDen )
+    grid.arrange(xDen+theme(legend.position = "none"),
+                 leg,
+                 xy+theme(legend.position = "none"),
+                 yDen+theme(legend.position = "none"),
+                 nrow = 2, ncol = 2,
+                 widths = unit(c(2,1), c("null", "null")),
+                 heights = unit(c(1,2), c("null", "null"))
+                 )
+}
+
+scatterWithMargins(iris, "Sepal.Length", "Sepal.Width", "Species")
+\end{verbatim}
+
+
+\end{document}

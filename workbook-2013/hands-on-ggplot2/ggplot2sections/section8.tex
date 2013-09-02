@@ -1,0 +1,130 @@
+% Created 2013-08-21 Wed 17:11
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{facets}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+
+One of the coolest things about ggplots is the ability to split the
+data into facets before making a plot. This is a really good way to
+convey data because you only have to remember one set of axes but you
+get to see lots of subsets of the data. For example, to reduce
+overplotting in one of the plots we made above, we could split our data by the type of media:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_wrap(~media)
+\end{verbatim}
+
+
+This plot very naturally compares between the different strains. We
+can easily reverse it, though and compare between medias:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=media,
+                        group=plate_pos))+
+    geom_line()+
+    facet_wrap(~strain)
+\end{verbatim}
+
+
+There's two kinds of faceting that you can do: ``facet$_{\mathrm{wrap}}$'' and
+``facet$_{\mathrm{grid}}$''. Facet wrap makes a ribbon of tiles in order to split
+your data. This is most appropriate when the facets don't need to be
+plotted in any particular order. On the other hand, facet$_{\mathrm{grid}}$ can be
+used if the order does matter. For example we can make a grid of
+ammonium and dextrose concentrations:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, as.table=TRUE)
+\end{verbatim}
+
+
+Notice that the facets are a bit out of order. I wanted the `high
+ammonium, high dextrose' condition in the upper left corner. The order
+that facets go in (and in general, the order that discrete scales are
+plotted in) is determined by the order of their levels. To get
+the behavior we want, we just have to specify the order that we want
+the levels to go in:
+
+\begin{verbatim}
+growth.270 <- subset(growth,(initial_dilution == 270))
+growth.270$ammonium <- factor(growth.270$ammonium, levels = c("L ammonium", "H ammonium"))
+growth.270$dextrose <- factor(growth.270$dextrose, levels = c("H dextrose", "L dextrose"))
+
+
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium)
+\end{verbatim}
+
+
+Another neat option is to get an additional column corresponding to
+the margins of the faceted variables:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)
+\end{verbatim}
+
+
+In this case, adding the margins makes clear that changing the
+dextrose concentrations in the presence of low or high ammonium doesn't change
+much in terms of growth rate but that changing the ammonium
+concentrations in the presence of low or high dextrose leads to higher
+growth rate as well as a higher saturation density.
+
+You can also add additional variables onto the facetting variables in
+order to display additional facets of the data. For example, here is
+the original plate map for the growth data:
+
+
+\begin{verbatim}
+ggplot( growth, aes(x=time,y=OD,label=strain, group=plate_pos))+geom_line()+
+    facet_grid(initial_dilution+row~col+ammonium+dextrose+strain)
+\end{verbatim}
+
+
+\end{document}

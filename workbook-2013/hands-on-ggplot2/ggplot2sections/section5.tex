@@ -1,0 +1,307 @@
+% Created 2013-08-21 Wed 17:10
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{geoms}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+
+There are many different geoms you can use to plot your data. I'll
+walk you through the most common below, but be sure to consult the
+ggplot documentation to see the full range of tools in your toolbox.
+
+\section{point}
+\label{sec-1}
+
+
+Probably the simplest geom to work with is the point. In ggplot land,
+all geoms are encoded as R functions. The syntax used to add them to a
+plot is simply a `+' sign:
+
+\begin{verbatim}
+ggplot(diamonds.sampled, aes(x=carat, y = price))+geom_point()
+\end{verbatim}
+
+
+geoms are modular, so you can add as many of them to a plot as you
+want (as you'll see below). Each geom has particular aesthetics that
+must be defined in the plot in order for it to be plotted. In the case
+of geom$_{\mathrm{point}}$, the only required aesthetics are `x' and `y'. However,
+pretty much any conceivable way you can think of to change a point can
+be set as an aesthetic mapping (as we saw above).
+
+Alternatively, if you just want all the points to be plotted in a
+particular way, you can set any aspect of their aesthetics outside of
+an aes function call:
+
+\begin{verbatim}
+ggplot(diamonds.sampled, aes(x=carat, y = price)) + geom_point(col = 'red', alpha = 0.1)
+\end{verbatim}
+
+
+The nice thing about ggplot is that once we have these pieces to play
+with, we can start messing around to create a whole variety of plots.
+For example, by setting the x value to discrete values and the y value to
+continuous values, we get what people call a `strip plot':
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_point()
+\end{verbatim}
+
+
+However, this plot is pretty hard to read because there's so much
+data. One solution to this is that points can be `jittered' to avoid overplotting:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_point(position=position_jitter( width = 0.05, height = 0) )
+\end{verbatim}
+
+
+You have to play around to get the right amount of jitter:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_point(position=position_jitter( width = 0.2, height = 0) )
+\end{verbatim}
+
+
+Setting the point transparency is also a good way to deal with overplotting
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_point(position=position_jitter( width = 0.1, height = 0),
+               alpha = 0.1)
+\end{verbatim}
+\section{violin}
+\label{sec-2}
+
+
+Another approach to the problem of overplotting in strip charts is to
+do a `violin' plot instead:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_violin()
+\end{verbatim}
+
+
+As I mentioned above, ggplot is modular. So, there's nothing stopping
+us from using more than one geom. For example, we could plot the
+points in addition to the violin plot. Notice that I set the fill of
+the violins and the color of the violins to make what I think is a
+more pleasing plot:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_violin(fill=NA, col='blue')+
+    geom_point(position=position_jitter( width = 0.1, height = 0),
+                 alpha = 0.1)
+\end{verbatim}
+\section{box}
+\label{sec-3}
+
+
+If your data are more or less normally distributed, a boxplot can be
+substituted for a stripplot or a violin plot:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price))+
+    geom_boxplot()
+\end{verbatim}
+\section{histograms}
+\label{sec-4}
+
+If your data aren't normally distributed, and if you care about the
+absolute frequency of the data, a histogram is always nice.
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(fill=cut, x=price))+
+    geom_histogram()
+\end{verbatim}
+
+
+Make sure you play around with the number of bins you use:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(fill=cut, x=price))+
+    geom_histogram(binwidth = 1000)
+\end{verbatim}
+
+
+There's two other ways to make a histogram: bins can be plotted beside
+one another:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(fill=cut, x=price))+
+    geom_histogram(position = "dodge")
+\end{verbatim}
+
+
+Or stacked on top for a kind of moving pie chart
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(fill=cut, x=price))+
+    geom_histogram(position = "fill")
+\end{verbatim}
+\section{density}
+\label{sec-5}
+
+
+If you don't want to determine the number of bins and you don't care
+about the absolute number of observations for a particular value, a density plot is
+sometimes appropriate:
+
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(col=cut, x=price))+
+    geom_density()
+\end{verbatim}
+\section{line}
+\label{sec-6}
+
+
+To demonstrate some aspects of ggplot, we'll use some data that I've
+generated. The data is the optical density (OD) of some yeast cultures
+seeded into a 96 well plate. There are three different yeast strains,
+four different media conditions, and eight different initial dilutions
+of the saturated culture into fresh media. First, we'll read in the
+data and make some subsets for ease of plotting:
+
+\begin{verbatim}
+growth=read.csv("http://people.duke.edu/~csm29/growth_curves.csv", as.is =TRUE)
+growth$ammonium <- paste(sapply(strsplit(growth$media, ""), "[", 1), "ammonium")
+growth$dextrose <- paste(sapply(strsplit(growth$media, ""), "[", 3), "dextrose")
+
+growth.PMY1529 <- subset(growth, (strain == "PMY1529") & (initial_dilution == 270))
+growth.270 <- subset(growth, (initial_dilution == 270))
+\end{verbatim}
+
+Since there are four media types, plotting the subset of the data that
+contains a single dilution amount and a single strain has four obvious
+lines corresponding to the media:
+
+\begin{verbatim}
+ggplot( growth.PMY1529, aes(x=time, y=OD))+geom_point()
+\end{verbatim}
+
+
+However, if we just try to substitute a line for a point, we get
+something that looks unintelligible:
+
+\begin{verbatim}
+ggplot( growth.PMY1529, aes(x=time, y=OD))+geom_line()
+\end{verbatim}
+
+
+This is because you must specify what `group' of values that ggplot
+should connect. To see this, we'll take an additional subset of the
+data to restrict ourselves to just one media type. As long as there's
+only one set of data to deal with, our approach worked OK:
+
+\begin{verbatim}
+ggplot(subset(growth.PMY1529, media == "HAHD"),
+       aes(x=time, y=OD))+geom_line()
+\end{verbatim}
+
+
+The way you tell ggplot to connect different sets of points in the
+data is to set the `group' aesthetic:
+
+\begin{verbatim}
+ggplot( growth.PMY1529, aes(x=time, y=OD, group=media))+geom_line()
+\end{verbatim}
+
+
+Instead of setting the group aesthetic, we could also just set the
+color to be the media type. ggplot is smart enough to connect like
+colored points when using geom$_{\mathrm{line}}$.
+
+\begin{verbatim}
+ggplot( growth.PMY1529, aes(x=time, y=OD, col=media))+geom_line()
+\end{verbatim}
+
+
+However, if we wanted to split by all media types, but color by only the
+dextrose concentration, we could specify both a color and a group:
+
+\begin{verbatim}
+ggplot( growth.PMY1529, aes(x=time, y=OD, col=dextrose, group=media))+geom_line()
+\end{verbatim}
+
+
+And, of course, you can specify mappings until the plot gets hard to read.
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        lty=dextrose,
+                        group=plate_pos))+geom_line()
+\end{verbatim}
+
+
+Strangely, you can't do a similar trick with the boxplots. For
+example, say that I wanted each `x' to be colored by `color' and
+grouped by `clarity:'
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price, col=color, group=clarity))+
+    geom_boxplot()
+\end{verbatim}
+
+
+The reasons why this is the case are complicated, but it's good to be
+aware of the fact. The best you can do have both `color' and `x':
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut, y=price, col=color))+
+    geom_boxplot()
+\end{verbatim}
+\section{tile}
+\label{sec-7}
+
+
+Sometimes you have two variables that are evaluated for a third
+variable on an evenly spaced grid (think of a fitness landscape). In
+this case, you can use the `tile' geom in order to color tiles
+according to the value at that coordinate:
+
+\begin{verbatim}
+#This is a function to make a dataframe of a two variabled function
+pp <- function (n,r=4) {
+ x <- seq(-r*pi, r*pi, len=n)
+ df <- expand.grid(x=x, y=x)
+ df$r <- sqrt(df$x^2 + df$y^2)
+ df$z <- cos(df$r^2)*exp(-df$r/6)
+ df
+}
+#Note that the aesthetic set is the 'fill' not the 'color'
+ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()
+\end{verbatim}
+
+\end{document}

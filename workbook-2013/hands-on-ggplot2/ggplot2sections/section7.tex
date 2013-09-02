@@ -1,0 +1,337 @@
+% Created 2013-08-21 Wed 17:11
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{stats}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+One of the really powerful things about ggplot is that it will do
+automatic calculations on your data and display the results. The way
+that this is formalized is through a `statistic' that is calculated
+before the data is passed to a geom. For geom$_{\mathrm{density}}$ and
+geom$_{\mathrm{histogram}}$, this is done automatically in a logical way (ie the
+frequency or the number is computed for each bin). However,
+sometimes you want the ability to summarize your data yourself. In
+this case you need to use `stat$_{\mathrm{summary}}$'. This is a function that
+takes two basic arguments: a function and a string telling ggplot what
+geom to use. The function is passed a vector of y values for every
+unique x value. Because of this, stat$_{\mathrm{summary}}$ only works for discrete
+x scales. Some examples will make this more clear.
+
+\section{fun.y}
+\label{sec-1}
+
+Let's pretend that we want to compute some summary statistic on the
+growth curve data. Maybe the data is noisy and we want to bin it
+before visualizing it. The code below cuts the data into 20 bins and
+plots the results. Note that there are now multiple y values for each
+x value.
+
+\begin{verbatim}
+time.quantiles <- ecdf(growth.270$time)( growth.270$time )
+growth.270$binned.time<- cut(time.quantiles, breaks = seq(0,1.1, 0.05))
+
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+geom_point()
+\end{verbatim}
+
+
+A quick google search reminds me how to change the orientation of the
+x axis text (see below for a brief discussion of themes).
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    geom_point()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+\end{verbatim}
+
+
+The argument fun.y in stat$_{\mathrm{summary}}$ tells ggplot what function to call
+for each X value. Since we defined a color scale, ggplot also first
+splits the data by the strain. This is true in general: the statistic
+is computed on data that has first been split by each of the aesthetic
+mappings specified.
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = "mean", geom = "point")+
+    scale_y_continuous("Mean OD")
+\end{verbatim}
+
+
+Of course, we could also choose a different function rather than the mean.
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = "median", geom = "point") +
+    scale_y_continuous("Median OD")
+\end{verbatim}
+
+
+We can also define our own functions. The function must take a vector and return
+a single number. In this case, I defined a function that will return 1
+plus a small random number if the OD is over 0.5 and 0 plus a small
+random number if it's less than 0.5. 
+
+\begin{verbatim}
+my.fxn <- function(x){
+    if(x > 0.5){
+        return( 1 + runif(n = 1, max = 0.1))
+    }
+    else{
+        return( 0 + runif(n = 1, max=0.1))
+    }
+}
+
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = "my.fxn", geom = "point")+
+      scale_y_continuous("Discretized OD")
+\end{verbatim}
+
+
+You might think that you could substitute the line geom for the point
+geom, but you can't.
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = "median", geom = "line")
+\end{verbatim}
+
+
+The reason is that the geom is passed the split data that the statistic was computed on which
+is length 1. This results in no lines being drawn since a line needs
+two points. To correct this, we have to specify the group that we want
+the lines to be drawn over:
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.y = "median", geom = "line")
+\end{verbatim}
+\section{fun.data}
+\label{sec-2}
+
+
+There's a second way to call stat$_{\mathrm{summary}}$. Rather than using `fun.y',
+you can specify `fun.data'. The difference between these two functions
+is that fun.y will automatically create a variable called `y' based on
+the summary statistic for every unique x value that is then passed to the geom specified. 
+Look at the documentation and note that most geoms require a variable
+called `y' to be defined in the data.frame.
+
+On the other hand, fun.data gives you more flexibility in what data
+variables are created, which means that you can use it with more
+geoms. The downside to this is that you have to be
+careful to specify what variables get created. So, the following code
+won't work:
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = "median", geom = "point")
+\end{verbatim}
+
+
+To see why this is, recall that in R vectors can have a `names'
+attribute accessible by the `names' function. The code below
+demonstrates that the result of the default `median' function is an
+unnamed vector. 
+
+\begin{verbatim}
+test <- median( seq(0,100) )
+print( names(test) )
+\end{verbatim}
+
+
+However, we can easily set the name to `y'.
+
+\begin{verbatim}
+names(test) <- "y"
+print( names(test) )
+\end{verbatim}
+
+
+In fact, we can define a function that does so automatically, and this
+function can then be passed to fun.data to give the behavior that we
+wanted.
+
+\begin{verbatim}
+named.median <- function(x){
+    out <- median(x)
+    names(out) <- "y"
+    out
+}
+
+print(names(named.median(1:100)))
+\end{verbatim}
+
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = "named.median", geom = "point")
+\end{verbatim}
+
+
+In this case, it would be easier to just call
+fun.y. However, some geoms require aesthetic variable mappings besides
+just `y.' `geom$_{\mathrm{errorbar}}$', `geom$_{\mathrm{pointrange}}$', `geom$_{\mathrm{ribbon}}$', and `geom$_{\mathrm{crossbar}}$' all
+require mappings called `ymax' and `ymin' in addition to `y'. In order
+to use these geoms with our data, we need to define a function outputs
+a named vector with all three of these names:
+
+\begin{verbatim}
+
+interquartile <- function(x){
+    out <- quantile(x, probs = c(0.25, 0.5, 0.75))
+    names(out) <- c("ymin", "y", "ymax")
+    out
+}
+
+print( interquartile(1:100) )
+\end{verbatim}
+
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = "interquartile", geom = "errorbar")
+\end{verbatim}
+
+
+You can then combine this plot with a line for a `trend with
+errorbars' kind of graph (note the addition of the `group' aesthetic):
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = "interquartile", geom = "errorbar")+
+    stat_summary(fun.y = 'median', geom='line')
+\end{verbatim}
+
+
+You can also adjust any of the attributes of the geom that is
+called through stat$_{\mathrm{summart}}$. For example, we can increase the line width and decrease the
+errorbar width. (You can find out what you can do with each geom by
+reading the documentation).
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = "interquartile", geom = "errorbar", width=0.5)+
+    stat_summary(fun.y = 'median', geom='line', lwd=1.5)
+\end{verbatim}
+
+
+Another cool geom is a ribbon:
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = "interquartile", geom = "ribbon", alpha = 0.1)
+\end{verbatim}
+
+
+Of course, you can use other functions for fun.data. Two of the most
+common ones are a 95\% confidence interval of the mean based on either
+a normal distribution or a bootstrap. These are packaged with ggplot2
+and are called `mean$_{\mathrm{cl}}$$_{\mathrm{normal}}$' and `mean$_{\mathrm{cl}}$$_{\mathrm{boot}}$' respectively. Note
+that these are just run of the mill functions that you can call
+yourself, they just happen to output named vectors:
+
+\begin{verbatim}
+print( mean_cl_boot( seq(0,100,1)) )
+\end{verbatim}
+
+
+\begin{verbatim}
+print( mean_cl_normal( seq(0,100,1)) )
+\end{verbatim}
+
+
+In this case, I used the `pointrange' geom:
+
+\begin{verbatim}
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain, group = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = "mean_cl_boot", geom = "pointrange")+
+    stat_summary(fun.y = "mean", geom="line")
+\end{verbatim}
+
+
+You can also define a function to make a boxplot. It requires three
+additional aesthetic mappings: `lower', `middle', and `upper'.
+
+\begin{verbatim}
+
+my.boxplot <- function(x){
+    out <- c(mean(x), quantile(x, probs = c(0.05, 0.95, 0.25, 0.5, 0.75)))
+    names(out) <- c("y", "ymin", "ymax", "lower", "middle", "upper")
+    out
+}
+
+ggplot(growth.270, aes(x=binned.time, y=OD, col = strain))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    stat_summary(fun.data = "my.boxplot", geom = "boxplot", fill = NA)
+\end{verbatim}
+\section{smoothed data}
+\label{sec-3}
+
+
+ggplot also gives you a nice way of plotting linear models with your
+data. The function is called stat$_{\mathrm{smooth}}$. The default behavior is to
+plot a loess regression:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    stat_smooth()
+\end{verbatim}
+
+
+However, you can actually specify any linear model you want. The
+linear model type is specifed by the method argument. For example,
+here's a normal linear model:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    stat_smooth( method = "lm", formula = y~x)+
+    geom_point()
+\end{verbatim}
+
+
+You can also do logistic regression or anything else calling for a
+generalized linear model. See the stat$_{\mathrm{smooth}}$ documentation for an example.
+
+\end{document}

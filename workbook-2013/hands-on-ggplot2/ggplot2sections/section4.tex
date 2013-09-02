@@ -1,0 +1,54 @@
+% Created 2013-08-21 Wed 17:10
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{ggplot}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+Probably the biggest obstacle to learning ggplot-style graphics is
+  that it requires learning a different syntax for plotting. The
+  following sections break down a ggplot into it's component parts.
+
+We've already seen the function `ggplot' itself. The first argument is
+always a data frame. The data frame is the one that ggplot will use to
+look for all the mappings that you define in the subsequent pieces of
+the plot. The nice thing about this is that there is no need to use
+the dollar sign notation. (You can get a similar behavior in base
+plots by specifying the `data' argument)
+
+The second argument is always a function called `aes.' aes takes named
+arguments. Each argument name is the `aesthetic' that you want mapped
+to a particular column in the data. The way you specify the mapping is
+by writing the aesthetic (ie size) `=' the column name. (Note that the column names aren't in quotes) For example, if we want the diamond's caret to be on the x axis and the diamond's price to be on the y axis, we would write:
+
+\begin{verbatim}
+ggplot(diamonds.sampled, aes(x=carat, y = price))
+\end{verbatim}
+
+If you call just this function, nothing will be plotted because we haven't told ggplots how to
+display the aesthetic mappings we've made. To do this, we need a geom.
+
+\end{document}

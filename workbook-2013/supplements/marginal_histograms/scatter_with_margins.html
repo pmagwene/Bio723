@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="en" xml:lang="en">
+<head>
+<title>scatter_with_margins</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-08-27 09:35:54 EDT"/>
+<meta name="author" content="Colin Maxwell"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+<div id="content">
+
+<h1 class="title">scatter<sub>with</sub><sub>margins</sub></h1>
+
+
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Using base graphics and par </a></li>
+<li><a href="#sec-2">2 Using the library ade4 </a></li>
+<li><a href="#sec-3">3 Using ggplots </a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Using base graphics and par </h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+This is a solution I found here:
+</p>
+<p>
+<a href="http://www.r-bloggers.com/example-8-41-scatterplot-with-marginal-histograms/">http://www.r-bloggers.com/example-8-41-scatterplot-with-marginal-histograms/</a>
+</p>
+<p>
+However, it gives strange behaviour that I haven't figured out when I
+run it in the emacs IDE (the axis labels don't work). My understanding
+is that this is also true in Sweave. However, it works pretty well in
+R launched from the command line.
+</p>
+
+
+
+<pre class="src src-R">scatterhist = <span style="color: #a020f0;">function</span>(x, y, xlab=<span style="color: #8b2252;">""</span>, ylab=<span style="color: #8b2252;">""</span>, xbreaks=<span style="color: #8b2252;">"Sturges"</span>, ybreaks=<span style="color: #8b2252;">"Sturges"</span>){
+  opar <span style="color: #008b8b;">&lt;-</span> par()
+  zones=matrix(c(2,0,1,3), ncol=2, byrow=<span style="color: #228b22;">TRUE</span>)
+  layout(zones, widths=c(4/5,1/5), heights=c(1/5,4/5))
+  xhist = hist(x, xbreaks, plot=<span style="color: #228b22;">FALSE</span> )
+  yhist = hist(y, ybreaks, plot=<span style="color: #228b22;">FALSE</span>)
+  top = max(c(xhist$counts, yhist$counts))
+  par(mar=c(3,3,1,1))
+  plot(x,y)
+  par(mar=c(0,3,1,1))
+  barplot(xhist$counts, axes=<span style="color: #228b22;">TRUE</span>, ylim=c(0, top), space=0)
+  par(mar=c(3,0,1,1))
+  barplot(yhist$counts, axes=<span style="color: #228b22;">TRUE</span>, xlim=c(0, top), space=0, horiz=<span style="color: #228b22;">TRUE</span>)
+  par(oma=c(3,3,0,0))
+  mtext(xlab, side=1, line=1, outer=<span style="color: #228b22;">TRUE</span>, adj=0, 
+    at=(1 * (mean(x) - min(x))/(max(x)-min(x))))
+  mtext(ylab, side=2, line=1, outer=<span style="color: #228b22;">TRUE</span>, adj=0, 
+    at=(1 * (mean(y) - min(y))/(max(y) - min(y))))
+  par(opar)          <span style="color: #b22222;"># </span><span style="color: #b22222;">restore original settings
+</span>}
+
+with(iris,
+     scatterhist(jitter(Sepal.Length),
+                 jitter(Petal.Width),
+                 xlab=<span style="color: #8b2252;">"Sepal length"</span>,
+                 ylab=<span style="color: #8b2252;">"Petal width"</span>)
+     )
+
+</pre>
+
+
+
+
+
+<p>
+<img src="margeHist/file1.png"  alt="margeHist/file1.png" />
+</p>
+
+
+
+
+<pre class="src src-R">with(iris,
+     scatterhist(jitter(Sepal.Length),
+                 jitter(Petal.Width),
+                 xlab=<span style="color: #8b2252;">"Sepal length"</span>,
+                 ylab=<span style="color: #8b2252;">"Petal width"</span>,
+                 ybreaks = 30)
+     )
+</pre>
+
+
+
+
+
+<p>
+<img src="margeHist/file2.png"  alt="margeHist/file2.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Using the library ade4 </h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+This is a package for ecological analysis. It's nice, but I can't
+figure out how to label the axes!
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #008b8b;">require</span>(ade4)
+s.hist(iris, xax=1, yax=4)
+</pre>
+
+
+
+
+
+<p>
+<img src="margeHist/file3.png"  alt="margeHist/file3.png" />
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #b22222;">#</span><span style="color: #b22222;">Don't plot rownumbers
+</span>s.hist(iris, xax=1, yax=4,clab=0)
+</pre>
+
+
+
+
+
+<p>
+<img src="margeHist/file4.png"  alt="margeHist/file4.png" />
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #b22222;">#</span><span style="color: #b22222;">Adjust the density plots
+</span>s.hist(iris, xax=1, yax=4, clab=0, adj=0.5)
+</pre>
+
+
+
+
+
+<p>
+<img src="margeHist/file5.png"  alt="margeHist/file5.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Using ggplots </h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+I have to say, I like my function the best! It labels the axes, works
+with Sweave, and you can break things into groups. The only
+disadvantage is this doesn't suppress the group legend when plotting a
+single color, which is a bit ugly.
+</p>
+
+
+
+<pre class="src src-R"><span style="color: #008b8b;">require</span>(ggplot2); <span style="color: #008b8b;">require</span>(grid); <span style="color: #008b8b;">require</span>(gridExtra)
+
+<span style="color: #0000ff;">scatterWithMargins</span> <span style="color: #008b8b;">&lt;-</span> <span style="color: #a020f0;">function</span>(plotData, x, y, color = 1){
+    <span style="color: #0000ff;">g_legend</span><span style="color: #008b8b;">&lt;-</span><span style="color: #a020f0;">function</span>(a.gplot){
+        tmp <span style="color: #008b8b;">&lt;-</span> ggplot_gtable(ggplot_build(a.gplot))
+        leg <span style="color: #008b8b;">&lt;-</span> which(sapply(tmp$grobs, <span style="color: #a020f0;">function</span>(x) x$name) == <span style="color: #8b2252;">"guide-box"</span>)
+        legend <span style="color: #008b8b;">&lt;-</span> tmp$grobs[[leg]]
+        <span style="color: #a020f0;">return</span>(legend)
+    }
+    xy <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes_string(x=x, y=y, col = color))+
+        geom_point()+
+        geom_density2d()+
+        theme_classic()
+    xDen <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes_string(x=x, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        theme_classic()+
+        xlab(<span style="color: #8b2252;">""</span>)
+    yDen <span style="color: #008b8b;">&lt;-</span> ggplot(plotData, aes_string(x=y, fill = color, col=color))+
+        geom_density(alpha=0.1)+
+        coord_flip()+
+        theme_classic()+
+        xlab(<span style="color: #8b2252;">""</span>)
+    leg <span style="color: #008b8b;">&lt;-</span> g_legend( xDen)
+    grid.arrange(xDen+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 leg,
+                 xy+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 yDen+theme(legend.position = <span style="color: #8b2252;">"none"</span>),
+                 nrow = 2, ncol = 2,
+                 widths = unit(c(2,1), c(<span style="color: #8b2252;">"null"</span>, <span style="color: #8b2252;">"null"</span>)),
+                 heights = unit(c(1,2), c(<span style="color: #8b2252;">"null"</span>, <span style="color: #8b2252;">"null"</span>))
+                 )
+}
+scatterWithMargins( iris, <span style="color: #8b2252;">"Sepal.Length"</span>, <span style="color: #8b2252;">"Petal.Width"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="margeHist/file6.png"  alt="margeHist/file6.png" />
+</p>
+
+
+
+<pre class="src src-R">scatterWithMargins( iris, <span style="color: #8b2252;">"Sepal.Length"</span>, <span style="color: #8b2252;">"Petal.Width"</span>, <span style="color: #8b2252;">"Species"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="margeHist/file7.png"  alt="margeHist/file7.png" />
+</p>
+</div>
+</div>
+<div id="postamble">
+<p class="author"> Author: Colin Maxwell
+</p>
+<p class="date"> Date: 2013-08-27 09:35:54 EDT</p>
+<p class="creator">HTML generated by org-mode 7.3 in emacs 23</p>
+</div>
+</div>
+</body>
+</html>
