@@ -29,7 +29,7 @@ This plots Sepal Length on the x-axis and Petal Length on the y-axis. Here's an 
 > plot(Petal.Length ~ Sepal.Length, data = iris)
 \end{R}
 %
-Did you notice what is different between the two versions above?  In the second version, you can think of the tilde (`~') as short-hand for `function of'.  So the plotting call above can be translated roughly as ``Plot Petal.Length as a function of Sepal.Length, where these variables can be found in the iris data set''.
+Did you notice what is different between the two versions above?  In the second version, you can think of the tilde (`\textasciitilde') as short-hand for `function of'.  So the plotting call above can be translated roughly as ``Plot Petal.Length as a function of Sepal.Length, where these variables can be found in the iris data set''.
 
 From these plot it is immediately obvious that these two variables are positively associated (i.e. when one increases the other tends to increase). You will also notice there seem to be distinct clusters of points in the plot. Recall that the iris data set consists of three different species.  Let's regenerate the plot, this time coloring the points according to the species names.
 %
@@ -51,7 +51,7 @@ Levels: setosa versicolor virginica
 > typeof(iris$Species)
 [1] "integer"
 \end{R}
-The |is.factor()| function tests whether an vector is a factor,  the |levels()| function returns the categorical labels associated with the factor, and |nlevels()| gives the total number of levels. Factor levels are represented internally as integers, as the |typeof()| function call illustrates.  You can use the function |unclass()| to show the corresponding integer representations for a vector of factors:
+The |is.factor()| function tests whether a vector is a factor,  the |levels()| function returns the categorical labels associated with the factor, and |nlevels()| gives the total number of levels. Factor levels are represented internally as integers, as the |typeof()| function call illustrates.  You can use the function |unclass()| to show the corresponding integer representations for a vector of factors:
 %
 \begin{R}
 > unclass(iris$Species)

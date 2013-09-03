@@ -1,6 +1,6 @@
 \section{Introducing ggplot2}
 
-Pretty much any statistical plot can be thought of as a mapping between data and one or more visual representations. For example, in a bivariate scatter plot we map two ordered sets of numbers (the variables of interest) to points in thecartesian plane (x,y-coordinates).  In our example above, we further embellished our plot with another mapping in which we mapped the Species labels to different colors.
+Pretty much any statistical plot can be thought of as a mapping between data and one or more visual representations. For example, in a bivariate scatter plot we map two ordered sets of numbers (the variables of interest) to points in the Cartesian plane (x,y-coordinates).  In our example above, we further embellished our plot with another mapping in which we mapped the Species labels to different colors.
 
 This notion of representing plots in terms of their mappings is a powerful idea which is central to an approach for plotting that is represented in the R package |ggplot2|.
 
@@ -14,9 +14,9 @@ Like all R packages, |ggplot2| can be installed either from the command line or 
 
 \subsection{Aesthetic and Geometric mappings in ggplot2}
 
-ggplot2 considers two types of mappings from data to visual reprsentations: 1) `aesthetic mappings', which determine the way that data are represented in a plot (e.g. symbols, colors) and 2) `geometry' or `geom' mappings which determine the type of geometric representation that a plot uses.  
+ggplot2 considers two types of mappings from data to visual representations: 1) `aesthetic mappings', which determine the way that data are represented in a plot (e.g. symbols, colors) and 2) `geometry' or `geom' mappings which determine the type of geometric representation that a plot uses.  
 
-The primary plotting function in |ggplot2| is |ggplot()|. The first argument to |ggplot()| is
+The primary plotting function in |ggplot2| is |ggplot()|. The first argument to |ggplot| is
 always a data frame. The data frame is the one that ggplot will use to look for all the mappings that you define in the subsequent pieces of the plot. The nice thing about this is that there is no need to use
 the dollar sign notation. As you've seen, you can get similar behavior in base plots by specifying the `data' argument.
 
@@ -35,7 +35,7 @@ Let's recreate our iris scatter plot using the function |ggplot| from the ggplot
                 col = Species)) + geom_point()
 \end{R}
 %
-Following the requirement outline above, |iris| is our data frame, the call to |aes| set's up our aesthetic mapping, and we're specifying the use of the point geom (|geom_point()|) to map the x- and y-values in the aesthetic mapping to points in the cartesian plane. In the function call above, we told ggplot that we wanted the sepal length on the x axis, the petal length on the y axis, and the colors to be encoded by the species. However, we could choose any number of other aesthetic mappings. For example, could use shape instead of color to represent the Species labels:
+Following the requirement outline above, |iris| is our data frame, the call to |aes| set's up our aesthetic mapping, and we're specifying the use of the point geom (|geom_point()|) to map the x- and y-values in the aesthetic mapping to points in the Cartesian plane. In the function call above, we told |ggplot| that we wanted the sepal length on the x axis, the petal length on the y axis, and the colors to be encoded by the species. However, we could choose any number of other aesthetic mappings. For example, could use shape instead of color to represent the Species labels:
 \begin{R}
 > ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, 
                 shape = Species)) + geom_point()
@@ -126,7 +126,7 @@ The above code also set the transparency of the bar fills using the |alpha| argu
 > ggplot(iris, aes(x = Sepal.Length, fill=Species)) + 
         geom_density(alpha=0.65)
 \end{R}
-
+%
 There's also a 2D version of the density plot, created using |geom_density2d()|.  This can be usefully combined with |geom_points()| to create a bivariate scatter plot with density contours.
 %
 \begin{R}
