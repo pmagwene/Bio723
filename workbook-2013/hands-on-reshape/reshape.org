@@ -1,4 +1,5 @@
-#+BABEL: R :session *R* :exports both :eval always :width 500 :height 500
+#+BABEL: R :session *R* :exports both :eval never :width 500 :height 500
+#+OPTIONS: ^:{}
 
 * Medium scale data processing
 Quite a lot of what working biologists do (or could do) with computers
@@ -6,14 +7,14 @@ is 'medium scale computing.' I don't know if there's a technical
 definition of this, but to me it means that you have too much data for
 dealing with in excel, but too little to justify setting up a database
 for sophisticated queries. Biological data often comes in batches
-(different experimental days) and with lots of covariates (geotype,
+(different experimental days) and with lots of covariates (geontype,
 environment, person who collected the data). For me the challenge was
 learning to quickly get all that data along with it's covariates into
 R in a way that was flexible and reusable. That is, my experiments
 change all the time, so things can't be too hard-coded, but things
 also stay the same and I don't want to have to copy and paste too much.
 
-* What is a list?
+* Why use lists?
 When I first started using R, I never bothered much with lists. If I
 had three different datasets, they would all be stored as three
 different data frames. The problem with this is that you need to
@@ -22,9 +23,31 @@ what their relationship to each other is. This is where lists come
 in. Rather than storing everything as a separate variable, a list has
 slots to put conceptually related objects together.
 
-* Making a list by hand							:run:
+* Description of data
 
-Directory structure:
+As an example of a multifactorial, multidimensional dataset, we'll use some data I collected about yeast
+morphological phenotypes. Microscope images were collected of yeast
+cells stained with markers for the nuclei, cell wall, and actin:
+
+[[file:morphology.jpg]]
+
+Software then segmented the yeast cells and collected a bunch of
+measurements relating to the size, shape and relationship between
+nuclei, actin patches, and cells. For example, here's a diagram of the
+measurements collected based on cell wall images:
+
+[[file:morphology_measurement.jpg]]
+
+I grew two different wild yeast isolates (referred to by their
+position in a 96 well plate as 2a1 and 2b1) in four different synthetic medias that either had high
+or low dextrose (2% or 0.5%) and high or low ammonium sulfate (5000uM
+or 50uM). These are called HAHD for "High ammonium high dextrose",
+"LAHD low ammonium high dextrose", etc. The results of running the
+morphology software on a batch of images from each of these
+combinations is in a series of directories that I've placed online. 
+
+The directory structure is
+as follows:
 
 - http://people.duke.edu/~csm29/morphology_data
   - definitions_without_stage.csv :: a mapping between morphological
@@ -37,8 +60,14 @@ Directory structure:
     - 2a1_HAHD_conA_biological.xls :: morphological measurements for
          cell wall characteristics
 
-In this case, we'll hand-code a list together that will mimic the
-directory structure of our experiment.
+
+* Making a list by hand							:run:
+
+As a first step, we'll hand-code a list together that will mimic the
+directory structure of our experiment. Then we'll use various list
+operations to quickly and easily read in the data into a usable
+form.
+
 
 #+begin_src R :results output
   baseFile = "http://people.duke.edu/~csm29/morphology_data"
@@ -59,6 +88,7 @@ directory structure of our experiment.
                   "2b1_LAHD" = "2b1_LAHD"
                   )
   
+  #These are mappings between the IDs used to describe a variable and a more 'human friendly description
   defs <- read.csv("http://people.duke.edu/~csm29/morphology_data/definitions_without_stage.csv", as.is=T)
   rownames(defs) <- defs$ID
 #+end_src
@@ -70,14 +100,38 @@ directory structure of our experiment.
 The simplest function to work with lists is lapply. The thing to
 remember about 'apply' functions is that they call a function that you
 determine with each successive list item as the first argument of the
-function. The clutch thing about 'apply' functions is that they
-remember the names of the list items:
+function.
 
-** Basic examples
+For example, we can write a function that will return whatever was
+passed to it. Calling lapply with our list and the function just
+returns a copy of the list:
 
-You can instantiate functions as an argument to the lapply
-function. This function just returns the exact same variable, which
-means our list doesn't change)
+#+begin_src R :results output
+  noChange = function(x){
+      x
+  }
+  
+  lapply( samples[1:4], noChange)
+#+end_src
+
+#+results:
+#+begin_example
+
+$`2a1_HAHD`
+[1] "2a1_HAHD"
+
+$`2a1_HALD`
+[1] "2a1_HALD"
+
+$`2a1_LALD`
+[1] "2a1_LALD"
+
+$`2a1_LAHD`
+[1] "2a1_LAHD"
+#+end_example
+
+Rather than having to name a function at each place, it's often convenient
+to just define a function in the argument of the lapply function like this:
 
 #+begin_src R :results output
   lapply( samples[1:4], function(x) x) 
@@ -98,7 +152,9 @@ $`2a1_LALD`
 [1] "2a1_LALD"
 #+end_example
 
-Replacing a character in a string with another character
+Defining a function in lapply itself allows you to nest other
+functions into the lapply call. For example, in this line we replace
+all the Ls with Xs. (look up gsub documentation for details).
 
 #+begin_src R :results output
   lapply( samples[1:4], function(x) gsub("L", "X", x)) 
@@ -119,12 +175,16 @@ $`2a1_LALD`
 [1] "2a1_XAXD"
 #+end_example
 
-Splitting a string
-
-strsplit can take vectors and split each string in the vector. There's
-no guarantee that the result each string split will be the same
-length, so strsplit returns a list. This can be inconvenient when
-you're only splitting a single string.
+The approach above is especially useful if you want to do extra
+processing for each item of the list. However, you don't need to
+use this approach if you just want to supply additional arguments to a
+function that don't change throughout the function call. For example,
+the strsplit function takes two arguments. The first is a vector of
+strings to split and the second is the character to split them
+by. lapply automatically passes the first argument to the function as
+it moves along the list. We
+can specify this second argument by simply appending it after the
+function.
 
 #+begin_src R :results output
   lapply( samples[1:2], strsplit, "_")
@@ -140,7 +200,11 @@ you're only splitting a single string.
 : $`2a1_HALD`[[1]]
 : [1] "2a1"  "HALD"
 
-Using 'str' to visualize a list. You can see that it's depth 2.
+
+The output might look a bit different that what you'd expect. Rather
+than having a vector with a vector of length two, each entry has a list of
+length one with a vector of length two. A good way to
+visualize lists is using the str function. You can readily see that it's depth 2.
 
 #+begin_src R :results output
   str(lapply( samples[1:2], strsplit, "_"))
@@ -153,24 +217,29 @@ Using 'str' to visualize a list. You can see that it's depth 2.
 :  $ 2a1_HALD:List of 1
 :   ..$ : chr [1:2] "2a1" "HALD"
 
-This example makes a more
+The reason that this is the case is that strsplit is vectorized. You
+can pass an arbitrarily long character vector to strsplit and it will
+return a list of the same length. When you pass a vector length one,
+it will return an argument of length one.
+
+To get the behavior we want, we can make a slightly more
 complicated function that first splits each string by the underscore,
 then returns the first (and only) item in the list, leading to a list
 of depth 1.
 
 #+begin_src R :results output
-  lapply( samples[1:2], function(x){
-      out <- strsplit(x, "_")
-      out[[1]]
-  })
+  str(
+      lapply( samples[1:2], function(x){
+          out <- strsplit(x, "_")
+          out[[1]]
+      })
+      )
 #+end_src
 
 #+results:
-:  $`2a1_HAHD`
-: [1] "2a1"  "HAHD"
-: 
-: $`2a1_HALD`
-: [1] "2a1"  "HALD"
+:  List of 2
+:  $ 2a1_HAHD: chr [1:2] "2a1" "HAHD"
+:  $ 2a1_HALD: chr [1:2] "2a1" "HALD"
 
 * sapply
 
@@ -199,7 +268,8 @@ columns.
 
 Often, it's convenient to be able to keep track of the 'kind' of
 observation that a data point belongs to. The nice thing about sapply
-is that by assigning names to the output of the function.
+is that by assigning names to the output of the function that these
+names will be trasmitted to the row names of the resulting data.frame:
 
 #+begin_src R :results output
   sapply( samples[1:2], function(x){
@@ -215,23 +285,18 @@ is that by assigning names to the output of the function.
 : strain "2a1"    "2a1"   
 : media  "HAHD"   "HALD"
 
-* Make data paths 
+* Assembling paths to our data with lapply
 
-Each folder has three different data types. This function takes three
-arguments. The first argument is the folder name, the second is the
-'base file', the third is a list of data types. The result of this is
-a list where each strain/media has a list that in turn contains a URL
-to each data table.
+Returning to our example, recall that each folder has three different
+data types. To assemble paths to our data for reading, we'll write a function.
 
-Note that the function takes three arguments. The first argument is
+The function takes three arguments. The first argument is
 'x' which is the folder name from the list we're going to call it
 on. The second two arguments are the base folder and the list of data
 types that we defined above. Rather than hard-coding these into the
 function, it's better practice to write a function that allows you to
 change the value of either the base folder or the data value you want
-to read in. lapply allows you to pass such arguments by just appending
-them on after the function. This leads to the elegant, but somewhat
-difficult to read, function call below:
+to read in.
 
 #+begin_src R :results output
   makeDataPaths <- function(x, bFile, dTypes){
@@ -306,7 +371,6 @@ If you specify 'unlist' you wil end up with a character vector:
 Whereas if you specify 'list' you'll end up with a list with the same
 number of levels as before.
 
-
 #+begin_src R :results output
   str(
     rapply( dataPaths[1:2], c, how="list")
@@ -360,6 +424,9 @@ point:
                   )
   
   dataPaths <- lapply( samples, makeDataPaths, baseFile, dataTypes)
+
+  #Read in the data with read.table. The extra arguments are for
+  read.table and rapply
   morphList <- rapply( dataPaths, read.table, header = T, sep="\t", how="list")
 #+end_src
 
@@ -401,7 +468,7 @@ elements in the list.
   })
   
   colnames(morphListFiltered[[1]])
-
+  
 #+end_src
 
 #+results:
@@ -448,13 +515,17 @@ elements in the list.
 The resulting list contains a bunch of columns, including some
 duplicates. Furthermore, not all the data is reliable. We'll exclude
 all the crap by wrapping the instructions into one function. We can
-then filter all the bad data in a single lapply call.
+then filter all the bad data in a single lapply call. Look up the
+documentation for grep to figure out how the call removes columns that
+end with either 1 or 2 or have X in them.
 
 #+begin_src R :results output
   removeBadData <- function(x){
+      #Remove unreliable data
       out <- subset(x, Cgroup != "complex")
       out <- subset(out, Dgroup != "-")
       out <- subset(out, Agroup != "-")
+      #Remove unneeded columns.
       unneededColumns <- grep("\\.1|\\.2|X", colnames(out))
       out[,-unneededColumns]
       
@@ -467,6 +538,10 @@ then filter all the bad data in a single lapply call.
 
 * Melting data
 
+Now that our data is in a list, we'd like to do something with it. In
+the next two sections we'll use the reshape package to put the data
+into a more usable format.
+
 The first reshape command we'll look at is 'melt.' The melt function
 will take either a list, a data.frame, or a matrix. In the case of a
 data.frame, the function will convert from the 'wide' form of data to
@@ -477,7 +552,6 @@ single strain/media combination
 
 #+begin_src R :results output
   library(reshape)
-  
   
   #Restrict the data to a few of the morphological features and some identifying data
   examp <- subset(morphListFiltered[[1]],
@@ -572,7 +646,7 @@ For your information, this is what the measurements correspond to.
 : C118 C118                  Cell size ratio
 
 In some sense, all the morphological measurements are equivalent to
-each other. They're all numbers. You can also tell reshape to only
+each other. They're all numbers. You could actually tell reshape to only
 index by the image number and the cell number and not by the phase of
 the cell cycle
 
@@ -642,9 +716,25 @@ types of observations, you'd want to keep the data in the long form:
 [[file:r/file2.png]]
 
 Melt can also be used on lists, which is convenient to get our data
-out of list form and into something we can work with more easily. 
+out of list form and into something we can work with more
+easily. We'll again subset our data to a small number of variables,
+but this time we'll do it simultaneously with the filtering. Notice
+that I called a two argument function with lapply so that I could
+supply a vector of 'variables I want to keep'. This means that I
+could easily change the variables without changing the bulk of the
+code.
 
 #+begin_src R :results output
+  filterAndSubset <- function(x, y){
+      out <- x[,c("Dgroup", y)]
+      out$phase <- NA
+      out$phase[ out$Dgroup == "A" ] <- "G1"
+      out$phase[ out$Dgroup == "A1" ] <- "S"
+      out$phase[ out$Dgroup == "C" ] <- "M"
+      out <- subset(out, !is.na(phase))
+      subset(out, select = -Dgroup)
+  }
+  
   variablesToKeep = c(
       "image_number",
       "cell_id",
@@ -659,18 +749,12 @@ out of list form and into something we can work with more easily.
       )
       
   
-  morphListFiltered2 <- lapply(morphListFiltered,
-                               function(x, y){
-                                   out <- x[,c("Dgroup", y)]
-                                   out$phase <- NA
-                                   out$phase[ out$Dgroup == "A" ] <- "G1"
-                                   out$phase[ out$Dgroup == "A1" ] <- "S"
-                                   out$phase[ out$Dgroup == "C" ] <- "M"
-                                   out <- subset(out, !is.na(phase))
-                                   subset(out, select = -Dgroup)
-                               }, variablesToKeep)
-  
-  
+  morphListFiltered2 <- lapply(morphListFiltered, filterAndSubset, variablesToKeep)
+#+end_src
+
+Now we'll melt the data
+
+#+begin_src R :results output
   morph <- melt(morphListFiltered2, id.vars = c(variablesToKeep, "phase"))
   
   morph[ morph == -1 ] <- NA
@@ -698,13 +782,13 @@ out of list form and into something we can work with more easily.
 #+end_example
 
 Since we told melt to index based on all the variables, the result is
-a long form of the data, except that the data.frame has a variable
+a wide form of the data, except that the data.frame has a variable
 corresponding to the element in the list that it came from. This is
 convenient for later analysis since the whole point of the list was
 that the name of the list was equal to a biological factor in our
 analysis.
 
-Alternatively, we can get all our data into a form like we had above
+Alternatively, we can get all our data into a long form like we had above
 by melting and indexing based on the same index variables we did before.
 
 #+begin_src R :results output
@@ -724,22 +808,21 @@ by melting and indexing based on the same index variables we did before.
 : 5            1       4     S     C103 38.94868 2a1_HAHD
 : 6            1       5     S     C103 46.17359 2a1_HAHD
 
-Now we've moved from data on a disk in sundry locations to a
+
+Now we can reap the benefits of our efforts. We've moved from data on a disk in sundry locations to a
 convenient pair of data.frames for plotting just about anything. For
 example, with a little extra work, we can compare the effect of media on the different
 morphological measurements by strain. The following uses strsplit 
 
 #+begin_src R :results silent
   
-  #This is a common trick to extract the first place in a underline separated
-  #string. strsplit makes a list with a length two character in each place.
-  #sapply goes to each element in the list, and gets a particular element
+  #This is a common trick to extract the first place in a underline separated string. strsplit makes a list with a length two character in each place. sapply goes to each element in the list, and gets a particular element with the '[' index function. 
   morph$media <- sapply( strsplit(morph$L1, "_"), "[", 2)
   morph$strain <- sapply( strsplit(morph$L1, "_"), "[", 1)
-  
   morph$ammonium <- sapply( strsplit(morph$media, ""), "[", 1)
   morph$dextrose <- sapply( strsplit(morph$media, ""), "[", 3)
   
+  #We'll factor our data with some nice levels and labels for convenient plotting
   morph$ammonium <- factor(morph$ammonium,
                            levels = c("L", "H"),
                            labels = c("50uM ammonium", "5000uM ammonium"))
@@ -748,18 +831,25 @@ morphological measurements by strain. The following uses strsplit
                            levels = c("H", "L"),
                            labels = c("2% dextrose", "0.5% dextrose"))
   
+  #Similarly, we'll add in the proper strain ID
+  morph$strain <- factor(morph$strain,
+                           levels = c("2a1", "2b1"),
+                           labels = c("PMY1529", "PMY1549"))
 #+end_src
 
 Now that we have our data in the appropriate form, we can call ggplot
 as above, or we could calculate the GxE curves for cell size for each strain!
 
 #+begin_src R :results graphics output :file r/GxE.png
+  require(scales)
   ggplot(morph, aes(x=strain, y=C103*C104, group = media))+
       stat_summary( fun.data = "mean_cl_boot", geom = "pointrange")+
       stat_summary( fun.y = "mean", geom = "line")+
       facet_grid(ammonium~dextrose)+
       theme_bw()+
-      ylab("Rectangular approximation of cell size (pixels)")
+      scale_y_continuous("Rectangular approximation of cell size (pixels)",
+                         labels=comma)+
+      xlab("")
 #+end_src
 
 #+results:
@@ -807,7 +897,7 @@ something like we found it in:
 
 The only difference being that there is a column corresponding to L1
 rather than a list. This can be remedied by using the '|' symbol. I'll
-print out the first two axes so you can see what's going on:
+print out the first two list items so you can see what's going on:
 
 #+begin_src R :results output
   str(cast(morph.m, image_number + cell_id + phase ~ variable | L1)[1:2])
@@ -924,7 +1014,7 @@ of the orignal variables on the first axis:
 Cast warns us that there's not a unique combination. This makes sense:
 there's lots of different data points that 1) measure C103, 2) are in
 phase G1, and 3) belong to experiment '2a1_HAHD'. In fact, there are
-61 of them. We can see this by plotting exactly this in ggplot:
+61 of them. We can see the multiplicity of data by plotting exactly this in ggplot:
 
 #+begin_src R :results output graphics :file r/file3.png
   ggplot(morph.m, aes(x = L1, y = value))+
@@ -939,21 +1029,22 @@ As a result, if you're not interested in the number of observations
 that you have for a particular class of data, you need to supply a
 function for cast to aggregate the data with. The argument that this
 is specified under is called 'fun.aggregate'. In this case, we'll use
-the mean:
+the mean. Notice that I passed the argument 'na.rm=T' to the 'mean'
+function by appending it to the function call. This is analogous to
+passing additional arguments in lapply functions.
 
-#+begin_src R :results output
-  head(cast(morph.m, phase + L1 ~ variable, fun.aggregate = "mean"))
+#+begin_src R :results output :eval always
+  head(cast(morph.m, phase + L1 ~ variable, fun.aggregate = "mean", na.rm=T))
 #+end_src
 
 #+results:
-: 
 :   phase       L1     C103     C104 C107 C108     C115 C118 C106 D110
-: 1    G1 2a1_HAHD 44.42133 33.63121   NA   NA 1.322337   NA   NA   NA
-: 2    G1 2a1_HALD 42.47919 33.38616   NA   NA 1.267637   NA   NA   NA
-: 3    G1 2a1_LAHD 39.48546 32.13472   NA   NA 1.230856   NA   NA   NA
-: 4    G1 2a1_LALD 38.65069 32.73564   NA   NA 1.184766   NA   NA   NA
-: 5    G1 2b1_HAHD 50.80645 40.48347   NA   NA 1.262813   NA   NA   NA
-: 6    G1 2b1_HALD 42.90138 35.51088   NA   NA 1.212462   NA   NA   NA
+: 1    G1 2a1_HAHD 44.42133 33.63121  NaN  NaN 1.322337  NaN  NaN  NaN
+: 2    G1 2a1_HALD 42.47919 33.38616  NaN  NaN 1.267637  NaN  NaN  NaN
+: 3    G1 2a1_LAHD 39.48546 32.13472  NaN  NaN 1.230856  NaN  NaN  NaN
+: 4    G1 2a1_LALD 38.65069 32.73564  NaN  NaN 1.184766  NaN  NaN  NaN
+: 5    G1 2b1_HAHD 50.80645 40.48347  NaN  NaN 1.262813  NaN  NaN  NaN
+: 6    G1 2b1_HALD 42.90138 35.51088  NaN  NaN 1.212462  NaN  NaN  NaN
 
 This is equivalent to just looking at the mean of each variable for
 each phase and media condition. You can also plot this using
@@ -967,7 +1058,7 @@ is plotted as a point.
 #+begin_src R :results output graphics :file r/file4.png
   ggplot(morph.m, aes(x = L1, y = value))+
       stat_summary(fun.y="mean", geom = "point")+
-      facet_grid(variable~phase, scale="free")
+      facet_grid(variable~phase, scale="free", na.rm=T)
 #+end_src
 
 #+results:
@@ -978,7 +1069,7 @@ we did the calculations beforehand ourselves. However, we need to cast
 the data into a slightly different form:
 
 #+begin_src R :results output
-  morph.c <- cast(morph.m, phase + L1 + variable ~ . , fun.aggregate = "mean")
+  morph.c <- cast(morph.m, phase + L1 + variable ~ . , fun.aggregate = "mean", na.rm=T)
   colnames(morph.c)[4] <- "value"
   head(morph.c)
 #+end_src 
@@ -988,10 +1079,10 @@ the data into a slightly different form:
 :   phase       L1 variable     value
 : 1    G1 2a1_HAHD     C103 44.421334
 : 2    G1 2a1_HAHD     C104 33.631213
-: 3    G1 2a1_HAHD     C107        NA
-: 4    G1 2a1_HAHD     C108        NA
+: 3    G1 2a1_HAHD     C107       NaN
+: 4    G1 2a1_HAHD     C108       NaN
 : 5    G1 2a1_HAHD     C115  1.322337
-: 6    G1 2a1_HAHD     C118        NA
+: 6    G1 2a1_HAHD     C118       NaN
 
 However, once cast has operated, the results are identical:
 
@@ -1005,31 +1096,50 @@ However, once cast has operated, the results are identical:
 [[file:r/file5.png]]
 
 
-This isn't really the most useful summary. It might be better to write
+The cast data.frame doesn't really read well. It might be better to write
 something more like this:
 
 #+begin_src R :results output
+  roundedMean <- function(x, n=1, na.rm=T){
+      round( mean(x, na.rm=na.rm), n )
+  }
+  
   morph.m$media <- sapply( strsplit(morph.m$L1, "_"), "[", 2)
   morph.m$strain <- sapply( strsplit(morph.m$L1, "_"), "[", 1)
-  cast(morph.m, strain + phase ~ media | variable, fun.aggregate = "mean")[1:3]
+  cast(morph.m, strain + phase ~ media | variable, fun.aggregate = "roundedMean")[1:3]
 #+end_src
 
 #+results:
-: Error: Casting formula contains variables not found in molten data: strain, media
+#+begin_example
 
+$C103
+  strain phase HAHD HALD LAHD LALD
+1    2a1    G1 44.4 42.5 39.5 38.7
+2    2a1     M 42.1 51.7 39.9 46.0
+3    2a1     S 43.9 44.4 42.6 46.3
+4    2b1    G1 50.8 42.9 49.3 49.3
+5    2b1     M 53.4 46.3 48.5 50.4
+6    2b1     S 53.2 45.1 51.3 48.6
 
+$C104
+  strain phase HAHD HALD LAHD LALD
+1    2a1    G1 33.6 33.4 32.1 32.7
+2    2a1     M 31.7 36.9 32.4 32.9
+3    2a1     S 33.0 35.0 32.8 34.2
+4    2b1    G1 40.5 35.5 34.3 35.4
+5    2b1     M 41.1 34.6 34.1 36.3
+6    2b1     S 41.5 35.5 36.0 35.9
 
+$C107
+  strain phase HAHD HALD LAHD LALD
+1    2a1    G1  NaN  NaN  NaN  NaN
+2    2a1     M 34.6 32.5 32.1 29.0
+3    2a1     S 19.5 18.6 20.6 19.9
+4    2b1    G1  NaN  NaN  NaN  NaN
+5    2b1     M 42.0 36.1 36.2 37.4
+6    2b1     S 21.6 20.4 21.5 21.4
+#+end_example
 
-* plyr the split, apply, combine paradigm
-** ddply
-** dlply
-** ldply
-** ddply for reading in complex data
-* Melting your data into a form usable by ggplot
-* Casting your data to plot summary statistics
-* Casting your data for subsequent filtering
-* How to deal with obnoxious data
-- Example using Tecan output and scan
 
 * Appendix
 ** [[ vs [

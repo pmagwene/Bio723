@@ -1,0 +1,120 @@
+
+* plyr the split, apply, combine paradigm
+** apply
+
+#+begin_src R
+  morph.c2 <- cast( morph.m, variable~media+strain, fun.aggregate="mean", na.rm=T)
+  
+  apply(morph.c2, 1, mean)
+  apply(morph.c2, 2, mean)
+#+end_src
+
+** split
+
+#+begin_src R
+  morph.spl <- split(morph.m, morph.m$strain)
+  
+  print( names( morph.spl) )
+  
+  str(morph.spl)
+  
+  lapply(morph.spl, head)
+#+end_src
+
+
+** split + apply
+
+#+begin_src R
+  
+  
+  morph.spl.C103 <- lapply( morph.spl, function(x){
+      subset(x, variable == "C103")
+  })
+  
+  lapply( morph.spl.C103, head)
+#+end_src
+
+
+#+begin_src R
+  
+  
+  sapply( morph.spl.C103, function(x){
+      mean(x$value)
+      })
+  
+  morph.spl.spl <- lapply( morph.spl, function(x){
+      split( x, x$variable)
+  })
+  
+  names(morph.spl.spl)
+  
+  names(morph.spl.spl[[1]])
+  
+  sapply( morph.spl.spl, sapply, function(x){
+      mean(x$value, na.rm=T)
+  })
+#+end_src
+
+** ddply
+
+#+begin_src R
+  
+  
+  foo = d_ply( morph.m, .(strain), function(x) print(head(x)))
+  print(foo)
+  
+  
+  foo = ddply( morph.m, .(strain), function(x) print(head(x)))
+  print(foo)
+  
+  foo = dlply( morph.m, .(strain), function(x) print(head(x)))
+  print(foo)
+  
+  #daply doesn't work here because there are mixed data types from the split
+#+end_src
+
+
+#+begin_src R
+  
+  
+  foo = ddply( morph.m, .(strain, variable), function(x) head(x,2))
+  print(foo)
+  
+  foo = ddply( morph.m, .(variable, strain), function(x) head(x,2))
+  print(foo)
+  
+  
+  ddply( morph.m, .(variable, strain), function(x) mean(x$value, na.rm=T))
+  
+  
+  ddply( morph.m, .(variable, strain), function(x){
+      out <- c(mean(x$value, na.rm=T), median(x$value, na.rm=T), max(x$value, na.rm=T))
+      names(out) <- c("mean", "median", "max")
+      out
+  })
+  
+  library(doMC)
+  registerDoMC(4)
+  getDoParWorkers()
+  
+  system.time(
+      d_ply( morph.m, .(variable), function(x){
+          runif(1000000)
+          NULL
+      })
+      )
+  
+  
+  system.time(
+      d_ply( morph.m, .(variable), function(x){
+          runif(1000000)
+          NULL
+      }, .parallel=TRUE)
+      )
+#+end_src
+
+** dlply
+** ldply
+** ddply for reading in complex data
+* How to deal with obnoxious data
+- Example using Tecan output and scan
