@@ -1,8 +1,13 @@
 \documentclass{beamer}
+\usepackage{etex}
 
 \input{../../preamble/slidespreamble.tex}
 
 \usepackage{tikz}
+
+\usepackage[inline]{asymptote}
+\usepackage{attachfile2}
+\usepackage{asyfig}
 
 
 
@@ -15,7 +20,7 @@
 \author{Instructor: Paul M. Magwene}
 
 
-\date{11 September 2012}
+\date{10 September 2013}
 
 \begin{document}
 %===========================================================
@@ -117,15 +122,18 @@ Last time we saw that correlation is a measure of association and is a function 
 \begin{frame}
   \frametitle{Partial Correlation}
 
+{\small
 The partial correlation of $\vec{x}$ and $\vec{y}$ given $\vec{z}$ is the correlation of $\vec{x}$ and $\vec{y}$ after we ``account for'' their joint association with $\vec{z}$.  
 
 \medskip
 
 What we mean by ``account for'' here is essentially `to factor out', by projecting $\vec{x}$ and $\vec{y}$ onto $\vec{z}$ and then calculating the correlation of the residual vectors.
 
+}
 
 \begin{center}
-\includegraphics[width=6cm]{partial-corr.pdf}
+\asyinclude[width=7cm,inline=true]{partial-corr.asy}
+%\includegraphics[width=6cm]{partial-corr.pdf}
 \end{center}
 
 
