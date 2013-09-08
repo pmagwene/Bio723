@@ -1,0 +1,176 @@
+% Created 2013-08-21 Wed 17:09
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Using ggplot2 to make a scatter plot}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+The goal of this section is to motivate why you might want to use
+ggplot rather than the R base graphics. To begin with, we'll load the
+package ggplot2 that contains the functions we'll need for the first
+section and two data.frames of data: we've already seen the iris
+dataset. The second dataset is the color, cut, clarity, caret and
+price of about 60,000 diamonds. Since the diamonds data is so big,
+we'll take a subsample of 1,000 points:
+
+\begin{verbatim}
+library(ggplot2); data(iris); data(diamonds)
+diamonds.sampled <- diamonds[ sample(1:nrow(diamonds), 1000),]
+\end{verbatim}
+
+As a first example, let's think about a scatter plot, to begin with,
+  we'll use the R base package. When we tell R to make a scatterplot,
+  we have to tell it what the `X' values will be and what the `Y'
+  values will be:
+
+\begin{verbatim}
+plot( x = iris$Sepal.Length, y = iris$Petal.Length)
+\end{verbatim}
+
+
+You can imagine an algorithm that tells R to go to each line in the
+  table of values, find the column for the Sepal length, then the
+  column for the petal length, and finally, to draw a dot where those
+  two things intersect. Another way of saying this is that the
+  horizonal coordinates are mapped onto a particular column of the
+  data (the sepal length) and the vertical coordinates are mapped onto
+  another column (the petal length).
+
+ We could embellish our plot a bit by adding some colors to
+  correspond to the species. However, this actually involves a fair
+  bit of somewhat obscure code:
+
+
+\begin{verbatim}
+#Set up a vector of color keywords for R to index
+COLORS = c("red", "blue", "green")
+
+#Since factors are encoded as numbers and a list of levels, we can index
+#the color vector using the numeric version of the species
+plot( x = iris$Sepal.Length, y = iris$Petal.Length,
+      col = COLORS[ as.numeric( iris$Species ) ] )
+
+#Finally, we can add a legend
+legend( "topleft", pch = 1, col = COLORS, legend = levels( iris$Species ) )
+\end{verbatim}
+
+
+Now we have three mappings: one from sepal length to X, one from
+  petal length to Y, and one from species to color. In the lingo of
+  ggplots, these mappings are called `aesthetic mappings' and the way
+  that these mappings are drawn on the plot is called the `geometry,'
+  or the `geom.' Using ggplot, we can make the same plot, but with a
+  little different syntax:
+
+\begin{verbatim}
+ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 col = Species)
+       )+
+    geom_point()
+\end{verbatim}
+
+
+The function `ggplot' takes two arguments: the first is a data.frame
+  that your plot will be made out of (iris in this case). The second is a function called
+  `aes' that sets up the aesthetic mappings. In this case, we told
+  ggplot that we wanted the sepal length on the x axis, the petal
+  length on the y axis, and the colors to be encoded by the
+  species. However, we could choose any number of other aesthetic
+  mappings. We could use shape:
+
+\begin{verbatim}
+ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 shape = Species)
+       )+
+    geom_point()
+\end{verbatim}
+
+
+
+Or size:
+
+\begin{verbatim}
+ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 size = Species)
+       )+
+    geom_point()
+\end{verbatim}
+
+
+ggplot is also smart enough to render continuous variables as colors or sizes:
+
+\begin{verbatim}
+ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 size = Petal.Width)
+       )+
+    geom_point()
+\end{verbatim}
+
+
+\begin{verbatim}
+ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 col = Petal.Width)
+       )+
+    geom_point()
+\end{verbatim}
+
+
+We could even make a difficult to interpret plot showing all five
+  data columns:
+
+\begin{verbatim}
+ggplot(iris, aes(x = Sepal.Length,
+                 y = Petal.Length,
+                 col = Petal.Width,
+                 size = Sepal.Width,
+                 shape = Species)
+       )+
+    geom_point()
+\end{verbatim}
+
+
+There's quite a lot of advantages to this approach rather than trying
+to replicate this plot with base graphics:
+
+\begin{enumerate}
+\item the legend is automatically drawn for you.
+\item the code is very easy to change. Rather than having to figure out
+   how to manually map a point size onto a variable using some
+   difficult R code, it's just as simple as saying to set the `size'
+   equal to a `variable'.
+\item it's easy to swap around variables from one aesthetic mapping to another.
+\end{enumerate}
+
+And this is just the beginning!
+
+
+
+\end{document}
