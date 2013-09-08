@@ -1,0 +1,350 @@
+% Created 2013-08-21 Wed 17:11
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{scales}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+
+A column of your data is mapped onto an aesthetic. The aesthetic is
+then translated into colors and positions on the plot by a `scale.'
+This translation is done automatically, but you can adjust various
+parts of the process by calling the `scale' functions.
+
+For x, y, alpha, size, linetype, and aesthetics, scales come in two
+flavors ``discrete'' and ``continuous.'' Continuous scales can be any real
+number, whereas discrete scales can be labelled using
+integers. Practically, what this means is that a discrete scale will
+have every value named with a unique label, whereas continuous scales
+will be labelled at periodic points with ticks.
+
+ggplot uses a consistent naming system to make remembering all the functions
+that you use to adjust these scales easy: scale_''AESTHETIC.NAME''_''SCALE.TYPE.''
+
+So for the `x' aesthetic, you have
+`scale$_x$$_{\mathrm{discrete}}$', `scale$_x$$_{\mathrm{continuous}}$', `scale$_x$$_{\mathrm{log10}}$',
+`scale$_x$$_{\mathrm{reverse}}$', `scale$_x$$_{\mathrm{sqrt}}$', `scale$_x$$_{\mathrm{date}}$', etc.
+
+\section{Choosing a discrete or continuous scale}
+\label{sec-1}
+
+
+Since ggplot is relatively smart, numerical columns are automatically
+mapped onto continous scales. For this reason, adding on
+``scale$_x$$_{\mathrm{continuous}}$'' doesn't do anything. 
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=price))+
+    geom_histogram()+
+    scale_x_continuous()
+\end{verbatim}
+
+
+On the other hand, if you specified a discrete scale ggplot would
+label each value in the vector individually. It would first generate a
+factor of the variable `price', which would mean that there would be
+(thousands) of unique variables before it tried to compute a
+histogram. The results are non-sensical and are shown below. Don't run
+it because it takes forever.
+
+\begin{verbatim}
+#Don't run
+ggplot( diamonds.sampled, aes(x=price))+
+    geom_histogram()+
+    scale_x_discrete()
+\end{verbatim}
+
+
+Likewise, if a column contains character values, it's automatically
+mapped to a discrete value:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut))+
+    geom_histogram()+
+    scale_x_discrete()
+\end{verbatim}
+
+
+However, the opposite will yield an error since there's not really a
+good way to go from discrete to continuous values.
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=cut))+
+    geom_histogram()+
+    scale_x_continuous()
+\end{verbatim}
+
+
+Everything that I mentioned about x and y scales is also true for
+shape, linetype, and all the others I listed above.
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    scale_shape_discrete()
+\end{verbatim}
+\section{Arguments to scales}
+\label{sec-2}
+
+
+You can specify how the scales are named by passing a string to the
+appropriate scale function. This argument doesn't need to be named:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    scale_x_continuous("carrots")+
+    scale_y_continuous("$$")+
+    scale_shape_discrete("beauty")
+\end{verbatim}
+
+
+One thing that you can do with scales is determine the range of data
+that you will plot. To do this, specify the limits argument in the
+appropriate scale:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    scale_x_continuous(limits=c(0,1))+
+    scale_y_continuous(limits=c(0,5000))
+\end{verbatim}
+
+
+There's also shorthand functions for this:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    xlim(0,1)+
+    ylim(0,5000)
+\end{verbatim}
+
+You can also control where you want tick marks to appear:
+
+\begin{verbatim}
+ggplot( diamonds.sampled, aes(x=carat, y=price, shape=cut))+
+    geom_point()+
+    scale_x_continuous(breaks=(1:30)/10)
+\end{verbatim}
+
+
+There's also some formatting options, such as percentages, dates, or
+dollars. These are found in the `scales' library and stored as
+formatting functions. You tell the scale what formatting function you
+want. You can also write your own. Consult the documentation for details.
+
+\begin{verbatim}
+library(scales)
+
+ggplot( diamonds.sampled, aes(x=carat*1000, y=price, shape=cut))+
+    geom_point()+
+    scale_y_continuous(labels=dollar)+
+    scale_x_continuous(labels=comma)
+\end{verbatim}
+\section{Kinds of x and y scales}
+\label{sec-3}
+
+
+A common task with x and y scales is to make one of the scales
+logarithmic. You can do this by adding on the functions
+`scale$_x$$_{\mathrm{log10}}$' or `scale$_y$$_{\mathrm{log10}}$':
+
+\begin{verbatim}
+ggplot( growth.PMY1529, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        lty=dextrose,
+                        group=plate_pos))+
+    geom_line()+
+    scale_y_log10()+
+    scale_x_log10()
+\end{verbatim}
+
+
+Similarly, you can do square roots automatically:
+
+\begin{verbatim}
+ggplot( growth.PMY1529, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        lty=dextrose,
+                        group=plate_pos))+
+    geom_line()+
+    scale_y_sqrt()+
+    scale_x_sqrt()
+\end{verbatim}
+\section{Continuous color scales}
+\label{sec-4}
+
+
+Color scales have a few things that are different about them that need
+to be treated separately from other types of scales. The aesthetics
+`fill' and `color' which control the fill and outline colors of
+shapes, respectively, also have two different types of scales
+depending on whether the column of data they map is discrete or
+continuous. However, you can make discrete and continuous color scales
+in several differnt ways, which leads to several different functions.
+
+Continuous color mappings default to mapping between blue and black:
+
+\begin{verbatim}
+ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()+
+    scale_fill_gradient()
+\end{verbatim}
+
+
+You can change the two colors that mark the high and low end of the
+data by specifying the arguments `high' and `low' to the function
+scale$_{\mathrm{fill}}$$_{\mathrm{gradient}}$ (or scale$_{\mathrm{color}}$$_{\mathrm{gradient}}$ depending on the aesthetic)
+
+\begin{verbatim}
+ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()+
+    scale_fill_gradient(low = "blue", high = "yellow")
+\end{verbatim}
+
+
+If you want three colors, use `scale$_{\mathrm{fill}}$$_{\mathrm{gradient2}}$'
+
+\begin{verbatim}
+ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()+
+    scale_fill_gradient2(low = "blue", mid = "black", high = "yellow")
+\end{verbatim}
+
+
+For more use `scale$_{\mathrm{fill}}$$_{\mathrm{gradientn}}$'
+
+\begin{verbatim}
+
+#Annoyingly, you have to use the British spelling of 'color'
+
+ggplot(pp(100), aes(x=x,y=y, fill=z))+geom_tile()+
+    scale_fill_gradientn(colours = c("blue", "black", "yellow", "red"))
+\end{verbatim}
+\section{Discrete colors}
+\label{sec-5}
+
+
+Discrete color scales are just like discrete x or y values. If the
+column is a character vector, the default scale will be discrete.
+
+The default discrete ggplot colors are some easy to distinguish pastels.
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()
+\end{verbatim}
+
+
+You can easily change this to greyscale with `scale$_{\mathrm{color}}$$_{\mathrm{grey}}$':
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_grey()
+\end{verbatim}
+
+
+Just like with axis labels, this is where you can change what the
+scale is called:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_grey("Magwene lab\nstrain number")
+\end{verbatim}
+
+
+
+If you don't like the default R colors, but don't want to bother to
+specify your own, the package RColorBrewer has some nice defaults. The
+following code displays the available color scales:
+
+You can use the function ``display.brewer.all'' to plot all the scales
+that are available for plotting.
+
+\begin{verbatim}
+library(RColorBrewer)
+display.brewer.all()
+\end{verbatim}
+
+
+ggplot lets you choose what palette you want to use by either an
+integer and the type of scale (sequential, qualitative, or diverging;
+the groups above correspond to these types):
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_brewer(palette = 2, type = "seq")
+\end{verbatim}
+
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_brewer(palette = 2, type = "div")
+\end{verbatim}
+
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_brewer(palette = 2, type = "qual")
+\end{verbatim}
+
+
+
+Or the name of the palette (shown above):
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    scale_color_brewer(palette = "Set1")
+\end{verbatim}
+
+\end{document}

@@ -1,0 +1,271 @@
+% Created 2013-08-21 Wed 17:11
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{themes}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+
+ggplot gives you almost unlimited control over the nitty gritty
+details of the non-data elements of you plot by changing options in the
+`theme' function. The full list of options you can specify is found here:
+
+\href{http://docs.ggplot2.org/current/theme.html}{http://docs.ggplot2.org/current/theme.html}
+
+Each option controls the appearance of an aspect of the plot. As you see in the documentation, each argument takes a different
+class. These range from strings to functions. For example, if the part
+of the plot that you want to control is text (an axis label or a
+title, for example), the type of argument that you need to call is the
+function `element$_{\mathrm{text}}$'. This function in turn has arguments for all
+parts of the appearance of the text (the size, orientation, etc.)
+There's way more here than I want to go into so I'll just go over a couple of my favorites.
+
+\section{Default themes}
+\label{sec-1}
+
+
+There's a philosophy behind the default ggplot theme (the grey
+background is to not make too much whitespace which draws your eyes,
+and the guidelines help you determine exactly where individual
+datapoints are). 
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    theme_grey()
+\end{verbatim}
+
+
+However, I feel like it's rather ugly. For single
+facets, I like `theme$_{\mathrm{classic}}$,' which makes the plot look like more
+traditional. It's also more compatible with greyscale color mappings:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    theme_classic()+
+    scale_color_grey()
+\end{verbatim}
+
+
+However, it doesn't look as nice with facets, since it doesn't give
+you the bounding box for the plots:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)+
+    theme_classic()
+\end{verbatim}
+
+
+In this case, I prefer `theme$_{\mathrm{bw}}$'
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)+
+    theme_bw()
+\end{verbatim}
+
+
+These theme functions are a good place to understand how themes work
+in ggplot. If you just type in the function name with no parentheses
+you can see the code that defines them:
+
+\begin{verbatim}
+theme_grey
+\end{verbatim}
+
+
+The function wraps a call to the function `theme' which has a large
+number of arguments that specifies how the plot looks. You can
+subsequently call the same function `theme' to change of those
+arguments. So, if we wanted the plot background to be a different
+color, we could adjust it:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)+
+    theme_classic()+
+    theme(plot.background = element_rect(fill = "black"))
+\end{verbatim}
+
+Another nice thing is that you can easily define functions for later
+use. We can get a clue how to do this by looking at the code for
+theme$_{\mathrm{bw}}$:
+
+\begin{verbatim}
+theme_bw
+\end{verbatim}
+
+
+The function theme is invoked again, but this time with the funny
+operator ``\%+replace+\%''. ``\%+replace+\%'' operates like a ``+'' sign or a
+``-'' sign in order to perform an operation. In this case, what it does
+is replace the aspects in the theme$_{\mathrm{grey}}$ that are specified in the
+second call to theme. The advantage to doing this rather than just
+calling theme directly is that it lets you keep control of the font
+and the font size which are specified through the arguments
+``base$_{\mathrm{size}}$'' and ``base$_{\mathrm{family}}$''
+
+With this in mind, I made a function to generate plots that have that
+dramatic black background that you see sometimes in presentations:
+
+\begin{verbatim}
+theme_dramatic_black <- function(base_size = 12, base_family = ""){
+    theme_grey(base_size = base_size, base_family = base_family) %+replace%
+        theme(
+            panel.background = element_rect(fill = NA, color="white"),
+            plot.background = element_rect(fill = "black"),
+            axis.title.y=element_text(color="white"),
+            axis.title.x=element_text(color="white"),
+            axis.text.x=element_text(color="white"),
+            axis.text.y=element_text(color="white"),
+            legend.key=element_rect(color=NA, fill = NA),
+            legend.text=element_text(color="white"),
+            legend.background=element_rect(color="black", fill="black"),
+            strip.background=element_rect(color="white", fill = NA),
+            strip.text = element_text(color="white"),
+            panel.grid.minor = element_line(color=NA),
+            panel.grid.major = element_line(size = 0.1, color = "white")
+            )
+}
+
+ggplot( growth.270, aes(x=time,
+                          y=OD,
+                          col=strain,
+                          group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)+
+    theme_dramatic_black()
+\end{verbatim}
+
+
+Since we wrapped the the function correctly, we can now easily adjust
+the text size, and the font:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                          y=OD,
+                          col=strain,
+                          group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)+
+    scale_x_continuous(label = comma)+
+    theme_dramatic_black(base_size = 16, base_family = "Garamond")
+\end{verbatim}
+
+
+This function could then be easily called to apply the same settings
+to every plot in our presentation.
+\section{Axis labels and title}
+\label{sec-2}
+
+
+A very common task is to change the labels on the plot. You can either
+do that using the `scale' functions as above, or with some dedicated
+functions:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)+
+    theme_bw()+
+    ggtitle("My title")+
+    ylab("Y axis title")+
+    xlab("X axis title")
+\end{verbatim}
+\section{Text orientation}
+\label{sec-3}
+
+
+
+
+I often find that my x axis labels run into each other (especially
+with facets). You can easily change this by setting the rotation and
+the x axis justification:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)+
+    theme_bw()+
+    ggtitle("Gowth curves")+
+    xlab("Time (seconds)")+
+    theme(axis.text.x = element_text(angle=90, hjust = 1, vjust = 0.5))
+\end{verbatim}
+
+
+The options available for the axis text are options passed to the
+function `element$_{\mathrm{text}}$.' Play around with the angle and justifications
+to see how they work.
+\section{Legends}
+\label{sec-4}
+
+
+The only legend option I find myself using is to put it on the bottom
+of the plot:
+
+\begin{verbatim}
+ggplot( growth.270, aes(x=time,
+                        y=OD,
+                        col=strain,
+                        group=plate_pos))+
+    geom_line()+
+    facet_grid(dextrose~ammonium, margins = TRUE)+
+    theme_dramatic_black()+
+    ggtitle("Gowth curves")+
+    xlab("Time (seconds)")+
+    theme(legend.position = "bottom")
+\end{verbatim}
+
+
+But note the changes made to the legend text and box above.
+
+\end{document}

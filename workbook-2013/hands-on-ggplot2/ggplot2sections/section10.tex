@@ -1,0 +1,183 @@
+% Created 2013-08-21 Wed 17:11
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{multiple plots per page}
+\author{Colin Maxwell}
+\date{21 August 2013}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+
+If you are using base graphics, you can set the number of plots per
+page using the `mfrow' option to the function `par':
+
+\begin{verbatim}
+par(mfrow = c(2,2))
+plot( x = iris$Sepal.Length, y = iris$Petal.Length, col = COLORS[ as.numeric( iris$Species ) ])
+plot( x = iris$Sepal.Width, y = iris$Petal.Length, col = COLORS[ as.numeric( iris$Species ) ])
+plot( x = iris$Sepal.Length, y = iris$Petal.Width, col = COLORS[ as.numeric( iris$Species ) ])
+plot( x = iris$Sepal.Width, y = iris$Petal.Width, col = COLORS[ as.numeric( iris$Species ) ])
+\end{verbatim}
+
+
+However, if you try this with ggplot, you'll end up with one plot per
+page. This is because ggplot makes use of a different plotting system
+than base graphics called `grid.' There's a couple ways to get
+multiple plots in a page. You read the `grid' documentation and figure
+out how to use the `viewports' functions. Or, there's a convenience
+function called `grid.arrange' in the `gridExtra' package that makes
+this task much simpler.
+
+One nice thing about ggplots is that it lets you save your plots as
+variables without evaluation for plotting later. This makes code much
+more readable in some situations. To begin with, we'll define the four
+plots we made above with ggplot:
+
+\begin{verbatim}
+p1 <- ggplot(iris, aes(x=Sepal.Length, y = Petal.Length, col=Species))+geom_point()
+p2 <- ggplot(iris, aes(x=Sepal.Width, y = Petal.Length, col=Species))+geom_point()
+p3 <- ggplot(iris, aes(x=Sepal.Width, y = Petal.Width, col=Species))+geom_point()
+p4 <- ggplot(iris, aes(x=Sepal.Length, y = Petal.Width, col=Species))+geom_point()
+\end{verbatim}
+
+
+Each of these plots is now stored in their respective variables. You
+can plot them using the `print' function:
+
+\begin{verbatim}
+print(p1)
+\end{verbatim}
+
+
+Now that we have four plots stored, we can print them in rows using
+the `grid.arrange' function:
+
+\begin{verbatim}
+library(grid); library(gridExtra)
+
+grid.arrange(p1, p2, p3, p4,
+             nrow=2)
+\end{verbatim}
+
+
+This is pretty nice, but it would be good to just plot the legend
+once. To do this, we'll first suppress the legends for the four plots
+we made using theme:
+
+\begin{verbatim}
+p1 <- p1+theme(legend.position = "none")
+p2 <- p2+theme(legend.position = "none")
+p3 <- p3+theme(legend.position = "none")
+p4 <- p4+theme(legend.position = "none")
+\end{verbatim}
+
+Next, we'll use a function to pull out only the legend from the
+function call that made the orignal p1.
+
+\begin{verbatim}
+g_legend<-function(a.gplot){
+    tmp <- ggplot_gtable(ggplot_build(a.gplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    return(legend)
+}
+p1.original = ggplot(iris, aes(x=Sepal.Length, y = Petal.Length, col=Species))+geom_point()
+plotLegend = g_legend(p1.original)
+\end{verbatim}
+
+The next code is a little confusing, but what it does is simple. In
+order to compute how wide the legend column in the plot should be, we
+sum the attribute `width' of the object plot legend. Next we combine
+the four plots we defined above using the function `arrangeGrob.' The
+function works just like grid.arrange, except you get to save the
+object. This results in a combined plot of the four plots in a grid
+saved as `combinedPlots.'
+
+Finally, we call grid.arrange with the two plots we want: the grid of
+four plots and the legend. The only tricky part is that we need to
+tell grid how wide to make everything. The function unit.c combines
+unit objects analogously to the way that the function `c' combines
+numbers. The first argument to unit.c is ``unit(1, ``npc'') - lwidth''. ``npc'' stands
+for normalized parental coordinates, which just means the size of the
+plot. Since the plot is size 1 in npc, subtracting the plot width
+gives us how much room we need for our combined plots. Likewise the
+second argument is how wide we want the legend to be, which is just
+`lwidth'.
+
+\begin{verbatim}
+lwidth = sum(plotLegend$width)
+combinedPlots <- arrangeGrob(p1, p2, p3, p4, nrow=2)
+
+grid.arrange(combinedPlots,
+             plotLegend, 
+             widths=unit.c(unit(1, "npc") - lwidth, lwidth), nrow=1
+             )
+\end{verbatim}
+
+
+So that's all very complicated, why go over it? Basically so that I can
+show you how to make my favorite ggplot: a scatterplot with marginal
+density plots. First, we'll define three plots and a legend. Note that
+the yDen plot has had it's coordinates flipped (the x becomes y and
+vice versa) using the function coord$_{\mathrm{flip}}$. This is because it's going
+to show the marginal distribution of y values and we want the density
+to be oriented `up-down' and not `left-right.' Also notice that I
+tacked on geom$_{\mathrm{density2d}}$ to the xy plot. You'll see what that does below.
+
+\begin{verbatim}
+xy <- ggplot(iris, aes(x=Petal.Width, y=Sepal.Length, col = Species))+
+    geom_point()+
+    geom_density2d()+
+    theme_classic()
+xDen <- ggplot(iris, aes(x=Petal.Width, fill = Species, col=Species))+
+    geom_density(alpha=0.1)+
+    theme_classic()+
+    xlab("")
+yDen <- ggplot(iris, aes(x=Sepal.Length, fill = Species, col=Species))+
+    geom_density(alpha=0.1)+
+    coord_flip()+
+    theme_classic()+
+    xlab("")
+leg <- g_legend( xDen )
+\end{verbatim}
+
+Next, we'll use grid.arrange to put everything in the order we want.
+
+\begin{verbatim}
+grid.arrange(xDen+theme(legend.position = "none"),
+             leg,
+             xy+theme(legend.position = "none"),
+             yDen+theme(legend.position = "none"),
+             nrow = 2, ncol = 2,
+             widths = unit(c(2,1), c("null", "null")),
+             heights = unit(c(1,2), c("null", "null"))
+             )
+\end{verbatim}
+
+
+The result is pretty cool! You can see how the data correlate with
+each other as well as how well each variable differentiates between
+the different groups.
+
+\end{document}
