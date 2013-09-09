@@ -151,30 +151,6 @@ matrix or to create a diagonal matrix as show below:
 [4,] 0.000000 0.000000 0.000000 3.605551
 \end{R}
 
-Note that the |rnorm()| function generates random numbers from the standard normal distribution. Use the help to read the documentation for |rnorm()|. Note that you can use the |mean| and |sd| arguments to specify other normal distributions.  Since we've introduced the |rnorm()| function let's go ahead and show how we can useit to simulate draws from a random normal distribution.
-%
-\begin{R}
-> x <- rnorm(100) # draw 100 samples from random normal distn
-> mean(x)
-[1] 0.03198427
-> sd(x)
-[1] 1.012966
-> hist(x)
-> abline(v=mean(x),col='red',lwd=2,lty='dashed')
-\end{R}
-%
-Also notice that the |rnorm()| help file also mentions three other related functions |dnorm()|, |pnorm()|, and |qnorm()|. |dnorm()| gives the density, |pnorm()| the distribution function, and |qnorm()| the quantile function. Here's an example how we can use the |dnorm()| function to compare our observed sample to the expected distribution:
-%
-\begin{R}
-> breakpts <- seq(-3, 3, 0.5)
-# note use of freq=F to get density histogram  and user specified breakpoints
-> h <- hist(x, breakpts, freq=F)
-> expected <- dnorm(h$mids)
-> lines(h$mids, expected, col='blue',lwd=2)
-> abline(v=0, col='blue', lwd=2)
-> abline(v=mean(x), col='red', lwd=2,lty='dashed')
-\end{R}
-%
 
 \subsubsection{Matrix operations in R}
 
