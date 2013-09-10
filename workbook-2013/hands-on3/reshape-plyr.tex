@@ -2,14 +2,14 @@
 
 \section{The Reshape package}
 
-|reshape2| is an R package for restructuring, transforming, and summarizing multivariate data sets. |reshape2| was written by Hadley Wickham, a statistician at Rice University, who is also the author of ggplot.  In this chapter we'll just scratch the surface of this package; for a more detailed overview see the documentation available on reshape web page -- \href{http://had.co.nz/reshape/}{reshape}. Install the |reshape2| package before proceeding.
+|reshape2| is an R package for restructuring, transforming, and summarizing multivariate data sets. |reshape2| was written by Hadley Wickham, a statistician at Rice University, who is also the author of ggplot.  In this section we'll give a brief overview of the |reshape2| package; for a more detailed discussion see the documentation available on reshape web page -- \href{http://had.co.nz/reshape/}{reshape}. Install the |reshape2| package before proceeding.
 
 The |reshape2| package allows us to restructure and aggregate data more easily than the built-in R functions.  There are two primary functions associated with the package -- |melt()| and |cast()|.  We use |melt()| to restructure a data frame or list into a generic structure that can then be |cast()| into the form we want.
 
 
 \subsubsection{melt}
 
-Import the |reshape2| package with |library(reshape2)| and read the docs for the |melt()| function.  |melt()| needs at least three arguments: 1) a data frame or list, 2) a vector specifying which columns to treat as `identification variables' (|id.vars|), and 3) a vector specifying which columns to use as `measured variables' (|measured.vars|).  ID variables are typically the fixed variables that represent aspects of the experimental design while measured variables represent the variables that were measured on each unit of interest.  If |id.vars| and |measured.vars| aren't specified, the |melt()| function will try and infer the |id.vars| based on those columns that are factors, and treat the remaining variables as |measured.vars|.  If only |id.vars| is specified, the remaining variables will be treated as |meaured.vars|.
+Import the |reshape2| package with |library(reshape2)| and read the docs for the |melt()| function.  |melt()| needs at least three arguments: 1) a data frame or list, 2) a vector specifying which columns to treat as `identification variables' (|id.vars|), and 3) a vector specifying which columns to use as `measured variables' (|measured.vars|).  ID variables are typically the fixed variables that represent aspects of the experimental design, while measured variables represent the variables that were measured on each unit of interest.  If |id.vars| and |measured.vars| aren't specified, the |melt()| function will try and infer the |id.vars| based on those columns that are factors, and treat the remaining variables as |measured.vars|.  If only |id.vars| is specified, the remaining variables will be treated as |measured.vars|.
 
 Let's create a simple data set that we can use to explore |melt()| and |cast()| functions.
 %
@@ -71,7 +71,7 @@ Examining the melted data set, you'll see that the columns representing the meas
 
 \subsubsection{cast}
 
-Having melted our data set, we can then use the |cast()| function to reshape and aggregate the data into the form we desire.  Read the docs for |cast()|.  Note that the |cast()| function is actually caleld as |dcast()| or |acast()| depending on whether you want the function to return a data frame or a vector or array. Minimally, |cast()| takes: 1) a melted data set,  2) a formula specifying how to shape the melted data; and 3) a function to apply to any aggregates that are specified for the cast formula. These are most easily illustrated by example, as shown below.
+Having melted our data set, we can then use the |cast()| function to reshape and aggregate the data into the form we desire.  Read the docs for |cast()|.  Note that the |cast()| function is actually called as |dcast()| or |acast()| depending on whether you want the function to return a data frame or a vector/array. Minimally, |cast()| takes: 1) a melted data set,  2) a formula specifying how to shape the melted data; and 3) a function to apply to any aggregates that are specified for the cast formula. These are most easily illustrated by example, as shown below.
 
 In the first example we're going to aggregate the measurements of each variable for each species and calculate the species mean.  Notice the form of the formula -- |species ~ variable|.
 %
@@ -100,7 +100,7 @@ In the second example, we want to aggregate across species \emph{and} experiment
 
 \subsubsection{Yeast NanoString Dataset}
 
-To illustrate the use of the |reshape2| package in conjunction with |ggplot2| we will use another gene expression data set my lab has generated.  This data set includes time series expression measurements on 192 genes, collected on each of four different yeast strains grown under two different media conditions. Each treatment (time point, media condition, strain) was replicated three times.  The expression platform used for this study is a technology called \href{http://www.nanostring.com/}{NanoString}.
+To illustrate the use of the |reshape2| package in conjunction with |ggplot2| we will use a gene expression data set my lab has generated.  This data set includes time series expression measurements on 192 genes, collected on each of four different yeast strains grown under two different media conditions. Each combination of treatments (time point, media condition, strain) was replicated three times.  The expression platform used for this study is a technology called \href{http://www.nanostring.com/}{NanoString}.
 
 Download the data set |yeast-timeseries.csv| from the course wiki. The data file is a plain text file that uses the "comma separated values" format. Use the |read.csv| function to read this data into R.
 %
@@ -109,12 +109,12 @@ Download the data set |yeast-timeseries.csv| from the course wiki. The data file
 > dim(yeast.time)
 [1] 108 196
 > names(yeast.time)
-  [1] "sample.id"  "media"      "strain"     "time.pt"    "replicate"  "ACE2"      
-  [7] "ACT1"       "ADR1"       "AGA2"       "AMN1"       "ASG7"       "ASH1" 
+  [1] "sample.id"  "media"  "strain"  "time.pt"   "replicate"  
+  [7]  "ACE2"  "ACT1"  "ADR1"  "AGA2"  "AMN1"  "ASG7"  "ASH1" 
 ...
 \end{R}
 
-We want to treat |sample.id|, |media|, |strain|, and |replicate| as factors.   Of these, |strain| isn't the only variable that is not automatically treated as a factor, because the strain names are numbers. Let's change that as follow:
+We want to treat |sample.id|, |media|, |strain|, and |replicate| as factors.   Of these, |strain| is the only variable that is not automatically treated as a factor, because the strain names are numbers. Let's change that as follows:
 %
 \begin{R}
 > yeast.time$strain <- as.factor(yeast.time$strain)
@@ -156,14 +156,67 @@ Now let's generate a time series plot for the first gene in the data set, ACE2:
         aes(x=time.pt, y=ACE2, col=strain)) + geom_line() + geom_point()
 \end{R}
 %
-Notice the use of the |subset()| function to focus specifically on the YPD media treatment.  However, it would be much more useful to be able to compare the two media treatments, YPD and YEPLD, side by side.  To do so we can use what ggplot calls a `facet'.  A facet  specifies one or more variables to condition against.  So if we treate the variable |media| as a facet, we will generate a set of plots that differ only by media type.  Here's how to do this simply with the |facet_wrap()| function from ggplot:
+Notice the use of the |subset()| function to focus specifically on the YPD media treatment.  However, it would be much more useful to be able to compare the two media treatments, YPD and YEPLD, side by side.  To do so we can use what ggplot calls a `facet'.  A facet  specifies one or more variables to condition against.  So if we treat the variable |media| as a facet, we will generate a set of plots that differ only by media type.  Here's how to do this  with the |facet_wrap()| function from ggplot:
 \begin{R}
 > ggplot(yeast.cast, aes(x=time.pt, y=ACE2, col=strain)) + geom_line() + geom_point() + facet_wrap(facets=c('media'))
 \end{R}
 %
-Your plot should resemble Fig.~\ref{fig:yeasttime}.
+Your plot should resemble Fig.~\ref{fig:yeasttime}.  You can examine the times series for different genes by changing the |y| variable in the ggplot aesthetic (do |name(yeast.cast)| to see all the variable names).
+%
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\columnwidth]{./figures/hands-on3/yeast-timeseries-plot.pdf}
-\caption{Gene expression time series for four yeast strains generated, grown in two different media conditions.\label{fig:yeasttime}}
+\caption{Gene expression time series for four yeast strains, grown in two different media conditions.\label{fig:yeasttime}}
 \end{figure}
+
+
+\medskip
+
+\begin{assignment}
+  Rather than plotting the time series for the two media conditions side-by-side, as in Fig.~\ref{fig:yeasttime}, you can place them on the same plot and use different line type (e.g. solid vs. dashed) to distinguish between them (see Fig.~\ref{fig:yeastalt}). 
+
+\smallskip
+
+  Write a function the encapsulates the steps needed to produce a figure shown like that shown in Fig.~\ref{fig:yeastalt}. This function should take as input: 1) a dataset with column names as in \lstinline|yeast.cast| used above; and 2) a string giving the name of the gene you want to plot, e.g. \lstinline|"ACE2"| or \lstinline|"MUC1"|.  The function \lstinline|aes_string()| will be useful for writing this function.  For an example of the use of \lstinline|aes_string()| see the \lstinline|scatterWithMargins()| function from week 2. 
+
+\end{assignment}
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\columnwidth]{./figures/hands-on3/timeseries-alt.pdf}
+\caption{An alternate representation of the expression time series data set.\label{fig:yeastalt}}
+\end{figure}
+
+
+% \begin{assignment}
+% \small
+% The data set |yeast-subnetwork-raw.txt| (see class website), consists of gene expression measurements
+% for 15 genes from 173 two-color microarray experiments (see Gasch et al.
+% 2000). These genes are members of a gene regulatory network that determines how yeast cells
+% respond to nitrogen starvation. The values in the data set are
+% expression ratios (treatment:control) that have been transformed by
+% applying the $\log_2$ function (so that a ratio of 1:1 has the value 0,
+% a ratio of 2:1 has the value 1, and a ratio of 1:2 has the value 0.5).    
+    
+% \par\medskip    
+% The raw data file
+% \lstinline!yeast-subnetwork-raw.txt! has the genes (variables) arranged
+% by rows and the observations (experiments) in columns. There are also
+% missing values. Using R, show how to read in the data set and then
+% create a matrix where the genes are in columns and the observations in
+% rows. Then replace any missing values (\lstinline!NA!) in each column
+% with the variable (gene) means (there are better ways to impute missing
+% values but this will do for now). Write a \emph{generic} function, |read.missing()| that will work with any data file with the same organization as that above.
+
+% \par\medskip
+% Functions that might come in handy for this assignment 
+% include: \lstinline!read.delim()!, \lstinline!t()!, \lstinline!subset()!,
+% \lstinline!as.matrix()!, and \lstinline!is.na()!. Note that
+% \lstinline!t()! applies to data frames as well as matrices. Also take
+% note of the \lstinline!na.rm! argument of \lstinline!mean()!. You might consider creating a function that handles the missing value
+% replacement and using it in conjunction with the \lstinline!apply()!
+% function. \lstinline!colnames()! and \lstinline!rownames()! allow you to
+% assign/extract column and row names for a matrix. Use the
+% \lstinline!write.table()! function to save your results (I recommend you
+% use \lstinline!"\t"! (i.e.~tab) as the \lstinline!sep! argument). You can check the correctness of your function by comparing it to the |yeast-subnetwork-clean.txt| file available from the course wiki. Use the |all.equal| function to check for approximate equality.
+% \end{assignment}

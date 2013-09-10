@@ -3,9 +3,16 @@
 
 Plotting and visualizing multivariate data sets can be challenge and a
 variety of representations are possible. We cover some of the basic ones
-here. Get the file \lstinline!yeast-subset-clean.txt! from the class
-website (or use the cleaned up data set you created in the assignment
-above).
+here. 
+
+Get the file \lstinline!yeast-subset-clean.txt! from the class
+website. This data set consists of gene expression measurements
+on 15 genes from 173 two-color microarray experiments (see Gasch et al.
+2000). These genes are members of a gene regulatory network that determines how yeast cells
+respond to nitrogen starvation. The values in the data set are
+expression ratios (treatment:control) that have been transformed by
+applying the $\log_2$ function (so that a ratio of 1:1 has the value 0,
+a ratio of 2:1 has the value 1, and a ratio of 1:2 has the value 0.5).  
 
 \subsection{Scatter plot matrix}
 
@@ -86,7 +93,7 @@ There is also a package available on CRAN called \lstinline!scatterplot3d! with 
 The |highlight.3d| argument colors points to help the viewer determine near and far points. Points that are closer to the viewer are lighter colors (more red in the default color scheme).
 
 \subsubsection{Using Package Vignettes}
-The Scatterplot3D package is quite flexible but this flexibility is hard to grok from the standard R help files (try |?scatterplot3d| to see for yourself).  Luckily the Scatterplot3D package includes a `vignette' -- a PDF document that discusses the design of the package and illustrates it's use.  Many packages include such vignettes. To see th list of vignettes available for your installed packages do the following:
+The Scatterplot3D package is quite flexible but this flexibility is hard to grok from the standard R help files (try |?scatterplot3d| to see for yourself).  Luckily the Scatterplot3D package includes a `vignette' -- a PDF document that discusses the design of the package and illustrates it's use.  Many packages include such vignettes. To see the list of vignettes available for your installed packages do the following:
 %
 \begin{R}
 > vignette(all=T)

@@ -37,9 +37,9 @@ creating small matrices at the command line you can use the
 \end{R}
 \lstinline!matrix()! takes a data vector as input and the shape of the
 matrix to be created is specified by using the \lstinline!nrow! and
-\lstinline!ncol! arguments (if the number of elements in the input data
+\lstinline!ncol! arguments. If the number of elements in the input data
 vector is less than |nrows| $\times$ |ncols| the
-elements will be 'recycled' as discussed in previous lectures). Without
+elements will be 'recycled' as discussed in previous chapters. Without
 any shape arguments the \lstinline!matrix()! function will create a
 column vector as shown above. By default the \lstinline!matrix()!
 function fills in the matrix in a column-wise fashion. To fill in the
@@ -51,26 +51,31 @@ the \lstinline!as.matrix()! function to convert it to a matrix.
 \begin{R}
 > turtles <- read.table('turtles.txt', header=T)
 > tmtx <- as.matrix(turtles)
-> tmtx   # note how the elements were all converted to character
-   sex length width height
-1  "f" " 98"  " 81" "38"
-2  "f" "103"  " 84" "38"
-3  "f" "103"  " 86" "42"
-4  "f" "105"  " 86" "40"
- ... output truncated ...
-> tsub <- subset(turtles, select=-sex)
-> tmtx <- as.matrix(tsub)
-> tmtx    # this is probably more along the lines of what you want
-   length width height
-1      98    81     38
-2     103    84     38
-3     103    86     42
-4     105    86     40
- ... output truncated ...
+> head(tmtx)   # see ?head and ?tail
+     sex length width height
+[1,] "f" " 98"  " 81" "38"  
+[2,] "f" "103"  " 84" "38"  
+[3,] "f" "103"  " 86" "42"  
+[4,] "f" "105"  " 86" "40"  
+[5,] "f" "109"  " 88" "44"  
+[6,] "f" "123"  " 92" "50" 
+# NOTE: the elements were all converted to character
+
+> tmtx <- as.matrix(subset(turtles, select=-sex))
+> head(tmtx)
+  length width height
+1     98    81     38
+2    103    84     38
+3    103    86     42
+4    105    86     40
+5    109    88     44
+6    123    92     50
+# This is probably more along the lines of what you want
 \end{R}
+
 You can use the various indexing operations to get particular rows,
 columns, or elements. Here are some examples:
-
+%
 \begin{R}
 > X <- matrix(1:12, nrow=4)
 > X
@@ -112,6 +117,7 @@ columns, or elements. Here are some examples:
 > Y[5]
 [1] 2
 \end{R}
+%
 The example above where we create a matrix \lstinline!Y! is meant to
 show that matrices are stored internally in a column wise fashion (think
 of the columns stacked one atop the other), regardless of whether we use
@@ -212,7 +218,7 @@ Error in A %*% B : non-conformable arguments
 > C <- matrix(1:16, nrow=4)
 > solve(C)  # not all square matrices are invertible!
 Error in solve.default(C) : Lapack routine dgesv: system is exactly singular
-> C <- matrix(rnorm(16), nrow=4)  # you'll get
+> C <- matrix(rnorm(16), nrow=4)  # you'll get a different matrix than I did
 > C
            [,1]       [,2]       [,3]       [,4]
 [1,] -1.6920758 -0.8104245  0.9940420  0.3592050
