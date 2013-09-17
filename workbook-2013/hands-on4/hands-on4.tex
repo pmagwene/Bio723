@@ -17,7 +17,9 @@ To illustrate multiple regression in R we'll use a built in dataset called |tree
  Mean   :13.25   Mean   :76   Mean   :30.17
  3rd Qu.:15.25   3rd Qu.:80   3rd Qu.:37.30
  Max.   :20.60   Max.   :87   Max.   :77.00
-> library(PerformanceAnalytics)
+
+# we'll use the chart.Correlation fxn that we introduced last week 
+> library(PerformanceAnalytics)  
 > chart.Correlation(trees)
 \end{R}
 %
@@ -39,7 +41,7 @@ From the 3D scatter plot it looks like we ought to be able to find a plane throu
 To visualize the multiple regression, let's use the |scatterplot3d| package to draw the 3D scatter of plots and the plane that corresponds to the regression model:
 %
 \begin{R}
-> library(scatterplot3d)
+> library(scatterplot3d)  # install this package first if needed
 > p <- scatterplot3d(trees,angle=55,type='h')
 > title('Tree Volume as\na function of Girth and Height')
 > p$plane3d(l, col='orangered')
@@ -79,7 +81,7 @@ Multiple R-squared: 0.948,  Adjusted R-squared: 0.9442
 F-statistic:   255 on 2 and 28 DF,  p-value: < 2.2e-16
 \end{R}
 %
-The regression equation is: $\hat{y} = 4.71x_1 + 0.34x_2$, where $y$ is Volume, and $x_1$ and $x_2$ are Girth and Height respectively. Since they're on different scales the coefficients for Girth and Height aren't directly comparable. Both coefficients are significant at the $p<0.05$ level, but that Girth is the much stronger predictor. In fact the addition of height explains only a minor additional fraction of variation in tree volume, so from the lumberjack's perspective the additional trouble of measuring height probably isn't worth it.
+The regression equation is: $\hat{y} = 4.71x_1 + 0.34x_2$, where $y$ is Volume, and $x_1$ and $x_2$ are Girth and Height respectively. Since they're on different scales the coefficients for Girth and Height aren't directly comparable. Both coefficients are significant at the $p<0.05$ level, but note that Girth is the much stronger predictor. In fact the addition of height explains only a minor additional fraction of variation in tree volume, so from the lumberjack's perspective the additional trouble of measuring height probably isn't worth it.
 
 \subsection{Exploring the Vector Geometry of a Regression Model}
 
@@ -87,8 +89,10 @@ The object returned by the |lm()| function hold lots of useful information:
 %
 \begin{R}
 > names(l)
- [1] "coefficients"  "residuals"     "effects"       "rank"          "fitted.values" "assign"
- [7] "qr"            "df.residual"   "xlevels"       "call"          "terms"         "model"
+ [1] "coefficients"  "residuals"     "effects"       
+     "rank"          "fitted.values" "assign"
+ [7] "qr"            "df.residual"   "xlevels" 
+     "call"          "terms"         "model"
 \end{R}
 %
 The |fitted.values| correspond to the predicted values of the outcome variable ($\hat{y}$). Let's use our knowledge of vector geometry to further explore the relationship between the predicted Volume and the predictor variables.  By definition the vector representing the predicted values lies in the plane defined by Height and Girth, so let's do some simple calculations to understand their length and angular relationships:
@@ -119,7 +123,10 @@ The |fitted.values| correspond to the predicted values of the outcome variable (
 [1] 58.71603
 \end{R}
 %
-Using those calculations above you should now be able to sketch out by hand, a diagram depicting the vector relationships between Height, Girth, and the predicted Volume.  Once you've finished with your sketch, discuss it with your fellow classmates.  Did you get similar answers? If not, discuss it and try to come up with an agreed upon representation.
+
+\begin{tcolorbox}[title=In class assignment]
+Using the calculations above you should now be able to sketch out by hand, a diagram depicting the vector relationships between Height, Girth, and the predicted Volume .  Once you've finished with your sketch, discuss it with your fellow classmates.  Did you get similar answers? If not, discuss it and try to come up with an agreed upon representation.
+\end{tcolorbox}
 
 \subsection{Exploring the Residuals from the Model Fit}
 
@@ -129,7 +136,7 @@ Now let's look at the residuals from the regression. The residuals represent the
 > abline(h=0, lty='dashed', col='red')
 \end{R}
 %
-Ideally the residuals should be evenly scatter around zero, with no trends as we go from high to low values of the outcome value.  As you can see in Fig.~\ref{fig:trees-resid} it looks like that the residuals on the left tend to be below zero, while those on the far right of the plot are consistently above zero, suggesting that there may be a non-linear aspect of the relationship that our model isn't capturing.
+Ideally the residuals should be evenly scattered around zero, with no trends as we go from high to low values of the dependent variable.  As you can see in Fig.~\ref{fig:trees-resid} it looks like that the residuals on the left tend to be below zero, while those on the far right of the plot are consistently above zero, suggesting that there may be a non-linear aspect of the relationship that our model isn't capturing.
 %
 \begin{figure}[htbp]
 \centering
@@ -137,7 +144,7 @@ Ideally the residuals should be evenly scatter around zero, with no trends as we
 \caption{Residual plot based on the multiple regression plot of cherry tree volume on girth and height,\label{fig:trees-resid}}
 \end{figure}
 
-Let's think about the relationships we're actually modeling for a few minutes.  For the sake of simplicity let's consider the trunk of a tree to be a cylinder.  How do the dimensions of this cylinder relate to it's volume? You can look up the formula for the volume of a cylinder, but the key thing you'll want to note is that volume of the cylinder should be proportional to a characteristic  length of the cylinder  ($V \propto \mathrm{L}^3$). This suggests that if we want to fit a linear model we should relate Girth to $\sqrt[3]{\mathrm{Volume}}$. Let's explore this a little. Since our initial multiple regression suggested that height had relatively little predictive power, we'll simplify our model down to a single predictor:
+Let's think about the relationships we're actually modeling for a few minutes.  For the sake of simplicity let's consider the trunk of a tree to be a cylinder.  How do the dimensions of this cylinder relate to its volume? You can look up the formula for the volume of a cylinder, but the key thing you'll want to note is that volume of the cylinder should be proportional to a characteristic length of the cylinder cubed ($V \propto \mathrm{L}^3$). This suggests that if we want to fit a linear model we should relate Girth to $\sqrt[3]{\mathrm{Volume}}$. Let's explore this a little. Since our initial multiple regression suggested that height had relatively little predictive power, we'll simplify our model down to a single predictor:
 %
 \begin{R}
 > cuberoot.V <- trees$Volume^0.33
@@ -194,10 +201,13 @@ Comparing the summary tables, we see indeed that using the cube root of Volume i
 > layout(c(1,2), widths=c(3,3), heights=c(2,2))
 > plot(trees$Volume, l.orig$residuals, xlab='Volume', ylab="Residuals")
 > abline(h = 0, col='red', lty='dashed')
-> plot(cuberoot.V, l.transf$residuals, xlab='Volume^0.33', ylab='Residuals')
+> plot(cuberoot.V, l.transf$residuals, 
+        xlab='Volume^0.33', ylab='Residuals')
+
 > abline(h = 0, col='red', lty='dashed')
 > dev.copy(pdf, 'compare-residuals.pdf')
 > dev.off()
+> layout(c(1,1))   # reset the layout
 \end{R}
 %
 \begin{figure}[htbp]
@@ -208,7 +218,9 @@ Comparing the summary tables, we see indeed that using the cube root of Volume i
 %
 As we can see the transformation we applied to the data did seem to make our residuals more uniform across the range of observations. Note the use of the |layout()| function to put multiple plots in the same figure.
 
-Above we transformed the volume data in order to fit a straight line relationship between $\sqrt[3]{V}$  and Girth. However, we could just as easily have applied a cubic regression to the original variables as shown below (remember this is still linear regression in the coefficients):
+\subsection{Fitting a curvilinear model using lm()}
+
+Above we transformed the volume data in order to fit a straight line relationship between $\sqrt[3]{V}$  and Girth. However, we could just as easily have applied a cubic regression to the original variables as shown below (remember this is still linear  in the coefficients):
 
 \begin{R}
 > lm.3 <- lm(Volume ~ I(Girth^3), data=trees)
@@ -237,11 +249,11 @@ F-statistic: 681.1 on 1 and 29 DF,  p-value: < 2.2e-16
 8.042696007 0.008136533
 > a0 = lm.3$coefficients[[1]]
 > B1 = lm.3$coefficients[[2]]
-> x <- seq(8,20,0.25) # range of values to evaluate model over
+> x <- seq(8,25,0.25) # range of values to evaluate model over
 > fit <- a0 + B1*x^3
 > plot(Volume ~ Girth, data=trees)
 > lines(x,fit,col='red')
-> figtext <- paste(c("Volume = ", round(a0,2), "+", round(B1,4), "*Girth^3"),collapse='')
+> figtext <- paste(c("Volume = ", round(a0,2), "+", round(B1,4), "*Girth^3"), collapse='')
 > text(12, 60, figtext)
 \end{R}
 %
@@ -255,5 +267,202 @@ F-statistic: 681.1 on 1 and 29 DF,  p-value: < 2.2e-16
 
 \medskip
 \begin{assignment}
-In the same R markdown docoument you created for Assignment 4.1, write a function, |mult.regr(X,y)| that calculates the multiple regression of $y$ on multiple predictors, $x_1, x_2, \ldots x_k$ \emph{using matrix operations}. Your function should take two arguments, |X| and |y|, where |X| is a matrix representing the predictor variables and |y| is a vector for the outcome variable.  Your function should return a list containg the vector of regression coeffients, $B$, the coefficient of determination ($R^2$), and a vector, $\hat{y}$, representing the fitted values.  Refer to the slides from lecture 4 (and possibly lecture 2 if you need a refresher) to review the matrix  solution to the regression problem.
+Write a function, |mult.regr(X,y)| that calculates the multiple regression of $y$ on multiple predictors, $x_1, x_2, \ldots x_k$ \emph{using matrix operations}. Your function should take two arguments, |X| and |y|, where |X| is a matrix representing the predictor variables and |y| is a vector for the outcome variable.  Your function should return a list containg the vector of regression coeffients, $B$, the coefficient of determination ($R^2$), and a vector, $\hat{y}$, representing the fitted values.  Refer to the slides from lecture 4 (and possibly lecture 2 if you need a refresher) to review the matrix  solution to the regression problem.
 \end{assignment}
+
+
+\section{Exploring the impact of nearly collinear predictors on regression}
+
+In lecture we discussed the problems that can arise in regression when your predictor variables are nearly collinear. In this section we'll illustrate some of these issues.
+
+Consider again the |trees| data set.  Recall that two of the variables -- Girth and Height -- are highly correlated and thus nearly collinear.
+%
+\begin{R}
+> cor(trees)
+           Girth    Height    Volume
+Girth  1.0000000 0.5192801 0.9671194
+Height 0.5192801 1.0000000 0.5982497
+Volume 0.9671194 0.5982497 1.0000000
+\end{R}
+%
+Let's explore what happens when we treat Height as the dependent variable, and Girth and Volume as the predictor variables.
+%
+\begin{R}
+> lm.H <- lm(Height ~ Girth + Volume, data = trees)
+> summary(lm.H)
+
+Call:
+lm(formula = Height ~ Girth + Volume, data = trees)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-9.7855 -3.3649  0.5683  2.3747 11.6910 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  83.2958     9.0866   9.167 6.33e-10 ***
+Girth        -1.8615     1.1567  -1.609   0.1188    
+Volume        0.5756     0.2208   2.607   0.0145 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 5.056 on 28 degrees of freedom
+Multiple R-squared:  0.4123,    Adjusted R-squared:  0.3703 
+F-statistic:  9.82 on 2 and 28 DF,  p-value: 0.0005868
+\end{R}
+%
+We can, of course, fit the linear model despite the collinearity, and we find that the model does have some predictive power, with $R^2 = 0.41$, and with Volume being the more significant predictor.
+
+Now, let's created a slightly different version of the trees data set by add some noise to the three variables.   Our goal here is to simulate a data set we might have created had we measured a slightly different set of trees during our sampling. We'll use the |jitter| function to add uniform noise to the data set.
+%
+\begin{R}
+> jitter.Girth <- jitter(trees$Girth, amount= 0.25 * sd(trees$Girth))
+> jitter.Height <- jitter(trees$Height, amount= 0.25 * sd(trees$Height))
+> jitter.Volume <- jitter(trees$Volume, amount= 0.25 * sd(trees$Volume))
+> jitter.trees <- data.frame(Girth = jitter.Girth, 
+                        Height = jitter.Height, 
+                        Volume = jitter.Volume)
+\end{R}
+%
+Here we added uniform noise proportional to the one-quarter the standard deviation of each variable.  Let's take a moment to convince ourselves that our new data set, |jitter.trees|, is not too different from the |trees| data set from which it was derived.
+%
+\begin{R}
+# compare this to summary(trees)
+# You will get slightly different answers because jitter adds random noise
+
+> summary(jitter.trees)
+     Girth            Height          Volume     
+ Min.   : 7.913   Min.   :62.31   Min.   :10.75  
+ 1st Qu.:10.971   1st Qu.:72.37   1st Qu.:18.99  
+ Median :12.606   Median :76.54   Median :22.38  
+ Mean   :13.170   Mean   :75.84   Mean   :29.77  
+ 3rd Qu.:15.183   3rd Qu.:80.63   3rd Qu.:37.71  
+ Max.   :20.722   Max.   :85.91   Max.   :77.69  
+
+# correlations among jittered variables are
+# similar to those of the original variables
+
+> cor(jitter.trees)
+           Girth    Height    Volume
+Girth  1.0000000 0.4924240 0.9433214
+Height 0.4924240 1.0000000 0.5531763
+Volume 0.9433214 0.5531763 1.0000000    
+
+## jittered variables are highly correlatd with original variables
+
+> cor(trees$Height, jitter.trees$Height)
+[1] 0.9861006
+> cor(trees$Girth, jitter.trees$Girth)
+[1] 0.9928097
+> cor(trees$Volume, jitter.trees$Volume)
+[1] 0.9883385
+
+> plot(trees$Height, jitter.trees$Height)
+> plot(trees$Girth, jitter.trees$Girth)
+> plot(trees$Volume, jitter.trees$Volume)
+\end{R}
+
+Now that we've convinced ourselves that our jittered data set is a decent approximation to our original data set, let's re-calculate the linear regression, and compare the coefficients of the jittered model to the original model:
+%
+\begin{R}
+> lm.H.jitter <- lm(Height ~ Girth + Volume, data = jitter.trees)
+> coefficients(lm.H.jitter)
+(Intercept)       Girth      Volume 
+ 73.3492169  -0.5437115   0.3241854 
+> coefficients(lm.H)
+(Intercept)       Girth      Volume 
+ 83.2957705  -1.8615109   0.5755946 
+\end{R}
+%
+We see that the coefficients of the linear model have changed quite a bit between the original data and the jittered data.  Our model is unstable to relatively modest changes to the data!
+
+Let's  draw some plots to illustrate how different the models fit to the original and jittered data are:
+%
+\begin{R}
+# draw 3d scatter plots with small points so as not to obscure regression planes
+> p <- scatterplot3d(x=trees$Girth, y=trees$Volume, z=trees$Height, 
+                      angle=15, type='p', pch='.')
+
+# original model
+> p$plane3d(lm.H, col='orangered')
+
+# jittered model
+> p$plane3d(lm.H.jitter, col='blue')
+\end{R}
+%
+The figure you generated should look something like Fig.~\ref{fig:jittercompare}.
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\columnwidth]{./figures/hands-on4/trees-jitterfit-height.pdf}
+\caption{Multiple regression plot of cherry tree height on girth and volume, for the original data (red) and the jittered data (blue).\label{fig:jittercompare}}
+\end{figure}
+
+
+
+Let's do the same comparison for the multiple regression of Volume on Height and Girth.  In this case the predictor variables are \emph{not} nearly collinear.
+%
+\begin{R}
+> lm.V <- lm(Volume ~ Girth + Height, data = trees)
+> lm.V.jitter <- lm(Volume ~ Girth + Height, data = jitter.trees)
+> coefficients(lm.V)
+(Intercept)       Girth      Height 
+-57.9876589   4.7081605   0.3392512 
+> coefficients(lm.V.jitter)
+(Intercept)       Girth      Height 
+-51.2670818   4.4798268   0.2906203 
+\end{R}
+%
+For this model, we see that the coefficients have changed only a small amount.  The underlying data, |jitter.trees|, is the same in both cases, but now our model is stable because the predictor variables are only modestly correlated with each other.
+
+Let's generate another plot to illustrate the similarity of the models fit to the original and jittered data when Girth and Height are used to predict Volume. The corresponding output is shown in Fig.~\ref{fig:jittervolume}.
+%
+\begin{R}
+> p <- scatterplot3d(x=trees$Girth, y=trees$Height, z=trees$Volume, 
+                     angle=55, type='p', pch='.')
+> p$plane3d(lm.V, col='orangered')
+> p$plane3d(lm.V.jitter, col='blue')
+\end{R}
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\columnwidth]{./figures/hands-on4/trees-jitterfit-volume.pdf}
+\caption{Multiple regression plot of cherry tree volume on girth and height, for the original data (red) and the jittered data (blue).\label{fig:jittervolume}}
+\end{figure}
+
+Finally, let's do some vector calculations to quantify how the angular deviation between the fit data and the predictor variables changes between the original and jittered data set for the two different multiple regressions:
+%
+\begin{R}
+
+# write a quickie fxn to express angle between vectors in degrees
+> vec.angle <- function(x,y) { acos(cor(x,y)) * (180/pi)}
+
+# vector angles for fit of Height ~ Girth + Volume (orig)
+> vec.angle(lm.H$fitted.values, trees$Girth)
+[1] 36.02644
+> vec.angle(lm.H$fitted.values, trees$Volume)
+[1] 21.29297
+
+# vector angles for fit of Height ~ Girth + Volume (jittered)
+> vec.angle(lm.H.jitter$fitted.values, jitter.trees$Girth)
+[1] 28.48079
+> vec.angle(lm.H.jitter$fitted.values, jitter.trees$Volume)
+[1] 9.097828
+
+# CONCLUSION -- angular changes of about 8 and 12 degrees 
+
+
+# vector angles for fit of Volume ~ Girth + Height (orig)
+> vec.angle(lm.V$fitted.values, trees$Girth)
+[1] 6.628322
+> vec.angle(lm.V$fitted.values, trees$Height)
+[1] 52.08771
+
+# vector angles for fit of Volume ~ Girth + Height (jittered)
+> vec.angle(lm.V.jitter$fitted.values, jitter.trees$Girth)
+[1] 6.163463
+> vec.angle(lm.V.jitter$fitted.values, jitter.trees$Height)
+[1] 54.33651
+
+# CONCLUSION -- angular changes of about 0.5 and 2 degrees
+\end{R}
