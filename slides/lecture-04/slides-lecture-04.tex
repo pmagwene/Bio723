@@ -25,7 +25,7 @@
 \author{Instructor: Paul M. Magwene}
 
 
-\date{18 September 2012}
+\date{17 September 2013}
 
 \begin{document}
 %===========================================================
@@ -61,7 +61,6 @@
 \begin{frame}
   \frametitle{Hands-on Session}
 \begin{itemize}
-    \item Literate Programming with R and knitr
     \item Multiple regression
 \end{itemize}
 
@@ -466,122 +465,6 @@ I(x^2)       0.47146    0.07685   6.135 1.68e-07 ***
 \end{frame}
 
 %===========================================================
-
-
-
-%===========================================================
-\begin{frame}
-  \frametitle{Literate Programming}
-
-``Literate programming'' is a concept coined by Donald Knuth, a preeminent computer scientist:
-
-\begin{itemize}
-
- \item Programs are useless with descriptions.
- \item Descriptions should be literate, not comments in code or typical reference manuals.
- \item The code in the descriptions should work.
-\end{itemize}
-
-\end{frame}
-%===========================================================
-
-%===========================================================
-\begin{frame}
-  \frametitle{Literate Programming and Reproducible Research}
-
-How literate programming can help to ensure your research is reproducible:
-
-\begin{itemize}
-
- \item The steps of your analyses are explicitly described, both as written text and the code and function calls used.
- \item Analyses can easily checked for correctness and reproduced from your literate code.
- \item Your literate code can serve as a template for future analyses, saving you time and the trouble of remembering all the gory details.
-\end{itemize}
-
-\end{frame}
-%===========================================================
-
-%===========================================================
-\begin{frame}
-  \frametitle{Tools for literate programming in R}
-
-
-\begin{itemize}
-
- \item Sweave -- works together with \LaTeX\ to produce output.
- \item knitr -- recent tool developed as a successor to Sweave. More flexible options for input and output; better formatting of figures, etc.
-
-\end{itemize}
-\end{frame}
-%===========================================================
-
-
-%===========================================================
-\begin{frame}[fragile]
-  \frametitle{Literate Programming with R Markdown}
-
-knitr allows you to use Markdown, a simple markup syntax, to `weave together' textual descriptions and R code. R code is delimited by so `code chunks' setoff with three backticks, as illustrated below:
-
-\smallskip
-
-\begin{tcolorbox}
-\begin{Rcode}
-# A simple example
-
-Here are some trivial R examples that will help to
-illustrate how Sweave works:
-
-```{r}
-z <- 1:10
-mean(z)
-summary(z)
-z[z > 5]
-```
-
-The above text was a code block woven into my
-description. It gets evaluated and integrated into
-the output. Cool, eh?
-\end{Rcode}
-\end{tcolorbox}
-
-\end{frame}
-%===========================================================
-
-
-%===========================================================
-\begin{frame}
-  \frametitle{knitr output}
-
-HTML output produced by knitr for the code on the previous slide:
-%
-\begin{center}
-%\begin{minipage}{.8\textwidth}
-\includegraphics[width=.65\textwidth]{knitr-ex1-screenshot.png}
-%\end{minipage}
-\end{center}
-
-
-\end{frame}
-%===========================================================
-
-
-%===========================================================
-\begin{frame}
-  \frametitle{Fancier knitr output}
-
-If you go to the trouble of learning to use \LaTeX\ you can generate even nicer output with knitr (code highlighting, better figure formatting):
-
-\begin{center}
-\fcolorbox{black}{bg}{%
-\begin{minipage}{.75\textwidth}
-\includegraphics[width=\textwidth]{knitr-ex2.pdf}
-\end{minipage}}
-\end{center}
-
-
-\end{frame}
-%===========================================================
-
 
 
 
