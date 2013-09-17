@@ -263,6 +263,7 @@ F-statistic: 681.1 on 1 and 29 DF,  p-value: < 2.2e-16
 \caption{Cubic regression of tree volume on girth \label{fig:cubic-regr}}
 \end{figure}
 %
+The |I()| function used above requires a little explanation.  Normally, the R formula syntax (see |?formula|) treats the carat symbol, |'^'|, as short-hand for factor crossing to the specified degree.  For example, the formula |(a+b+c)^2| would be interpretted as the model with main effects and all second order interaction terms, i.e. |a + b + c + a:b + a:c + b:c| where the colons indicate interactions.  The |I()| function `protects' the object in it's argument; in this case telling the regression function to treat this as Girth raised to the third power as opposed to trying to construct interaction terms for Girth.
 
 
 \medskip
