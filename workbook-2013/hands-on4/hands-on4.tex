@@ -275,7 +275,7 @@ Write a function, |mult.regr(X,y)| that calculates the multiple regression of $y
 
 In lecture we discussed the problems that can arise in regression when your predictor variables are nearly collinear. In this section we'll illustrate some of these issues.
 
-Consider again the |trees| data set.  Recall that two of the variables -- Girth and Height -- are highly correlated and thus nearly collinear.
+Consider again the |trees| data set.  Recall that two of the variables -- Girth and Volume -- are highly correlated and thus nearly collinear.
 %
 \begin{R}
 > cor(trees)
@@ -466,3 +466,132 @@ Finally, let's do some vector calculations to quantify how the angular deviation
 
 # CONCLUSION -- angular changes of about 0.5 and 2 degrees
 \end{R}
+
+\section{Manipulating data using split}
+
+Last week we introduced the |reshape()| function from the reshape2 package.  |reshape()| is good for computing simple statistics across multiple `facets' of data. However, more complicated statistics are made possible by using the |split()| function, which is defined in the R base package.
+
+|split()| takes two arguments: 1) a vector or data frame to split and 2) a character vector defining what to split the first argument by. For example, we can split the iris data set by species in order to get a list containing three data frames; one for each species.
+%
+\begin{R}
+> iris.split <- split(iris, iris$Species)
+> names(iris.split)
+[1] "setosa"     "versicolor" "virginica" 
+> str(iris.split)  # see the documentation for the str() function
+List of 3
+ $ setosa    :'data.frame': 50 obs. of  5 variables:
+  ..$ Sepal.Length: num [1:50] 5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+  ..$ Sepal.Width : num [1:50] 3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+  ..$ Petal.Length: num [1:50] 1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+  ..$ Petal.Width : num [1:50] 0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+  ..$ Species     : Factor w/ 3 levels "setosa","versicolor",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ versicolor:'data.frame': 50 obs. of  5 variables:
+  ..$ Sepal.Length: num [1:50] 7 6.4 6.9 5.5 6.5 5.7 6.3 4.9 6.6 5.2 ...
+  ..$ Sepal.Width : num [1:50] 3.2 3.2 3.1 2.3 2.8 2.8 3.3 2.4 2.9 2.7 ...
+  ..$ Petal.Length: num [1:50] 4.7 4.5 4.9 4 4.6 4.5 4.7 3.3 4.6 3.9 ...
+  ..$ Petal.Width : num [1:50] 1.4 1.5 1.5 1.3 1.5 1.3 1.6 1 1.3 1.4 ...
+  ..$ Species     : Factor w/ 3 levels "setosa","versicolor",..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ virginica :'data.frame': 50 obs. of  5 variables:
+  ..$ Sepal.Length: num [1:50] 6.3 5.8 7.1 6.3 6.5 7.6 4.9 7.3 6.7 7.2 ...
+  ..$ Sepal.Width : num [1:50] 3.3 2.7 3 2.9 3 3 2.5 2.9 2.5 3.6 ...
+  ..$ Petal.Length: num [1:50] 6 5.1 5.9 5.6 5.8 6.6 4.5 6.3 5.8 6.1 ...
+  ..$ Petal.Width : num [1:50] 2.5 1.9 2.1 1.8 2.2 2.1 1.7 1.8 1.8 2.5 ...
+  ..$ Species     : Factor w/ 3 levels "setosa","versicolor",..: 3 3 3 3 3 3 3 3 3 3 ...
+\end{R}
+
+Now that we have a split data frame, it's easy to use |lapply| or |sapply| to calculate complicated summary statistics. For example, this function calculates the mean ratio of |Sepal.Length| to |Petal.Length|:
+%
+\begin{R}
+> ratio.sepal2petal <- function(x) {
++    mean( x$Sepal.Length / x$Petal.Length)
++ }
+> sapply(iris.split, ratio.sepal2petal)
+    setosa versicolor  virginica 
+  3.464906   1.400896   1.188350 
+\end{R}
+%
+We could also write a function to return the coefficients of fitting a linear model to each facet of the data:
+%
+\begin{R}
+> sepal.on.petal.coeff <- function(x){
++       model <- lm(Sepal.Length ~ Petal.Length, data=x)
++       return(model$coeff)
++ }
+> sapply(iris.split, sepal.on.petal.coeff)
+                setosa versicolor virginica
+(Intercept)  4.2131682   2.407523 1.0596591
+Petal.Length 0.5422926   0.828281 0.9957386
+\end{R}
+%
+Of course, no analysis would be complete without examining the fit of the linear models. In order to visualize whether the linear model is a good representation of the data, we'll write another function to return a data frame containing the fitted values, residuals, and species names for each element of the list.
+%
+\begin{R}
+> sepal.on.petal.lm.fit <- function(x){
++       model <- lm(Sepal.Length ~ Petal.Length, data=x)
++       data.frame(fitted = fitted(model),
++                  residuals = residuals(model),
++                  species = x$Species)
++ }
+> iris.fit <- lapply(iris.split, sepal.on.petal.lm.fit)
+> str(iris.fit)
+List of 3
+ $ setosa    :'data.frame': 50 obs. of  3 variables:
+  ..$ fitted   : num [1:50] 4.97 4.97 4.92 5.03 4.97 ...
+  ..$ residuals: num [1:50] 0.1276 -0.0724 -0.2181 -0.4266 0.0276 ...
+  ..$ species  : Factor w/ 3 levels "setosa","versicolor",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ versicolor:'data.frame': 50 obs. of  3 variables:
+  ..$ fitted   : num [1:50] 6.3 6.13 6.47 5.72 6.22 ...
+  ..$ residuals: num [1:50] 0.7 0.265 0.434 -0.221 0.282 ...
+  ..$ species  : Factor w/ 3 levels "setosa","versicolor",..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ virginica :'data.frame': 50 obs. of  3 variables:
+  ..$ fitted   : num [1:50] 7.03 6.14 6.93 6.64 6.83 ...
+  ..$ residuals: num [1:50] -0.734 -0.338 0.165 -0.336 -0.335 ...
+  ..$ species  : Factor w/ 3 levels "setosa","versicolor",..: 3 3 3 3 3 3 3 3 3 3 ...
+> 
+\end{R}
+
+Next, we'll join the data back into a data frame using the |do.call| and |rbind| functions. Read the documentation to figure out what they do.
+%
+\begin{R}
+> iris.joined <- do.call('rbind', iris.fit)
+> str(iris.joined)
+'data.frame': 150 obs. of  3 variables:
+ $ fitted   : num  4.97 4.97 4.92 5.03 4.97 ...
+ $ residuals: num  0.1276 -0.0724 -0.2181 -0.4266 0.0276 ...
+ $ species  : Factor w/ 3 levels "setosa","versicolor",..: 1 1 1 1 1 1 1 1 1 1 ...
+\end{R}
+
+Finally, we'll visualize our model fits by plotting our data using ggplot:
+%
+\begin{R}
+> library(ggplot2)
+> ggplot(iris.joined, aes(x=fitted, y=residuals))+
++   geom_point()+
++   facet_wrap(~species, scale='free') + 
++   ggtitle("Residuals from Regression of \nSepal Length on Petal Length for 3 Iris Species")
+\end{R}
+Examining the residuals (Fig.~\ref{fig:irissplit}), we see they look fairly uniform across the range of fit values. The term that statiscians use for this is `homoscedastic'; when the residuals are non uniform we say they are `heteroscadistic'.
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\columnwidth]{./figures/hands-on4/iris-residuals.pdf}
+\caption{Residuals from regressions of Sepal Length on Petal Length, for the Iris data set split by species.\label{fig:irissplit}}
+\end{figure}
+
+
+An alternate way to visualize the fits, without the benefit of  getting the info on the model fits back for further examination, is to use the |stat_smooth()| to plot a linear fit of our data for each facet (Fig.~\ref{fig:irisregressions}). Read the |stat_smooth| documentation to how this works.
+%
+\begin{R}
+> ggplot( iris, aes(x=Petal.Length, y=Sepal.Length))+
+   geom_point()+
+   stat_smooth(method="lm")+
+   facet_wrap(~Species, scale='free')+
+   ggtitle("Regressions of Sepal Length on Petal Length")
+\end{R}
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\columnwidth]{./figures/hands-on4/iris-regressions.pdf}
+\caption{Regressions of Sepal Length on Petal Length, for the Iris data, produced using the \lstinline|stat_smooth()| function in ggplot2.\label{fig:irisregressions}}
+\end{figure}
+%
