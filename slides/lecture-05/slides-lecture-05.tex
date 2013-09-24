@@ -1,5 +1,8 @@
 \documentclass{beamer}
 
+\usepackage{etex}
+\reserveinserts{28}
+
 \input{../../preamble/slidespreamble.tex}
 
 %\usepackage{amsfonts}
@@ -21,7 +24,7 @@
 \author{Instructor: Paul M. Magwene}
 
 
-\date{24 September 2012}
+\date{24 September 2013}
 
 \begin{document}
 %===========================================================
@@ -62,6 +65,27 @@
 
 
 
+
+%===========================================================
+\begin{frame}
+  \frametitle{Reminder from last lecture: Definition of Basis}
+
+Let $S$ be a subspace of \RealN.  Then there is a finite list, $X$, of vectors from $S$ such that $S$ is the space spanned by $X$.
+\medskip
+
+Let $S$ be a subspace of $\RealN$ spanned by the list $(u_1, u_2, \ldots, u_n)$. Then  there is a linearly independent sublist of $(u_1, u_2, \ldots, u_n)$ that also spans $S$.
+\medskip
+
+\begin{block}{Definition}
+A list $X$ is a \textbf{basis} for $S$ if:
+\begin{itemize}
+\item $X$ is linearly independent
+\item $S$ is the subspace spanned by $X$
+\end{itemize}
+\end{block}
+
+\end{frame}
+%===========================================================
 
 
 %===========================================================
