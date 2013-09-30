@@ -1,0 +1,166 @@
+
+\section{Plotting in Python}
+
+Python doesn't have any `native' data plotting tools but there are a
+variety of packages that provide tools for visualizing data. The Matplotlib package is the de facto standard for producing
+publication quality scientific graphics in Python. Matplotlib is
+included with the EPD and was automatically pulled into the interpretter
+namespace if you're using the \ipython |--pylab| option. If you want to explore the full power of Matplotlib check out the example
+gallery and the documentation at
+\url{http://matplotlib.sourceforge.net/}.
+
+\subsection{Basic plots using matplotib}
+
+If you invoked the Ipython shell using the pylab option than most of the
+basic matplotlib functions are already available to you. If not, import
+them as so:
+
+\begin{python}
+>>> from pylab import * # only necessary if not using pylab
+>>> import numpy as np # go ahead and import numpy as well, using an alias
+
+# load the turtle data using the numpy.loadtxt function 
+# skipping the first row (header) and the first column 
+>>> turt = np.loadtxt('turtles.txt', skiprows=1, 
+                      usecols=(1,2,3))
+>>> turt.shape
+(48, 3)
+# draw bivariate scatter plot
+>>> scatter(turt[:,0], turt[:,1])
+# give the axes some labels and a title for the plot
+>>> xlabel('Length')
+>>> ylabel('Width')
+>>> title('Turtle morphometry')
+\end{python}
+
+Here's another example using the yeast expression data set:
+%
+\begin{python}
+>>> data = np.loadtxt('yeast-subnetwork-clean.txt',skiprows=1,usecols=range(1,16))
+>>> data.shape   # check the dimensions of the resulting matrix
+(173, 15)
+\end{python}
+The \lstinline!skiprows! argument tells the function how many rows in
+the data file you want to skip. In this case we skipped only the first
+row which gives the variable names. The \lstinline!usecols! arguments
+specificies which columns from the data file to use. Here we skipped the
+first (zeroth) column which had the names of the conditions. The usecols
+\lstinline!loadtxt! works when there is no missing data. Use
+\lstinline!numpy.genfromtxt! instead when there are missing values. For
+a full tutorial on how to use the \lstinline!numpy.genfromtxt! function
+see
+\url{http://docs.scipy.org/doc/numpy/user/basics.io.genfromtxt.html}.
+
+\subsubsection{Histograms in Matplotlib}
+
+Matplotlib has a histogram drawing function. Here's how to use it:
+%
+\begin{python}
+>>> hist? # in Ipython calls the help function
+>>> h = hist(data[:,0]) # plot a histogram of the first variable (column) in our data set
+>>> clf() # clear the plot window, don't need this if you closed the plot window
+>>> h = hist(data[:,0], bins=20) # plot histogram w/20 bins
+>>> h = hist(data[:,:2])  # histograms of the first two variables    
+\end{python}
+
+There's no built in density plot function, but we can create a function
+that will do the necessary calculations for us to create our own density
+plot. This uses a kernel density estimator function in the scipy library
+(included with EPD). Put the following code in a file called
+\lstinline!myplots.py! somewhere on your \lstinline!PYTHONPATH!:
+%
+\begin{python}
+# myplots.py
+
+import numpy as np
+from scipy import stats
+
+def density_trace(x):
+    kde = stats.gaussian_kde(x)
+    xmin,xmax = min(x), max(x)
+    xspan = xmax - xmin
+    xpts = np.arange(xmin, xmax, xspan/1000.)
+    ypts = kde.evaluate(xpts) # evalude the estimate at the xpts
+    return xpts,ypts
+\end{python}
+
+You can then use the \lstinline!density_trace! function as follows:
+%
+\begin{python}
+>>> import myplots
+>>> h = hist(data[:,0], normed=True) # use normed=True so histogram 
+                           # is normalized to form a prob. density
+>>> x,y = myplots.density_trace(data[:,0])
+>>> plot(x,y, 'red')    
+\end{python}
+
+\subsubsection{Boxplots in Matplotlib}
+
+Box-and-whisker plots are straightforward in Matplotlib:
+%
+\begin{python}
+>>> b = boxplot(data[:,0])
+>>> clf()
+>>> b = boxplot(data[:,:5]) # boxplots of first 5 variables
+\end{python}
+%
+The \lstinline!boxplot! function has quite a few facilities for
+customizing your boxplots. For example, here's how we can create a
+notched box-plot using 1000 bootstrap replicates (we'll discuss the
+bootstrap in more detail in a later lecture) to calculate confidence
+intervals for the median.
+%
+\begin{python}
+>>> boxplot(data[:,0], notch=1, bootstrap=True)    
+\end{python}
+See the Matplotib docs for more info.
+
+\subsubsection{3D Scatter Plots in Matplotlib}
+
+Recent version of Matplotlib include facilities for creating 3D plots.
+Here's an example of a 3D scatter plot:
+
+\begin{python}
+>>> from mpl_toolkits.mplot3d import Axes3D
+>>> fig = figure()
+>>> ax = fig.add_subplot(111, projection = '3d')
+>>> ax.scatter(data[:,0],data[:,1],data[:,2])
+<mpl_toolkits.mplot3d.art3d.Patch3DCollection object at 0x1a0bbd70>
+>>> ax.set_xlabel('Gene 1')
+<matplotlib.text.Text object at 0x1a0ae7d0>
+>>> ax.set_ylabel('Gene 2')
+<matplotlib.text.Text object at 0x1a0bb2b0>
+>>> ax.set_zlabel('Gene 3')
+<matplotlib.text.Text object at 0x1a0bbcd0>
+>>> show()
+\end{python}
+%
+Retyping all those commands is tedious and error prone so let's turn it
+into a function. Add the following code to \lstinline!myplots.py!:
+
+\begin{python}
+from matplotlib import pyplot
+from mpl_toolkits.mplot3d import Axes3D
+
+def scatter3d(x,y,z, labels=None):
+    fig = pyplot.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(x,y,z)
+
+    if labels is not None:
+        try:
+            ax.set_xlabel(labels[0])
+            ax.set_ylabel(labels[1])
+            ax.set_zlabel(labels[2])
+        except IndexError:
+            print "You specificied less than 3 labels."
+    return fig
+\end{python}
+Now reload myplots and call the scatter3d function as so:
+
+\begin{python}
+>>> reload(myplots)
+>>> myplots.scatter3d(data[:,0], data[:,1], data[:,2])
+>>> myplots.scatter3d(data[:,0], data[:,1], data[:,2], lab)
+>>> myplots.scatter3d(data[:,0], data[:,1], data[:,2],labels=('X','Y','Z'))
+\end{python}
