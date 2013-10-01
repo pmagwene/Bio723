@@ -356,17 +356,15 @@ R doesn't have native support for common image files like JPEG and PNG.  However
 \begin{R}
 > install.packages("png", dependencies=T)
 > install.packages("jpeg", dependencies=T)
-> install.packages("ReadImages", dependencies=T)
 \end{R}
 
-The |png| and |jpeg| libraries provide simple functions for reading and writing image files.  The following code shows how to read in the |chesterbw.jpg| image which can be found in the course datasets. The |ReadImages| provides more functions for manipulating image data, including functions for converting color images to grayscale, and for normalizing image values so they conform to what R expects for raster images.
+The |png| and |jpeg| libraries provide simple functions for reading and writing image files.  The following code shows how to read in the |chesterbw.jpg| image which can be found in the course datasets. %The |ReadImages| provides more functions for manipulating image data, including functions for converting color images to grayscale, and for normalizing image values so they conform to what R expects for raster images.
 
 The function |grid.raster| in the |grid| library can be used to draw the matrix of image data returned from the |readJPEG|.  There is also a lower-level |rasterImage()| function that can be used to draw images, as shown below.
 %
 \begin{R}
 > library(jpeg)
 > img <- readJPEG("chesterbw.jpg")
-> library(ReadImages) # provides normalize
 > dim(img)
 [1] 556 605
 > typeof(img)
@@ -378,10 +376,10 @@ The function |grid.raster| in the |grid| library can be used to draw the matrix 
 > max.pixels <- max(nx,ny)
 > plot(0:max.pixels, 0:max.pixels, type='n', xlab='', ylab='',asp=1)
 > ?rasterImage
-> rasterImage(normalize(img), 0, 0, nx, ny)
+> rasterImage(img, 0, 0, nx, ny)
 > library(grid) # provides grid.raster function
 > ?grid.raster
-> grid.raster(normalize(img))  # more convenient but less flexible than rasterImage
+> grid.raster(img)  # more convenient but less flexible than rasterImage
 \end{R}
 The output of the code above is shown in Fig~\ref{fig:chester}.
 \begin{figure}[ht!]
