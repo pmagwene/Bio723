@@ -100,7 +100,6 @@ PCA <- function(X, center=T, scale=F){
    V <- x.svd$v
 
    # check for zero eigenvalues
-   zeros <- rep(0, p)
    tolerance = .Machine$double.eps^0.5
    has.zero.singval <- any(x.svd$d <= tolerance)
    if(has.zero.singval)
@@ -360,7 +359,9 @@ R doesn't have native support for common image files like JPEG and PNG.  However
 
 The |png| and |jpeg| libraries provide simple functions for reading and writing image files.  The following code shows how to read in the |chesterbw.jpg| image which can be found in the course datasets. %The |ReadImages| provides more functions for manipulating image data, including functions for converting color images to grayscale, and for normalizing image values so they conform to what R expects for raster images.
 
-The function |grid.raster| in the |grid| library can be used to draw the matrix of image data returned from the |readJPEG|.  There is also a lower-level |rasterImage()| function that can be used to draw images, as shown below.
+
+The function |grid.raster| in the |grid| library can be used to draw the matrix of image data returned from the |readJPEG|.  There is also a lower-level |rasterImage()| function that can be used to draw images, as shown below. The |image()| function included in R base will also draw images, but to do so conveniently we'll write a simple wrapper function called |GreyscaleImage()|.
+
 %
 \begin{R}
 > library(jpeg)
@@ -380,6 +381,11 @@ The function |grid.raster| in the |grid| library can be used to draw the matrix 
 > library(grid) # provides grid.raster function
 > ?grid.raster
 > grid.raster(img)  # more convenient but less flexible than rasterImage
+> GreyscaleImage <- function(im){
++    rotated <- t(im[rev(1:nrow(im)), rev(1:ncol(im))])
++    image( rotated, col= grey(seq(0,1, length=256)), useRaster=TRUE )
++ }
+> GreyscaleImage(img)
 \end{R}
 The output of the code above is shown in Fig~\ref{fig:chester}.
 \begin{figure}[ht!]
@@ -401,7 +407,7 @@ Now we'll use SVD to create a low-dimensional approximation of this image.
 > Vt15 <- Vt[1:15,]  # first 15 right singular values, NOTE: we're getting rows rather than columns here
 
 > approx15 <- U15 %*% S15 %*% Vt15
-> grid.raster(normalize(approx15))
+> GreyScaleImage(approx15)
 \end{R}
 %
 The output of our approximate image is shown in Fig~\ref{fig:chester15}.
@@ -417,7 +423,7 @@ Finally, let's look at the `error term' associated with our approximation, i.e. 
 %
 \begin{R}
 > img.diff <- img - approx15
-> grid.raster(normalize(img.diff))
+> GreyScaleImage(img.diff)
 \end{R}
 %
 An image representing the information our approximation didn't capture is shown in Fig~\ref{fig:chesterdiff}.
