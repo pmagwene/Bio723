@@ -382,7 +382,7 @@ The function |grid.raster| in the |grid| library can be used to draw the matrix 
 > ?grid.raster
 > grid.raster(img)  # more convenient but less flexible than rasterImage
 > GreyscaleImage <- function(im){
-+    rotated <- t(im[rev(1:nrow(im)), rev(1:ncol(im))])
++    rotated <- t(im[rev(1:nrow(im)), 1:ncol(im)])
 +    image( rotated, col= grey(seq(0,1, length=256)), useRaster=TRUE )
 + }
 > GreyscaleImage(img)
