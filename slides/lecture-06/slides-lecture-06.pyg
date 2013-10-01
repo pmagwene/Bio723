@@ -67,6 +67,9 @@
 \def\PYZsh{\char`\#}
 \def\PYZpc{\char`\%}
 \def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
 \def\PYZti{\char`\~}
 % for compatibility with earlier versions
 \def\PYZat{@}
