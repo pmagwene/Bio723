@@ -362,8 +362,12 @@ Here's the more conventional ANOVA table for the same data:
   \frametitle{Overview of Discriminant Analysis}
 
 \begin{block}{Discrimination}
-Given an $n \times p$ data matrix, \Mtx{X}, and a grouping of the $n$ specimens into $g$ groups, find the linear combination of the variables, $\Mtx{a}'\Mtx{x}$ that best discriminates between the groups (using $'$ to indicate transpose).
+Given an $n \times p$ data matrix, \Mtx{X}, and a grouping of the $n$ specimens into $g$ groups, find the linear combination of the variables, $\Mtx{X}\Mtx{a}$, that best discriminates between the groups.
+\[
+\vec{y}_{\text{discrim}} = a_1 \vec{\Mtx{x}}_1 + a_2 \vec{\Mtx{x}}_2 + \cdot + a_p \vec{\Mtx{x}}_p
+\]
 \end{block}
+
 
 \begin{block}{Classification}
 Given $g$ groups, define a function that assigns an object with unknown assignment to the `best' group.
@@ -384,13 +388,13 @@ Given $g$ groups, define a function that assigns an object with unknown assignme
 \end{itemize}
 
 \[
-F = \frac{(\Mtx{a}'\bar{\Mtx{x}}_1 - \Mtx{a}'\bar{\Mtx{x}}_2)^2}{\Mtx{a}'\Mtx{W}\Mtx{a}}
+F = \frac{(\bar{\Mtx{x}}_1\Mtx{a} - \bar{\Mtx{x}}_2\Mtx{a})^2}{\Mtx{a}'\Mtx{W}\Mtx{a}}
 \]
 
 where
 \begin{itemize}
-\item $\bar{\Mtx{x}}_1 = \frac{1}{n_1}\sum_{i=1}^{n_1} \Mtx{x}_{1i}$
-\item $\bar{\Mtx{x}}_2 = \frac{1}{n_2}\sum_{i=1}^{n_2} \Mtx{x}_{2i}$
+\item $\bar{\Mtx{x}}_1 = \frac{1}{n_1}\sum_{i=1}^{n_1} \Mtx{x}_{1i}$ (row-vector of means of group 1)
+\item $\bar{\Mtx{x}}_2 = \frac{1}{n_2}\sum_{i=1}^{n_2} \Mtx{x}_{2i}$ (row-vector of means of group 2)
 \item $\Mtx{W} = \frac{1}{n_1 + n_2 - 2}\sum_{i=1}^{2}\sum_{j=1}^{n_i}(\Mtx{x}_{ij} - \bar{\Mtx{x}}_i)(\Mtx{x}_{ij} - \bar{\Mtx{x}}_i)'$ (w/in-group pooled covariance matrix)
 \item $n_i$ indicates the number of observations in the $i$th group and the $\Mtx{x}_{i1},\ldots,\Mtx{x}_{in_i}$ represent the specific observations (as vectors).
 \end{itemize}
@@ -431,7 +435,7 @@ F = \frac{(\Mtx{a}'\bar{\Mtx{x}}_1 - \Mtx{a}'\bar{\Mtx{x}}_2)^2}{\Mtx{a}'\Mtx{W}
 Maximizing $F$ gives:
 
 \[
-\Mtx{a} = c\Mtx{W}^{-1}(\bar{\Mtx{x}}_1 - \bar{\Mtx{x}}_2)
+\Mtx{a} = c\Mtx{W}^{-1}(\bar{\Mtx{x}}_1 - \bar{\Mtx{x}}_2)'
 \]
 
 where $c$ is an arbitrary constant (usually taken to be 1).
@@ -521,8 +525,8 @@ There will be $s=\min(p, g-1)$ non-zero eigenvalues.
 
 Organize the eigenvectors, $\Mtx{a}_i$, as columns of a $p \times s $ matrix \Mtx{A}.
 \begin{itemize}
-\item The \textbf{\emph{canonical variates}} are given by $\Mtx{y} = \Mtx{A}'\Mtx{x}$
-\item The mean of the $i$-th group in the canonical variates space is given by $\bar{\Mtx{y}}_i = \Mtx{A}'\bar{\Mtx{x}}_i$
+\item The \textbf{\emph{canonical variates}} are given by $\Mtx{Y} = \Mtx{X}\Mtx{A}$
+\item The mean of the $i$-th group in the canonical variates space is given by $\bar{\Mtx{y}}_i = \bar{\Mtx{x}}_i\Mtx{A}$, where $\bar{\Mtx{x}}_i$ is the mean row-vector for group $i$.
 \end{itemize}
 
 \end{frame}
