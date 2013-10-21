@@ -1,0 +1,192 @@
+\documentclass{beamer}
+
+\input{../../preamble/slidespreamble.tex}
+
+\usepackage{pdfpages}
+
+\parskip=0.5em
+
+%===========================================================
+\title{Scientific Computing for Biologists}
+\subtitle{Lecture 8: Clustering}
+
+\author{Instructor: Paul M. Magwene}
+\date{22 October 2013}
+
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Outline of Lecture}
+  
+\begin{itemize}
+    \item Distance and dissimilarity measures
+    \begin{itemize}
+        \item Quantitative data
+        \item Dichotomous data
+        \item Qualitative data
+    \end{itemize}
+    \item Hierarchical clustering
+    \item K-means clustering
+\end{itemize}     
+  
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Similarity/Dissimilarity}
+
+\begin{block}{Intuition}
+Similarity is a measure of ``likeness'' between two entities of interest. Dissimilarity is the complement of similarity.
+\end{block}
+
+
+\begin{itemize}
+\item Dissimilarities may be converted to similarities (and vise versa) by taking any monotonically decreasing function. For example:
+\[
+s = 1 - d_{ij}  \ \mbox{(for $0 \leq d_{ij} \leq 1$)}
+\]
+\item Dissimilarities are usually in range $0 \leq d_{ij} \leq C$ where $C$ is the maximum dissimilarity
+\item Distances are one measure of dissimilarity but distances are unbounded to the right
+\[
+d_{ij} \in [0,\infty]
+\]
+\end{itemize}
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Dissimilarity Measures for Quantitative Data}
+
+
+\begin{itemize}
+\item Euclidean distance
+\[
+d_{ij} = \left\{ \sum_{k=1}^p (x_{ik} - x_{jk})^2 
+         \right\} ^{1/2}
+\]
+
+
+\item Scaled Euclidean distance
+\[
+d_{ij} = \left\{ \sum_{k=1}^p w_k^2 (x_{ik} - x_{jk})^2 
+         \right\} ^{1/2}
+\]
+where $w_k$ are suitable weight for the $k$-th variable, e.g. $\sigma_{x_k}^{-1}$ or $(max(x_k)-min(x_k))^{-1}$
+
+\item Manhattan (taxi cab, city block) distance
+\[
+d_{ij} = \sum_{k=1}^p | x_{ik} - x_{jk} |         
+\]
+
+\end{itemize}
+\end{frame}
+%===========================================================
+
+
+
+%===========================================================
+{ 
+\setbeamercolor{background canvas}{bg=} 
+\includepdf[pages={1-5,8-16}]{lecture7-clustering.pdf}
+}
+%===========================================================
+
+
+
+%===========================================================
+%% K-means clustering
+
+\begin{frame}
+\frametitle{K-mean Clustering}
+
+\begin{block}{General idea}
+Assign the $n$ data points (or $p$ variables) to one of $K$ clusters to as to optimize some criterion of interest.    
+\end{block}
+
+\begin{columns}
+    
+\begin{column}{5cm}
+\begin{itemize}
+\item The most common criterion to minimize is the sum-of-squares from the group centroids.
+
+\[
+V = \sum_{i=1}^k \sum_{j \in g_i}|x_j-\mu_i|^2
+\]
+\end{itemize}
+\end{column}
+
+\begin{column}{5.5cm}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{k-means-simple.png}    
+\end{center}
+\end{column}
+
+\end{columns}
+
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+\frametitle{Simple algorithm for K-means clustering}
+\begin{enumerate}
+\item Decide on $k$, the number of groups
+
+\item Randomly pick $k$ of the objects to act as the initial centers
+
+\item Assign each object to the group whose center it is closest to
+
+\item Recalculate the $k$ centers as the centroids of the objects assigned to them
+
+\item Repeat from step 3 until centroids no longer move (convergence)
+
+\end{enumerate}
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+\frametitle{Illustration of K-means algorithm}
+\begin{center}
+\includegraphics[height=3.2in]{k-means-fig.jpg}    
+\end{center}
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+\frametitle{Things to note re:K-means clustering}
+\begin{itemize}
+\item The algorithm described above does not necessarily find the global optimum
+
+\bigskip
+
+\item The algorithm is sensitive to choice of initial cluster center; k-means is often run multiple-time with different initial centers to insure inferred clusters are robust.    
+\end{itemize}
+\end{frame}
+%===========================================================
+
+
+
+\end{document}
+
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{XXX}
+
+\end{frame}
+%===========================================================
+
