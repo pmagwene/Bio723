@@ -15,7 +15,7 @@ represent ordered collections of arbitrary objects.
 5
 \end{python}
 
-Python lists are zero-indexed. This means you can access lists elements
+Python lists are zero-indexed. This means you can access lists elements in the range 
 |0| to |len(x)-1|.
 %
 \begin{python}
@@ -49,16 +49,33 @@ Indexing can be used to both get and set items in a list.
 [2, 4, 6, 8, 'learning python is so great!']
 \end{python}
 
+You can  append and delete list elements as well as concatenate two lists:
+\begin{python}
+>>> l1 = [1,2,3]
+>>> l2 = ['a','b','c','d']
+>>> l1.append(4)
+>>> l1
+[1, 2, 3, 4]
+>>> del l2[2]
+>>> l2
+['a', 'b', 'd']
+>>> l3 = l1 + l2
+>>> l3
+[1, 2, 3, 4, 'a', 'b', 'd']
+\end{python}
+
 Python lists support the notion of `slices' - a continuous sublist of a
 larger list. The following code illustrates this concept:
 %
 \begin{python}
->>> y = range(10)  # our first use of a function!
+>>> y = range(10)  # use help(range) to read about this fxn
 >>> y
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
->>> y[2:8]
+>>> y[:3]  # get first 3 elements of y
+[0, 1, 2]
+>>> y[2:8] # get elements from 2 to 8
 [2, 3, 4, 5, 6, 7]
->>> y[2:-1] # the slice
+>>> y[2:-1] # get elements from 2 to the last element
 [2, 3, 4, 5, 6, 7, 8]
 >>> y[-1:0] # how come this didn't work? 
 []
@@ -73,21 +90,6 @@ As with single indexing, the slice notation can be used to set elements of a lis
 >>> s[2:4] = ['C','D']
 >>> s
 ['a', 'b', 'C', 'D', 'e']
-\end{python}
-
-You can also append and delete list elements as well as concatenate two lists:
-\begin{python}
->>> l1 = [1,2,3]
->>> l2 = ['a','b','c','d']
->>> l1.append(4)
->>> l1
-[1, 2, 3, 4]
->>> del l2[2]
->>> l2
-['a', 'b', 'd']
->>> l3 = l1 + l2
->>> l3
-[1, 2, 3, 4, 'a', 'b', 'd']
 \end{python}
 %
 Finally, there are a number of useful methods associated with list objects, such as |reverse()| and |sort()|:
@@ -125,9 +127,7 @@ Traceback (most recent call last):
 TypeError: 'tuple' object does not support item assignment
 \end{python}
 %
-The above illustrates that tuples can be indexed like lists, however you can't assign to or extend a tuple after it's created. As we will illustrate later, tuples are often used to return multiple objects from functions.
-
-Read, `Think Python' \href{http://www.greenteapress.com/thinkpython/html/thinkpython013.html}{Chapter 12} for more about tuples.
+The above illustrates that tuples can be indexed like lists, however you can't assign to or extend a tuple after it's created. As we will illustrate later, tuples are often used to return multiple objects from functions. Read, `Think Python' \href{http://www.greenteapress.com/thinkpython/html/thinkpython013.html}{Chapter 12} for more about tuples.
 
 
 

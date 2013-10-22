@@ -16,7 +16,7 @@ basic matplotlib functions are already available to you. If not, import
 them as so:
 
 \begin{python}
->>> from pylab import * # only necessary if not using pylab
+>>> from pylab import * # only necessary if not using ipython --pylab
 >>> import numpy as np # go ahead and import numpy as well, using an alias
 
 # load the turtle data using the numpy.loadtxt function 
@@ -36,7 +36,8 @@ them as so:
 Here's another example using the yeast expression data set:
 %
 \begin{python}
->>> data = np.loadtxt('yeast-subnetwork-clean.txt',skiprows=1,usecols=range(1,16))
+>>> data = np.loadtxt('yeast-subnetwork-clean.txt', 
+                      skiprows=1, usecols=range(1,16))
 >>> data.shape   # check the dimensions of the resulting matrix
 (173, 15)
 \end{python}
@@ -60,6 +61,7 @@ Matplotlib has a histogram drawing function. Here's how to use it:
 >>> h = hist(data[:,0]) # plot a histogram of the first variable (column) in our data set
 >>> clf() # clear the plot window, don't need this if you closed the plot window
 >>> h = hist(data[:,0], bins=20) # plot histogram w/20 bins
+>>> clf()
 >>> h = hist(data[:,:2])  # histograms of the first two variables    
 \end{python}
 

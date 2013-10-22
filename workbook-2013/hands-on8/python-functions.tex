@@ -7,7 +7,8 @@ The general form of a Python function is as follows:
 \begin{python}
 def funcname(arg1,arg2):
     # one or more expressions
-    return someresult # arbitrary python object (could even be another function)
+    return someresult # arbitrary python object 
+                      # (could even be another function)
 \end{python}
 %
 An important thing to remember when writing functions is that Python is
@@ -83,7 +84,6 @@ def veclength(x):
     x = numpy.array(x)
     return numpy.sqrt(numpy.dot(x,x))
 
-
 def unitvector(x):
     """Return a unit vector in the same direction as x."""
     x = numpy.array(x)
@@ -127,9 +127,7 @@ To see the directories that your Python installation searches by default try the
 ... output truncated ...
 \end{python}
 
-For your own code it's useful to setup a separate directory. Create a directory called |pycode| in your home directory. In order for Python to "see" the code in this directory you must add it to your |PYTHONPATH|.
-
-To temporarily add a new directory to |sys.path|:
+For your own code it's useful to setup a separate directory. Create a directory called |pycode| in your home directory. In order for Python to "see" the code in this directory you must add it to your |PYTHONPATH|. To temporarily add a new directory to |sys.path|:
 \begin{python}
 >>> sys.path.append('/Users/pmagwene/pycode') # substitute the path to the directory you used
 >>> print sys.path
@@ -138,8 +136,8 @@ To temporarily add a new directory to |sys.path|:
 ... output truncated...
 '/Users/pmagwene/pycode']
 \end{python}
-
-This change applies only to your current interpreter and lasts until you close the interactive prompt. To make persistent changes to the Python seach path you need to create an environment variable called |PYTHONPATH| and add the desired directories.  You do this the same way you set your system |PATH|, but modify your shell initialization file (Unix or OS X) or using the System Properties tool in the control panel to create a new environment variable (Windows). For example, on OS X add the following line to your |.bash_profile| (found in your home directory, create it if doesn't already exist):
+%
+This change applies only to your current interpreter and lasts until you close the interactive prompt. To make persistent changes to the Python seach path you need to create an environment variable called |PYTHONPATH| and add the desired directories.  You do this the same way you set your system |PATH|, by modifying your shell initialization file (Unix or OS X) or using the System Properties tool in the control panel to create a new environment variable (Windows). For example, on OS X add the following line to your |.bash_profile| (found in your home directory, create it if doesn't already exist):
 %
 \begin{bash}
 export PYTHONPATH=$PYTHONPATH:$HOME/pycode   

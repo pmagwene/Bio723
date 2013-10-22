@@ -16,9 +16,11 @@ Here's some examples illustrating using of \numpy:
 \begin{python}
 >>> from numpy import array # a third form of import 
 >>> x = array([2,4,6,8,10])
+>>> x
+array([ 2,  4,  6,  8, 10])
 >>> -x
 array([ -2,  -4,  -6,  -8, -10])
->>> x ** 2
+>>> x**2
 array([  4,  16,  36,  64, 100])
 >>> pi * x # assumes pi is in the current namespace
 array([  6.28318531,  12.56637061,  18.84955592,  25.13274123,  31.41592654])
@@ -57,15 +59,17 @@ Traceback (most recent call last):
   File "<pyshell#52>", line 1, in -toplevel-
     x[5]
 IndexError: index out of bounds
+>>> x[-1]
+10
 \end{python}
 
 \numpy arrays support the comparison operators and return arrays of
 booleans.
 \begin{python}
-    >>> x < 5 
-    array([ True, True, False, False, False], dtype=bool)
-    >>> x >= 6 
-    array([0, 0, 1, 1, 1])
+>>> x < 5 
+array([ True, True, False, False, False], dtype=bool)
+>>> x >= 6 
+array([0, 0, 1, 1, 1])
 \end{python}
 %
 \numpy also supports the combination of comparison and indexing that R vectors
@@ -197,11 +201,6 @@ array([[ 1.        ,  0.5       ,  0.33333333],
        [ 0.25      ,  0.2       ,  0.16666667],
        [ 0.14285714,  0.125     ,  0.11111111],
        [ 0.1       ,  0.09090909,  0.08333333]])
->>> X
-array([[  1.,   2.,   3.],
-       [  4.,   5.,   6.],
-       [  7.,   8.,   9.],
-       [ 10.,  11.,  12.]])
 >>> X + X
 array([[  2.,   4.,   6.],
        [  8.,  10.,  12.],
@@ -217,11 +216,11 @@ array([[  14.,   32.,   50.,   68.],
        [  32.,   77.,  122.,  167.],
        [  50.,  122.,  194.,  266.],
        [  68.,  167.,  266.,  365.]])
->>> np.identity(4)
-array([[1, 0, 0, 0],
-       [0, 1, 0, 0],
-       [0, 0, 1, 0],
-       [0, 0, 0, 1]])
+>>> np.dot(X, X.transpose())  # transpose() is also a method associated with the array object
+array([[  14.,   32.,   50.,   68.],
+       [  32.,   77.,  122.,  167.],
+       [  50.,  122.,  194.,  266.],
+       [  68.,  167.,  266.,  365.]])
 >>> np.sqrt(X)
 array([[ 1.        ,  1.41421356,  1.73205081],
        [ 2.        ,  2.23606798,  2.44948974],
@@ -232,10 +231,20 @@ array([[ 0.54030231, -0.41614684, -0.9899925 ],
        [-0.65364362,  0.28366219,  0.96017029],
        [ 0.75390225, -0.14550003, -0.91113026],
        [-0.83907153,  0.0044257 ,  0.84385396]])
+>>> np.identity(4)
+array([[1, 0, 0, 0],
+       [0, 1, 0, 0],
+       [0, 0, 1, 0],
+       [0, 0, 0, 1]])
+>>> np.ones((4,4))
+array([[ 1.,  1.,  1.,  1.],
+       [ 1.,  1.,  1.,  1.],
+       [ 1.,  1.,  1.,  1.],
+       [ 1.,  1.,  1.,  1.]])
 \end{python}
-
-The code above also demonstrated the Numpy functions \lstinline!dot()!,
-\lstinline!transpose()! and \lstinline!identity()!. Note too that Numpy
+%
+The code above also demonstrated the Numpy functions \lstinline!dot!,
+\lstinline!transpose!, \lstinline!identity! and |ones|. Note too that Numpy
 has a variety of functions such as \lstinline!sqrt()!and
 \lstinline!cos()! that work on an element-wise basis.
 
@@ -254,7 +263,7 @@ array([[  1.,   2.,   3.],
 1.0
 >>> X[3,0] # get the fourth row, 1st column
 10.0
->>> X[:2,:2]  # an example of slicing, get the first two columns and rows (i.e. indices 0 and 1)
+>>> X[:2,:2]  # slicing, first two columns and rows (i.e. indices 0 and 1)
 array([[ 1.,  2.],
        [ 4.,  5.]])
 >>> X[1:,:2] # get everything after the 0th row and  the first two columns
@@ -280,7 +289,10 @@ array([[ 1.00000000e+000, -5.55111512e-017, -6.93889390e-017,  2.94902991e-017],
        [ 1.11022302e-016,  1.00000000e+000, -1.11022302e-016, -5.55111512e-017],
        [ 1.11022302e-016, -2.22044605e-016,  1.00000000e+000,  2.77555756e-017],
        [ 0.00000000e+000, -4.44089210e-016,  0.00000000e+000,  1.00000000e+000]])
->>> print np.array2string(np.dot(C,Cinv),precision=2, suppress_small=True)
+>>> CCinv = np.dot(C, Cinv)
+>>> np.allclose(CCinv, np.identity(4))  #  test for approx. equality
+True
+>>> print np.array2string(CCinv,precision=2, suppress_small=True)
 [[ 1. -0.  0.  0.]
  [-0.  1.  0.  0.]
  [ 0.  0.  1.  0.]

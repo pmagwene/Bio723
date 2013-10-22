@@ -249,6 +249,7 @@ ax.set_zlabel("z")
 
 # set elevation and azimuth for viewing
 ax.view_init(68,-11) 
+fig.show()
 \end{python}
 %
 \begin{figure}[!ht]
@@ -325,16 +326,14 @@ Some things to remember about mathematical operations in Python:
   The standard math functions like |cos()| and
   |log()| are not available to the Python interpeter by
   default. To use these functions you'll need to |import| the
-  math library as shown below.
+  math library as shown below.  This doesn't apply when you're using an 
+  interpetter environment like `ipython --pylab' which automatically
+  imports the commonly used math functions.
 \end{itemize}
 
 For example:
 %
-\begin{python}
->>> 1/2
-0
->>> 1/2.0
-0.5    
+\begin{python}  
 >>> cos(0.5)
 Traceback (most recent call last):
   File "<pyshell#2>", line 1, in -toplevel-
@@ -397,13 +396,19 @@ And some examples of using the string data type:
 >>> s1 = 'It was the best of times'
 >>> type(s1)
 <type 'str'>
+>>> s1  # show representation of string
+'It was the best of times'
+>>> print s1  # print the string, notice difference from above
+It was the best of times
 >>> s2 = 'it was the worst of times'
 >>> s1 + s2
 'It was the best of timesit was the worst of times'
 >>> s1 + ', ' + s2
 'It was the best of times, it was the worst of times'
->>> 'times' in s1
+>>> 'times' in s1  # is 'times' a substring of s1?
 True
+>>> s1.count('t')  # count the occurences of 't' in s1
+4
 >>> s3 = "You can nest 'single quotes' in double quotes"
 >>> s4 = 'or "double quotes" in single quotes'
 >>> s5 = "but you can't nest "double quotes" in double quotes"
