@@ -2,7 +2,9 @@
 
 \input{../../preamble/slidespreamble.tex}
 
+\usepackage{amsmath}
 \usepackage{pdfpages}
+
 
 \parskip=0.5em
 
@@ -93,12 +95,273 @@ d_{ij} = \sum_{k=1}^p | x_{ik} - x_{jk} |
 %===========================================================
 
 
+%===========================================================
+\begin{frame}
+  \frametitle{Dissimilarity Measures for Quantitative Data, cont.}
+
+
+\begin{itemize}
+
+\item Manhattan (taxi cab, city block) distance
+\[
+d_{ij} = \sum_{k=1}^p | x_{ik} - x_{jk} |         
+\]
+
+\item Chebychev distance
+\[
+d_{ij} = max_k \left\{ | x_{ik} - x_{jk} | \right\}
+\]
+
+\item Minkowski Metric
+\[
+d_{ij} = \left\{ \sum_{k=1}^p |x_{ik} - x_{jk}|^\lambda
+         \right\} ^{1/ \lambda}
+\]
+
+$\lambda = 1$ is Manhattan distance, $\lambda = 2$ is Euclidean distance, $\lambda = \infty$ is Chebychev distance.
+
+\end{itemize}
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{More distance measures}
+
+
+\begin{itemize}
+
+\item Canberra distance (weighted Manhattan distance)
+\[
+d_{ij} = \sum_{k=1}^p \frac{| x_{ik} - x_{jk} |}{|x_{ik}| + |x_{jk}|}
+\]
+
+\item Cosine distance
+\[
+d_{ij} = \frac{x_{i\cdot} \cdot x_{j\cdot}}{|x_{i\cdot}||x_{j\cdot}|}
+\]
+where $x_{j\cdot}$ and $x_{j\cdot}$ indicate the row vectors, representing objects $i$ and $j$
+
+\item Hamming distance
+\[
+d_{ij} = \frac{\text{count}(x_{ik} = x_{jk})}{p}
+\]
+
+\end{itemize}
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Metric  Distance Functions}
+
+A non-negative function, $g(x,y)$, is \alert{metric} if:
+
+\begin{enumerate}
+
+\item $g(x,y)$ satisifies the triangle inequality:
+\[
+g(x,y) \leq  g(x,z) + g(y,z)
+\]
+
+\item symmetric:
+\[
+g(x,y) = g(y,x)
+\] 
+
+\item $g(x,y) =0$ only if $x = y$
+
+
+
+\end{enumerate}
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Dissimilarity Measures for Dichotomous Data}
+
+For each pair of objects (samples) of interest form a $2 \times 2$ contigency table:
+
+\begin{center}
+\begin{tabular}{l|cc}
+   & 1 & 0 \\
+\midrule
+1 & $a$ & $b$ \\
+0 & $c$ & $d$ \\
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item Simple matching coefficient: 
+\[
+d_{ij} = 1 - \frac{a + d}{p} = \frac{b + c}{p}
+\]
+
+\item Jaccard's coefficient (ignores joint absence):
+\[
+d_{ij} =  \frac{b + c}{a + b + c}
+\]
+
+
+\item Czenkanowski coefficient: 
+\[
+d_{ij} = \frac{b + c}{2a + b + c}
+\]
+
+
+\end{itemize}
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Dissimilarity Measures for Variables}
+
+Correlation provides a suitable measure of \emph{similarity}. Common \emph{dissimilarity} measures based on correlation include:
+
+
+\begin{itemize}
+
+\item $d_{kl} = 1 - r_{kl}$ if $r_{kl} = -1$ is taken to indicate maximum disagreement
+
+\item $d_{kl} = 1 - r_{kl}^2$ if $r_{kl} = 1$ and $r_{kl} = -1$ are treated equivalently (predictive power)
+
+
+\item Based on uncentered correlation:
+\[
+d_{kl} = 1 - \frac{\sum_{i=1}^n x_{ik}x_{il}} {\sum_{i=1}^n x_{ik}^2 \sum_{i=1}^n x_{il}^2}
+\]
+
+\end{itemize}
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}[plain,c]
+
+
+\begin{center}
+
+\Huge Introduction to Clustering
+
+\end{center}
+
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Goal of Clustering}
+
+\begin{block}{Goal}
+Find ``natural groups'' in data
+\end{block}
+
+What's a ``natural group''?
+
+\begin{itemize}
+  \item Patches of high density points surrounded by patches of lower density in the $p$-dimensional space defined by the variates.
+\end{itemize}
+
+\begin{center}
+\includegraphics[height=1.5in]{cluster-fig.pdf}
+\end{center}
+
+\end{frame}
+%===========================================================
+
+
 
 %===========================================================
 { 
 \setbeamercolor{background canvas}{bg=} 
-\includepdf[pages={1-5,8-16}]{lecture7-clustering.pdf}
+\includepdf[pages={10}]{lecture7-clustering.pdf}
 }
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Generic Algorithm for Agglomerative Hierarchical Clustering}
+
+
+\begin{enumerate}
+  \item Calculate a dissimilarity matrix for the $n$ items
+  
+  \item Join the two nearest items, $i$ and $j$
+
+\begin{alertenv}
+  \item Delete the $i$-th and $j$-th rows and columns of the dissimilarity matrix; and a new row/column that represents the dissimilarity of a new group ($i$,$j$) to all other items 
+\end{alertenv}  
+
+  \item Repeat from step 2 until there is a single group
+\end{enumerate}
+
+\begin{block}{Key Point}
+ The different hierarchical clustering methods are determined by the function used to calculate the distance between groups in step 3.
+\end{block}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Single Linkage Clustering}
+
+\begin{block}{Group Distance Measure}
+  Let $i$ and $j$ be groups, and $n_i$ and $n_j$ be the number of objects in the respective groups. 
+
+  \smallskip
+
+  $D_{ij}$ is the \emph{smallest} of the $n_i n_j$ dissimilarities between each element of $i$ and each element of $j$
+\end{block}
+
+Properties of Single Linkage Clustering
+\begin{itemize}
+
+\item Invariant under monotonic transformation of the $d_{ij}$
+
+\item Unaffected by ties
+
+\item Provably nice asymptotic properties
+
+\item Disadvantage: susceptible to chaining
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+
+%===========================================================
+{ 
+\setbeamercolor{background canvas}{bg=} 
+\includepdf[pages={15-16}]{lecture7-clustering.pdf}
+}
+%===========================================================
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{More Hierarchical Clustering Functions}
+
+
+\begin{description}
+
+\item[Complete Linkage] -- $D_{ij}$ is the maximum of the $n_i n_j$ dissimilarities between the two groups.
+
+\item[Group Average Methods] -- $D_{ij}$ is the average of the $n_i n_j$  dissimilarities between the two group (UPGMA, WPGMA)
+
+\item[Centroid Method] -- $D_{ij}$ is the squared Euclidean distance between the centroids of groups $i$ and $j$
+
+\end{description}
+
+\end{frame}
 %===========================================================
 
 
@@ -107,7 +370,7 @@ d_{ij} = \sum_{k=1}^p | x_{ik} - x_{jk} |
 %% K-means clustering
 
 \begin{frame}
-\frametitle{K-mean Clustering}
+\frametitle{K-means Clustering}
 
 \begin{block}{General idea}
 Assign the $n$ data points (or $p$ variables) to one of $K$ clusters to as to optimize some criterion of interest.    
@@ -166,7 +429,7 @@ V = \sum_{i=1}^k \sum_{j \in g_i}|x_j-\mu_i|^2
 
 %===========================================================
 \begin{frame}
-\frametitle{Things to note re:K-means clustering}
+\frametitle{Things to note re: K-means clustering}
 \begin{itemize}
 \item The algorithm described above does not necessarily find the global optimum
 
