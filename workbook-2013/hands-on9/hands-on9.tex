@@ -307,6 +307,25 @@ The final output of your plot should look like Figure~\ref{fig:pykmeans}.
   \caption{Results of applying k-means clustering to the iris data set, using the k-means algorithm impelmented in SciPy.\label{fig:pykmeans}}
 \end{figure}
 
+
+\medskip
+\begin{assignment}
+\small
+
+Using the `naive' k-means clustering algorithm described in lecture, implement your own k-means clustering function in either Python or R.
+
+Your function should take as input:
+\begin{enumerate}
+\item A distance matrix
+\item an integer, $k$, giving the number of clusters
+\item an integer, \verb|maxiter|, giving the maximum number of iterations of the algorithm to perform. NOTE: \verb|maxiter| is an upper limit; you might a choose other criteria for the algorithm to converge, but \verb|maxiter| will guarantee that it completes.
+\end{enumerate}
+
+Illustrate your function with application to a data set of your choice.
+
+
+\end{assignment}
+
 % \section{Minimum Spanning Tree in R}
 
 % The package \texttt{ape} has an \texttt{mst()} function. Several others packages, including vegan also have minimum spanning tree functions. The |mst()| function takes a dissimilarity matrix as its input and returns a square adjacency matrix, $A$, where $A_{ij} = 1$ if $(i,j)$ is an edge in the MST or 0 otherwise.
