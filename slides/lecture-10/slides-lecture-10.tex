@@ -12,7 +12,7 @@
 \subtitle{Lecture 10: Mixture Models and Multi-dimensional Scaling} % (optional)
 
 \author{Instructor: Paul M. Magwene}
-\date{06 November 2012}
+\date{05 November 2013}
 
 
 \begin{document}
@@ -200,6 +200,15 @@ The standard approach to estimating the parameters is called the "Expectation-Ma
 \includepdf[pages=24]{li-mixtures-lecture.pdf}
 }
 %===========================================================
+
+%===========================================================
+\begin{frame}[plain,c]
+\begin{center}
+\Huge Multidimensional Scaling
+\end{center}
+\end{frame}
+%===========================================================
+
 
 
 %===========================================================
@@ -389,6 +398,115 @@ Input $\Mtx{D}$: road distances between U.S. cities
 
 \end{frame}
 %===========================================================
+
+
+%===========================================================
+\begin{frame}[plain,c]
+\begin{center}
+\Huge Minimum Spanning Tree
+\end{center}
+\end{frame}
+%===========================================================
+
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Minimum Spanning Tree}
+
+\begin{block}{Goal}
+Construct a tree that connects all points in the data set and whose total length is minimized.
+\end{block}
+
+\emph{Statistical applications}
+\begin{itemize}
+    \item highlights close neighbors in a data set
+    \item useful check for distortions produced by projection techniques
+    \item tests of normality
+\end{itemize}
+\medskip
+
+\emph{Other applications}
+\begin{itemize}
+    \item urban planning/engineering
+    \item circuit design
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Example Data Set}
+
+\begin{center}
+\includegraphics[height=3.1in]{points-only}
+\end{center}
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Minimum Spanning Tree: Example}
+
+  
+\begin{center}
+\includegraphics[height=3.1in]{points-mst}
+\end{center}
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Relationship between MST and Single Linkage Clustering}
+
+
+\begin{itemize}
+
+\item Cut a single linkage dendrogram at height, $\delta \dashrightarrow$ clusters
+
+\item Remove all edges in the MST with length $\geq \delta \dashrightarrow$ subgraphs corresponding to the same clusters
+
+\end{itemize}
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{A Generic MST Algorithm}
+
+
+\textbf{Input}: dissimilarity matrix, \Mtx{D}, between each object (point) of interest
+\begin{enumerate}
+\item Create a graph, G, where  $V = \{v_1,\ldots,v_n\}$ and $E =\{\}$ ($E$ initially empty)
+\item Find the smallest dissimilarity, $d_{ij}$ where (i,j) is not in $E$.
+\item Add (i,j) to $E$ if (i,j) does not create a cycle
+\item Repeat from step 2 until every vertex is included in at least one edge
+\end{enumerate}
+
+Not particularly efficient algorithm, but simple. More efficient algorithms for finding MSTs include Kruskal's Algorithm and Prim's algorithm.
+
+\end{frame}
+%===========================================================
+
+%===========================================================
+\begin{frame}
+  \frametitle{Applications of the MST}
+
+MST tends to highlight close neighbors; can be used to look for distortions associated with projections to lower dimensional spaces.
+
+\begin{block}{Using the MST to look for Projection Distortion}
+\begin{itemize}
+    \item  Calculate the MST based on dissimilarity in a high-dimensional space
+    \item Draw the MST edges among points in the projection space (e.g. MDS or PCA)
+    \item MST edges that cross highlight geometric relationships among points that are not well represented by the projection
+\end{itemize}
+\end{block}
+\end{frame}
+%===========================================================
+
+
 
 
 \end{document}
