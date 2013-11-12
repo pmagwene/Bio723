@@ -187,49 +187,50 @@ Calculate pseudovalues of $S$, $s^*$, leaving out a single observation at a time
 %@-node:pmagwene.20061128000033:overview
 %@+node:pmagwene.20061128100749:motivation
 
+% \begin{frame}
+%   \frametitle{Motivation for Jackknifing}
+
+% \begin{itemize}
+%     \item Let $\bar{x} = 1/n \sum_{i=1}^{n}x_i$ denote the mean for a sample of size $n$.
+
+%     \item Let
+% \[
+% \bar{x}_{-j} = \frac{1}{n-1} \sum_{i \neq 1}^{n}x_i
+% \]
+% denote the sample mean with the $i$th observation removed.
+
+%     \item If we know both $\bar{x}$ and $\bar{x}_{-i}$ we can compute the value of the $i$th point as
+% \[
+% x_i = n\bar{x} - (n-1)\bar{x}_{-i}
+% \]
+
+
+% \end{itemize}
+
+% \end{frame}
+
+
+
 \begin{frame}
-  \frametitle{Motivation for Jackknifing}
+  \frametitle{Jackknifing I}
 
 \begin{itemize}
-    \item Let $\bar{x} = 1/n \sum_{i=1}^{n}x_i$ denote the mean for a sample of size $n$.
-
-    \item Let
-\[
-\bar{x}_{-j} = \frac{1}{n-1} \sum_{i \neq 1}^{n}x_i
-\]
-denote the sample mean with the $j$th observation removed.
-
-    \item If we know both $\bar{x}$ and $\bar{x}_{-j}$ we can compute the value of the $j$th point as
-\[
-x_j = n\bar{x} - (n-1)\bar{x}_{-j}
-\]
-
-
-\end{itemize}
-
-\end{frame}
-
-
-
-\begin{frame}
-  \frametitle{Motivation for Jackknifing II}
-
-\begin{itemize}
-    \item Now assume we're interested in some arbitrarily complex statistic that is a function of the $n$ data points:
+    \item Assume we're interested in some arbitrarily complex statistic that is a function of the $n$ data points:
 \[
 \widehat{\Theta} = \phi(x_1, x_2, \cdots, x_{i-1}, x_i, x_{i+1}, \cdots x_n)
 \]
 
-    \item We define the $j$th \textbf{partial estimate} of $\Theta$ as
+    \item We define the $i$th \textbf{partial estimate} of $\Theta$ as
 \[
-\widehat{\Theta}_j = \phi(x_1, x_2, \cdots, x_{i-1}, x_{i+1}, \cdots x_n)
+\widehat{\Theta}_i = \phi(x_1, x_2, \cdots, x_{i-1}, x_{i+1}, \cdots x_n)
 \]
 
-    \item By analogy with the previous formula we define the $j$th \textbf{pseudovalue} as:
+    \item We define the $i$th \textbf{pseudovalue} as:
 \[
-\widehat{\Theta^*}_j = n \widehat{\Theta} - (n-1)\widehat{\Theta}_j
+\widehat{\Theta^*}_i = n \widehat{\Theta} - (n-1)\widehat{\Theta}_i
 \]
 
+We will treat the pseudovalues as if they were independent random variables with mean $\widehat{\Theta}$.
 
 
 \end{itemize}
@@ -238,7 +239,7 @@ x_j = n\bar{x} - (n-1)\bar{x}_{-j}
 
 
 \begin{frame}
-  \frametitle{Motivation for Jackknifing III}
+  \frametitle{Jackknifing II}
 
 \begin{itemize}
     \item From the pseudovalues we can calculate a \textbf{jackknife estimate} of $\Theta$ as follows
@@ -246,9 +247,16 @@ x_j = n\bar{x} - (n-1)\bar{x}_{-j}
 \widehat{\Theta^*} = \frac{1}{n} \sum_{i=1}^{n}\widehat{\Theta^*}_i
 \]
 
+  \item The variance of the pseudovalues, $\widehat{\Theta^*}_i$, is given by:
+
+\[
+Var(\widehat{\Theta^*}) = \frac{(\sum \widehat{\Theta^*}_i - \widehat{\Theta^*})^2}{n-1}
+\]
+
+
     \item We can approximate the standard error of $\widehat{\Theta^*}$ by calculating the standard error
 \[
-SE_{jack} = \sqrt{\frac{Var(\widehat{\Theta^*}_j)}{n}}
+SE_{jack} = \sqrt{\frac{Var(\widehat{\Theta^*})}{n}}
 \]
 
 
@@ -277,8 +285,8 @@ Let's use the jackknife to estimate confidence intervals for the standard deviat
 \begin{itemize}
     \item We calculate the jackknife pseudovalues, $\widehat{\sigma^*_1}, \ldots, \widehat{\sigma^*_{20}}$
     \item The mean of the jackknife pseudovalues, $\widehat{\sigma^*} = 1.096$.
-    \item The variance of the pseudovalues, $Var(\widehat{\Theta^*}_j) = 1.488$
-    \item The standard error of the pseudovalues, $\sqrt{\frac{Var(\widehat{\Theta^*}_j)}{n}} = 0.273$.
+    \item The variance of the pseudovalues, $Var(\widehat{\Theta^*}_i) = 1.488$
+    \item The standard error of the pseudovalues, $\sqrt{\frac{Var(\widehat{\Theta^*}_i)}{n}} = 0.273$.
     \item The approximate 95\% confidence interval is: $1.096 \pm 2.09 \times 0.273 = (0.53, 1.67)$
 
 \end{itemize}
@@ -430,7 +438,7 @@ Limitations:
 \begin{itemize}
     \item Jackknife can be viewed as approximation to bootstrap
     \item Jackknife less computationally intensive to calculate
-    \item Jackknife can fail if the statistic of interest is not `smooth' (small changes in data cause only small changes in the statistic)
+    \item Jackknife can fail if the statistic of interest is not `smooth' (small changes in data cause only small changes in the statistic) - e.g. median
 \end{itemize}
 
 \end{frame}

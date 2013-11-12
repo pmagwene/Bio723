@@ -220,7 +220,7 @@ This illustrates the type of simulation study you might do to check the robustne
 There are several packages that provide functions for doing bootstrapping in R. These include |bootstrap| and |boot|. We'll take a quick look at the functions in |bootstrap|. Install |bootstrap| using the standard package installation mechanism.
 
 We'll use the same set of samples from the Poisson that we used before to illustrate the jackknife.
-
+%
 \begin{R}
 > library(bootstrap)
 > ?bootstrap  # as always, check out the docs
@@ -242,7 +242,24 @@ We'll use the same set of samples from the Poisson that we used before to illust
 > jknife(psample,var)$ci
 [1] 1.716397 4.630270
 \end{R}
+%
 
+% Now let's use the bootstrap to look at the distribution of a more complicated statistic -- the fraction of the variance explained by the first principal component.  To do this, first we need to define a function that return the statistic we're interested in:
+% %
+% \begin{R}
+% > pca.1stpc.ratio <- function(x){
+% +    x.pca <- prcomp(x, center=T, scale.=T)
+% +    pca.var <- x.pca$sdev**2
+% +    return (pca.var[1]/sum(pca.var))
+% + }
+% \end{R}
+% %
+% Having defined this function we can generate bootstrap samples to estimate the distribution of this statistic:
+% %
+% \begin{R}
+% > iris.sub <- subset(iris, select=
+
+% \end{R}
 
 \section{LOESS Models}
 
@@ -272,14 +289,14 @@ called the ``tri-cube'' function which is defined as:
 \lstMakeShortInline|
 
 
-\medskip
-\begin{assignment}
-Write an R function that computes the tri-cube
-function described above. Create a plot of the tri-cube function over
-the interval (-3,3). Create a second R function that calculates the
-Gaussian function $f(x) = e^{-x^2}$ and plot that function over the same
-interval, in the same plot, to compare the two functions.  Make sure you use a suitably dense sampling of points to get an accurate assesment of the shape of each function.
-\end{assignment}
+% \medskip
+% \begin{assignment}
+% Write an R function that computes the tri-cube
+% function described above. Create a plot of the tri-cube function over
+% the interval (-3,3). Create a second R function that calculates the
+% Gaussian function $f(x) = e^{-x^2}$ and plot that function over the same
+% interval, in the same plot, to compare the two functions.  Make sure you use a suitably dense sampling of points to get an accurate assesment of the shape of each function.
+% \end{assignment}
 
 The primary parameter that a user must decide on when using LOESS is the
 size of the neighborhood function to apply (i.e.~over what distance
