@@ -244,22 +244,39 @@ We'll use the same set of samples from the Poisson that we used before to illust
 \end{R}
 %
 
-% Now let's use the bootstrap to look at the distribution of a more complicated statistic -- the fraction of the variance explained by the first principal component.  To do this, first we need to define a function that return the statistic we're interested in:
-% %
-% \begin{R}
-% > pca.1stpc.ratio <- function(x){
-% +    x.pca <- prcomp(x, center=T, scale.=T)
-% +    pca.var <- x.pca$sdev**2
-% +    return (pca.var[1]/sum(pca.var))
-% + }
-% \end{R}
-% %
-% Having defined this function we can generate bootstrap samples to estimate the distribution of this statistic:
-% %
-% \begin{R}
-% > iris.sub <- subset(iris, select=
+Now let's use the bootstrap to look at the distribution of a more complicated statistic -- the fraction of the variance explained by the first principal component.  To do this, first we need to define a function that return the statistic we're interested in.
+%
+\begin{R}
+> pca.1stpc.ratio <- function(x){
++    x.pca <- prcomp(x, center=T, scale.=T)
++    pca.var <- x.pca$sdev**2
++    return (pca.var[1]/sum(pca.var))
++ }
+\end{R}
+%
+The |bootstrap()| function expects the data to be in the form of a vector, not a data frame or matrix, so we will write a second function that takes as it's first argument the set of observations to use to construct each bootstrap sample, and as it's second argument the full data set.  We can then pass this function to |bootstrap()| with a vector of indices $1,2,\ldots,n$.
+%
+\begin{R}
+> pca.on.subset <- function(the.subset, orig.data){
++     data.subset <- orig.data[the.subset,]
++     pca.1stpc.ratio(data.subset)
++ }
 
-% \end{R}
+\end{R}
+
+Having defined this function we can generate bootstrap samples to estimate the distribution of this statistic:
+%
+\begin{R}
+> iris.sub <- subset(iris, select=-Species)  # drop the species column
+> iris.boot <- bootstrap(1:150, 1000, pca.on.subset, iris.sub)
+> hist(iris.boot$thetastar)
+> mean(iris.boot$thetastar)
+[1] 0.7306235
+> pca.1stpc.ratio(iris.sub)
+[1] 0.7296245
+\end{R}
+%
+For this particular statistic, the fraction of variation explained by the 1st PC, the bootstrap distribution looks fairly normal with a mean fairly close to our observed value. 
 
 \section{LOESS Models}
 
