@@ -9,10 +9,10 @@
 %===========================================================
 % Title Info
 \title{Scientific Computing for Biologists}
-\subtitle{Lecture 11: Resampling methods and other non-parametric appraoches} % (optional)
+\subtitle{Lecture 11: Nono-Parametric Methods: Resampling Methods and Loess Regression} % (optional)
 
 \author{Instructor: Paul M. Magwene}
-\date{13 November 2012}
+\date{12 November 2013}
 
 
 \begin{document}
@@ -243,7 +243,7 @@ x_j = n\bar{x} - (n-1)\bar{x}_{-j}
 \begin{itemize}
     \item From the pseudovalues we can calculate a \textbf{jackknife estimate} of $\Theta$ as follows
 \[
-\widehat{\Theta^*} = \frac{1}{n} \sum_{i=1}{n}\widehat{\Theta^*}_i
+\widehat{\Theta^*} = \frac{1}{n} \sum_{i=1}^{n}\widehat{\Theta^*}_i
 \]
 
     \item We can approximate the standard error of $\widehat{\Theta^*}$ by calculating the standard error
@@ -257,7 +257,7 @@ SE_{jack} = \sqrt{\frac{Var(\widehat{\Theta^*}_j)}{n}}
 \widehat{\Theta^*} \pm t_{\alpha/2, n-1} SE_{jack}
 \]
 
-where $t_{\alpha/2, n-1}$ is the valued that is exceeded with probability $\alpha/2$ for the t-distribution with n-1 degrees of freedom.
+where $t_{\alpha/2, n-1}$ is the valued that is exceeded with probability $\alpha/2$ for the t-distribution with $n-1$ degrees of freedom.
 
 \end{itemize}
 
