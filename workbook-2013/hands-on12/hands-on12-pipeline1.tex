@@ -1,0 +1,432 @@
+%!TEX root = ../workbook-2013.tex
+\section{Overview}
+
+Many types of analyses, especially those involving genomic data, require the investigator to carry out a large number of sequential steps. For example, given a set of uncharacterized genes in your organism of interest you might want to find out as much as you can about the structure and function of the proteins they encode, search for related proteins in other organisms, and try to identify pathways that they might be involved in. If you had only a single gene of interest you might apply each of the appropriate software tools by hand to carry out such an analysis. However, when the number of genes of interest grows beyond a small number (say 10-15) doing such an analysis by hand starts to become tedious and error prone.  A bioinformatics pipeline can help to automate this process, will make the analysis easier to replicate or apply to new sets of genes, and can be modified to include additional tasks.  Writing out a series of analysis steps as a pipeline also helps us to achieve the goal of `reproducible research' in the same way that knitr helps you to do so in R.
+
+During the next two class sessions we're going to build a series of analysis pipelines, starting with simple shell scripts and eventually building up to a complex series of analyses integrating Python code, several command line programs, and web queries to NCBI.
+
+
+\section{Awk revisited}
+
+One of the tools that was introduced in the appendix on Unix command line tools was Awk, a programming language for processing structured text files.  We'll start by revisiting Awk to build some simple but useful programs that we'll then incorporate into our first pipeline.
+
+If you haven't already done so, download the \textit{Saccharomyces cerevisiae} GFF file from the yeast genome database as so:
+%
+\begin{bash}
+$ curl -O http://downloads.yeastgenome.org/curation/chromosomal_feature/saccharomyces_cerevisiae.gff  
+\end{bash}
+%
+Recall that Awk works on the fields of a structured data file. By default fields are delimited by spaces or tabs, though this can be changed.  Conveniently, GFF files consist of 9 columns separated by tabs, so they are well suited to manipulation by awk.  The information that is found in each of the columns of the GFF format is described here: \url{http://www.sequenceontology.org/gff3.shtml}.
+
+\subsection{The \texttt{pattern \{action\}} syntax of Awk}
+
+The basic syntax of |awk| is often depicted in the form |pattern {action}|. In the example below the pattern can be read as -- ``if the 3rd field is 'chromosome'". For all lines that match that pattern the corresponding action is applied; in this case ``print fields 1 and 5'' (the chromosome name and its length):
+%
+\begin{bash}
+awk '$3=="chromosome" {print $1, $5}' saccharomyces_cerevisiae.gff 
+\end{bash}
+
+Here's another |pattern {action}| pair that shows how we could find all gene features with length less than 300:
+%
+\begin{bash}
+$ awk '$3 == "gene" && ($5 - $4) < 300 {print $0 }' saccharomyces_cerevisiae.gff | wc -l
+\end{bash}
+%
+|&&| is the AND operator. The pattern for this example translates as ``if the 3rd fields is 'gene' AND the the 5th field minus the 4th field is less than 300''; the corresponding action is ``print the whole line.'' Notice how we piped the output of |awk| to the utility |wc| to count the number of lines returned.
+
+Let's add one more condition to the previous example -- we'll look for the word `Dubious' in the 9th field. 
+%
+\begin{bash}
+$ awk '$3 == "gene" && ($5 - $4) < 300 && match($9, "Dubious") {print $0 }' saccharomyces_cerevisiae.gff | wc -l
+\end{bash}
+%
+Comparing the output of the previous example to this one you'll see that a significant proportion of small genes are classified as `Dubious'.
+
+\subsection{Writing an Awk script}
+
+There's lots of powerful things you can do with |awk| one-liners, but writing short scripts often makes things easier to understand. You can think of an |awk| scripts as a series of |pattern {action}| statements.  Our script will create a table giving both the length of each chromosome and the number of genes on that chromosome. Save the following  script in a file called |gcount.awk|.
+
+\begin{codeblock}[awk]
+# gcount.awk
+# length of each chromosome
+$3 == "chromosome" {
+    clen[$1] = $5
+}
+
+# increment the gene count for the given chromosome
+$3 == "gene" {
+    ngenes[$1] += 1
+}
+
+# END only gets carried out once 
+# we've processed all the records
+END {
+print "Chrom\tLength\t# Genes"
+for (chr in clen) {
+    print chr "\t" clen[chr] "\t" ngenes[chr]
+    }
+}
+\end{codeblock}
+%
+In this example  we create two arrays -- |clen| and |ngenes| -- to keep track of the chromosome lengths and number of genes on each chromosome. Arrays can be indexed by either integers or strings; when they are indexed by strings we can think of them like Python dictionaries. We have two patterns -- whether the 3rd field equals 1) ``chromosome'' or 2) ``gene''. The final pattern, labeled |END|, says what to do once we've processed all the lines in the file.  Run this script as follows:
+%
+\begin{bash}
+$ awk -f gcount.awk saccharomyces_cerevisiae.gff
+\end{bash}
+%
+The |-f| option says to use the pattern/action pairs contained in the specified file.  One possible shortcoming (at least on my system) is that the output wasn't sorted.  That's easy to solve by piping the results to the sort command:
+%
+\begin{bash}
+$ awk -f gcount.awk saccharomyces_cerevisiae.gff | sort
+\end{bash}
+
+
+\subsection{A more flexible Awk script}
+
+Our |gcount.awk| script works pretty well, but what if we wanted to count pseudogenes rather than genes, or tRNA features? In its current form the feature type is hardcoded into the script. Let's see how we can get rid of that constraint. Save the following awk script as |fcount.awk|.
+%
+\begin{codeblock}[awk]
+# fcount.awk
+BEGIN {
+# if var ftype has NOT been defined, assign it a default value
+if (!ftype)
+  ftype = "gene"
+}
+
+# length of each chromosome
+$3 == "chromosome" {
+    clen[$1] = $5
+}
+
+# increment the feature count for the given chromosome
+$3 == ftype {
+    ngenes[$1] += 1
+}
+
+END {
+for (chr in clen) {
+    print chr "\t" clen[chr] "\t" ngenes[chr]
+    }
+}
+\end{codeblock}
+
+Here we introduced the |BEGIN| pattern. This pattern is carried out before any lines of the file are processed.  By default, this new script will count genes like our previous script did, but if you specify the variable |ftype| using the |-v| option on the command line it will count the specified feature type:
+%
+\begin{code}[]
+# count pseudogenes
+$ awk -f fcount.awk  -v ftype="pseudogene" saccharomyces_cerevisiae.gff 
+
+# counts ARS sequences (origins of replication)
+$ awk -f fcount.awk  -v ftype="ARS" saccharomyces_cerevisiae.gff
+
+# count tRNA genes
+$ awk -f fcount.awk  -v ftype="tRNA" saccharomyces_cerevisiae.gff
+\end{code}
+
+\subsection{String substitution in Awk}
+
+As a final example of using |awk|, let's see how we can use string substitution to create more human friendly output when we output our GFF file in awk.   
+
+Here's a now familiar example of using the |pattern {action}| syntax to find all the pseudogenes in a GFF file:
+%
+\begin{code}
+$ awk '$3 == "pseudogene" { print $0 }' saccharomyces_cerevisiae.gff  | less
+\end{code}
+%
+This works, but the output is a bit ugly because of how the attribute field is specified in GFF format. Let's write a simple awk |function| that nicely formats the output. Save the following script as |attribs.awk|.
+%
+\begin{codeblock}[awk]
+# attribs.awk
+# parse the attributes field of a GFF file
+
+NF >= 9 {
+    # print some useful fields
+    print "Chromosome =", $1
+    print "Type = ", $3
+    print "Start =", $4
+    print "End =", $5
+    print "Strand =", $7
+    #print $1, $2, $3, $4, $5, $6, $7, $8
+  
+    # break the attributes field up into individual attributes
+    n = split($9, attributes, ";")
+    for (i = 1; i <= n; i++){
+        tstr = attributes[i]
+        gsub(/%20/," ", tstr ) # spaces
+        gsub(/%2C/, ",", tstr) # commas
+        gsub(/%3B/, ";", tstr) # semi-colons
+        gsub(/%2F/, "/", tstr) # forward slash
+        gsub("="," = ", tstr) # add spaces around equal signs
+        print tstr
+        }
+    print "\n"
+}
+\end{codeblock}
+%
+The awk function |gsub()| globally substitutes one string for another. In this case it's replacing HTML type encoding of spaces, commas, semi-colons, etc. with more human friendly versions of the same. We can use our |attribs.awk| script as follows:
+%
+\begin{code}
+$ awk '$3 == "pseudogene" { print $0 }' saccharomyces_cerevisiae.gff  | awk -f attribs.awk | less
+\end{code}
+%
+This produces output that is much nicer for a human reader to interpret, though perhaps less easy to parse computationally.
+
+The GFF3 format is used by many organism specific genome projects besides yeast. If we take care to write our scripts to operate on GFF3 files generically then we can apply scripts we write for one organism easily to another organism. Let's test this out by downloading the X-chromosome GFF3 file for \textit{Drosophila melanogaster} from FlyBase:
+%
+\begin{bash}
+$ curl -O ftp://ftp.flybase.net/genomes/dmel/current/gff/dmel-X-r5.54.gff.gz   
+$ gunzip dmel-X-r5.54.gff.gz  # unzip the compressed file
+\end{bash}
+%
+Now let's test our |attribs.awk| script with this new GFF file by generating a report on pseudogenes on the \textit{Drosophila} X-chromosome:
+%
+\begin{bash}
+$ awk '$3 == "pseudogene"  {print $0}' dmel-X-r5.54.gff | awk -f attribs.awk > fly-X-pseudogenes.txt    
+\end{bash}
+%
+Use |less| or a text editor to view your report.
+
+
+\section{Shell Scripting}
+
+To this point all of our examples have involved single command lines or scripts, occasionally tied together with pipes. This works well for quick analyses, but what if you wanted to run an analysis over and over again, say on a monthly basis as a genome project was updated, or as you generated new data as part of your research?  In that context a shell script might be useful. A shell script is a small program written for the command line interpreter of an operating system.  A shell script is convenient for tying together a series of commands that you might otherwise type by hand into a repeatable and documented set of operations. For these exercises we will assume that you use the ``bash shell'', which is the default command line interface on OSX, Cygwin, and most Linux based systems. You can confirm that your default shell is bash by doing something like:
+%
+\begin{bash}
+$ sh --version
+GNU bash, version 3.2.48(1)-release (x86_64-apple-darwin10.0)
+Copyright (C) 2007 Free Software Foundation, Inc.
+\end{bash}
+
+Assuming, that you've got bash working on your system, enter the following code into your text-editor and save it with the filename |genome_reporter.sh| in the same directory where you've saved |fcount.awk| that we created earlier. Be careful that you enter the text as shown as |bash| is particularly picky about extra spaces around the equal sign (=) in variable assignment so if you get error messages when you try and run this script (see below), that's the first thing to check.
+%
+\begin{codeblock}[bash]
+#!/bin/bash
+
+URL='http://downloads.yeastgenome.org/curation/chromosomal_feature/saccharomyces_cerevisiae.gff'
+BASEFILE='saccharomyces_cerevisiae.gff'
+
+# get today's date
+TODAY=$(date -u +%Y-%m-%d)
+
+# create filename, prepended w/today's date
+FILENAME="$TODAY-$BASEFILE"
+REPORT="report-$FILENAME"
+
+# if the GFF file does not already exist then
+# use curl to download the file and save if with the name above
+if [ ! -e $FILENAME ]
+then
+    curl -o $FILENAME $URL
+fi
+
+# create report with a series of awk calls
+echo -e "Genome Report\nPrepared: $TODAY\n" > $REPORT
+
+echo "Total genes: " >> $REPORT
+awk '$3 == "gene" {print $0}' $FILENAME | wc -l >> $REPORT
+
+echo -e "\nDubious ORFs: " >> $REPORT
+awk '$3 == "gene"  && match($9, "Dubious") {print $0 }' $FILENAME | wc -l >> $REPORT
+
+echo -e "\nPseudogenes: " >> $REPORT
+awk -f fcount.awk  -v ftype="pseudogene" $FILENAME | wc -l >> $REPORT
+
+echo -e "\nChromosome, length, genes per chromosome: " >> $REPORT
+awk -f fcount.awk $FILENAME | sort >> $REPORT    
+
+echo "Report written to: $REPORT"
+\end{codeblock}
+%
+Note that the line |#!/bin/bash| needs to be the first line in the file. This tells the operating system to run this script using the bash shell. This line is sometimes referred to as the `she-bang' line by Unix programmers. We'll see next week how to set this for a Python program.
+
+Having entered and saved that script, make the script executable by typing:
+\begin{bash}
+$ chmod +x genome_reporter.sh
+\end{bash}
+from the command line.  Once you've done that you can run the script, from the same directory, by typing:
+\begin{bash}
+$ ./genome_reporter.sh
+\end{bash} 
+Assuming you don't have any errors the script will download the GFF file from the Saccharomyces Genome Database, save it with the date prefixed to the file name, and then generate a short report listing some useful summaries generated from the file.
+
+Most of the bottom half of the script should be easy to understand; it simply shows a bunch of |echo| and |awk| commands that you might have typed at the command line. In the top portion of the script we create a set of variables to hold the names of the files we'll be using. One new feature we haven't seen before is the use of the dollar sign (\verb|$|) to dereference variable names.  For example, the variable |FILENAME| is constructed by creating a string by joining together the strings held in the variables |TODAY| and |BASEFILE| (and separated by a dash |-|). Depending on the date on which the script is run it generates a different set of file names, as specified by the variables |TODAY|, |BASEFILE|, and |REPORT|.  The bottom half of the script is setup to generate the appropriate output given those changing variables.  One other feature to take note of is the |if-then-fi| conditional statement. The portion in the square brackets (\verb|[ ! -e $FILENAME ]|) asks whether the file for that date already exists. If so it doesn't bother downloading the file again, for efficiency reasons.
+
+
+
+\section{Beyond Shell Scripting}
+
+As we saw above, built-in Unix tools like Awk can be extremely useful for manipulating and processing data sources, especially in combination with shell scripts.  Now we're going to scale up our pipeline building to include additional bioinformatics tools and a small Biopython script.
+
+Our next pipeline will accomplish the following tasks:
+%
+\begin{enumerate}[noitemsep]
+\item Translate a nucleotide FASTA file to amino acid sequences
+\item Perform a multiple alignment of the amino acid sequences using the aligner MAFFT
+\item Place the translated output and multiple sequence alignments in separate files
+\item Run HMMMER on the the translated output and produce a report on recognize protein domains.
+\end{enumerate}
+
+\subsection{A First Brush with Biopython}
+
+We'll start with a small Python script to take care of step 1, translating the nucleotide sequence to a protein sequence. Save the following code as |aatranslate.py|.   This small script uses a number of classes and functions from the Biopython library that we'll discuss in greater detail in the next class session.
+%
+\begin{codeblock}[python]
+#!/usr/bin/env python
+
+import sys
+from Bio import Seq, SeqIO
+from Bio.SeqRecord import SeqRecord
+from Bio.Data.CodonTable import TranslationError
+
+recs = SeqIO.parse(sys.stdin, "fasta")
+for rec in recs:
+    try:
+        newrec = SeqRecord(rec.seq.translate(), id=rec.id+"_translated",
+                           description=rec.description + ' (translated)')
+        print newrec.format("fasta")
+    except TranslationError:
+        print rec.format("fasta")
+\end{codeblock}
+
+After saving the above code as |aatranslate.py|, make it executable by using |chmod +x|.  This script takes a set of FASTA nucleotide sequences from from |stdin| and translates them, sending the output to |stdout|.  Test your function as shown below using the |unknown2.fas| data set from the class wiki. Notice how we use |cat| to pipe the fasta file to |aatranslate.py|.
+%
+\begin{code}
+$ less unknown2.fas # confirm that the unknowns are nuc. seqs, q to quit
+$ cat unknown2.fas | ./aatranslate.py | less   # pipe output ot less
+$ cat unknown2.fas | ./aatranslate.py > unknown2-AA.fas  # write output to file
+\end{code}
+
+
+\subsection{MAFFT}
+
+MAFFT is a multiple sequence alignment program. It's relatively fast and a number of studies have shown that it is amongst the best performing multiple sequence aligners. MAFFT is usually the sequence aligner I reach for first.  Clustalw is the `classic' alignment tool, so it's useful to have on your system, but MAFFT usually gives better alignments (though Clustalw2 is supposed to address some of the short-comings of the older versions of Clustalw). See the \href{http://mafft.cbrc.jp/alignment/software/}{MAFFT website} for additional references and information. There are pre-compiled MAFFT binaries available on the MAFFT website.
+
+Once you've installed MAFFT check the installation location and confirm that the binary is working (on Windows, add the MAFFT install directory to your PATH):
+%
+\begin{code}
+$ which mafft
+/usr/local/bin/mafft
+$ mafft  # type ctrl-c to exit from the interactive prompt
+
+---------------------------------------------------
+
+   MAFFT v6.864b (2011/11/10)
+
+        Copyright (c) 2011 Kazutaka Katoh
+        NAR 30:3059-3066, NAR 33:511-518
+        http://mafft.cbrc.jp/alignment/software/
+---------------------------------------------------
+\end{code}
+
+\subsection{Testing MAFFT}
+
+Once you've confirmed that MAFFT is properly installed, let's test it with the amino acids translation of our |unknown2.fas| file. We'll use this data to do some quick tests to confirm that our software tools are working correctly. Of course, when putting together an analysis pipeline for your own purposes you'll want to spend a fair amount of time reading the documentation (and related papers) for each tool and make sure you understand the various options and settings.
+%
+\begin{bash}
+$ mafft --auto unknown2-AA.fas > unknown2-AA-mafft.fas
+\end{bash}
+%
+The commands above should produce the following file: |unknown2-AA-mafft.fas| (MAFFT).  To visualize the alignments there are a variety of different multiple alignment viewers. One such program is \href{http://pbil.univ-lyon1.fr/software/seaview.html}{SeaView}, a free cross platform,  alignment viewer.  Take a look at the MAFFT alignment using SeaView.
+
+
+\subsection{HMMER}
+
+HMMER is an implementation of a profile Hidden Markov Model (HMM) for protein sequence analysis. You can read up on HMMER at the \href{http://hmmer.janelia.org/}{HMMER website}. We will use it here for finding protein domains in sequences in conjuction with the PFAM database. Download the appropriate version of HMMER from \url{http://hmmer.janelia.org/software}.  See the bottom of the page for Cygwin binaries.
+
+
+\subsubsection{Get the PFAM HMM library}
+
+We will be using the Pfam database (Release 27) in conjunction with HMMER to search for known protein domains in our sequences of interest. Since the the Pfam HMM libraries are large I'll try and provide a couple of thumb drives with the necessary library. If you're using this document outside of class you can download the necessay library as follows:
+%
+\begin{code}
+$ curl -O ftp://ftp.sanger.ac.uk/pub/databases/Pfam/releases/Pfam27.0/Pfam-A.hmm.gz
+\end{code}
+%
+This is a large file (202MB) and decompresses to an even larger file (approx. 1GB). Make sure you have adequate disk space. On OS X or Windows using Cygwin you can unzip it as follows:
+%
+\begin{code}
+$ gunzip Pfam-A.hmm.gz
+\end{code}
+%
+If you aren't using Cygwin on Windows you can download the open source program \href{http://www.7-zip.org/}{7-zip} which can unzip gzip'd files (and many other common compression formats).
+
+\subsection{Testing HMMER}
+
+To test out HMMER and Pfam download the |Rme1.fas| file from the class wiki. Rme1 is a transcription factor that regulates sporulation and meiosis in budding yeast, \textit{Saccharomyces cerevisiae}.  We'll illustrate how we can use HMMER to analyze the domain structure of Rme1.
+
+The first thing you'll need to do is run |Pfam-A.hmm| through the |hmmpress| program which prepares the HMM database for fast scanning by creating binary files. This might take a few minutes depending on the speed of your machine.
+
+\begin{code}
+$ hmmpress Pfam-A.hmm
+\end{code}
+
+This will create a number of additional files in the same directory as |Pfam-A.hmm|. We can now use |hmmscan| to search for known protein domains included in the Pfam database.
+
+\begin{code}
+$ hmmscan Pfam-A.hmm Rme1.fas > Rme1-Pfam-out.txt
+\end{code}
+
+The default output from |hmmscan| is designed to be human readable. Open |Rme1-Pfam-out.txt| in a text editor to see the output. For outputs that are easier to parse computationally use the |--tblout| or |--domtblout| options to save output in a tabular format.
+
+\begin{code}
+$ hmmscan --domtblout Rme1-output.txt -o /dev/null Pfam-A.hmm Rme1.fas
+\end{code}
+
+This call produces a file |Rme1-output.txt| that contains a space delimited text file summarizing the per-domain output. The |-o| option redirects the main human-readable output (in this case to the `bit-bucket', /dev/null). You can then manipulate the tabular output in |Rme1-output.txt| using standard Unix tools like |awk|.
+
+See pp.\,24-26  of the \href{ftp://selab.janelia.org/pub/software/hmmer3/3.0/Userguide.pdf}{HMMER user guide} for more info on the |hmmscan| program and settings. E-values and bit-scores are the criteria you want to look at when trying to judge which domains you sequence of interest has good matches to.  HMMER bit scores reflect the extent to which a sequence is a good match to a  profile model (higher bit scores are better matches). See p.\,43 of the HMMER 2.3 user guide (use Google to find a copy of the older version of the HMMER manual) for a discussion of E-values and bit scores.  If you examine the output file |Rme1-output.txt| you'll see that the model with the lowest E-values and highest bit-scores is a ``zinc finger'' domain.  There are three such domains in the Rme1 protein (see the column labeled ``N'' in the output), though two of them are weaker matches (larger E-values). Rme1 is a zinc finger transcriptional factor. The two weaker zinc finger domains are weak matches to the HMM model for zinc fingers but are nonetheless functional domains.
+
+\subsubsection{Combining Python, MAFFT, HMMER}
+
+Now that we know how to use each of the tools individually we can write a bash script to chain them together.  Save the following code as |pipeline1.sh|:
+
+\begin{codeblock}[bash]
+#!/bin/bash
+
+# change these if these excutables and files are located elsewhere
+TRANSLATE=$HOME/tmp/aatranslate.py
+MAFFT=/usr/local/bin/mafft
+HMMSCAN=/usr/local/bin/hmmscan
+PFAMDB=$HOME/tmp/Pfam-A.hmm
+
+scriptargs="fastafile aafile alignfile reportfile"
+E_WRONG_ARGS=85
+nexpargs=4
+args=$#
+
+#  did we get the expected number of args to the script?
+if [[ $args -ne $nexpargs ]]
+then
+    echo
+    echo "Usage: `basename $0` $scriptargs"
+    echo
+    exit $E_WRONG_ARGS
+fi
+
+progname="$0" # the name of the program
+fastafile="$1" # the input fasta file
+aafile="$2" # the output file for the AA translation
+alignfile="$3" # the output file for the aligned sequences
+reportfile="$4" # output file for the HMMER report
+
+echo "Translating sequences"
+cat "$fastafile" | "$TRANSLATE" > "$aafile"
+
+echo "Aligning sequences"
+"$MAFFT" --auto --quiet "$aafile" > "$alignfile"
+
+echo "Running hmmscan"
+"$HMMSCAN" "$PFAMDB" "$aafile" > "$reportfile"
+\end{codeblock}
+
+After setting the script to be executable (|chmod +x pipeline1.sh|) you can run it like so:
+%
+\begin{code}
+$ ./pipeline1.sh unknown2.fas unknown2-trans.fas unknown2-align.fas unknown2-report.txt
+\end{code}
+%
+This will produce three files, one containing the translated amino acid sequences, the second giving the multiple alignment of those amino acid sequences, and the third with the PFAM output. Use less or a text editor to take a look at the generated files. At the beginning of this script we added a little bit of error checking code to insure that the correct number of arguments were provided on the command line.  If no arguments or the wrong number of arguments are provided the script gives the user a little usage information and exits gracefully. Try running the script as:
+%
+\begin{code}
+$ ./pipeline2.sh    
+\end{code}
