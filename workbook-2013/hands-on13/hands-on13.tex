@@ -1,9 +1,7 @@
 
 \section{Overview}
 
-Many types of analyses, especially those involving genomic data, require the investigator to carry out a large number of sequential steps. For example, given a set of uncharacterized genes in your organism of interest you might want to find out as much as you can about the structure and function of the proteins they encode, search for related proteins in other organisms, and try to identify pathways that they might be involved in. If you had only a single gene of interest you might apply each of the appropriate software tools by hand to carry out such an analysis. However, when the number of genes of interest grows beyond a small number (say 10-15) doing such an analysis by hand starts to become tedious and error prone.  A bioinformatics pipeline can help to automate this process, will make the analysis easier to replicate or apply to new sets of genes, and can be modified to include additional tasks.  Writing out a series of analysis steps as a pipeline also helps us to achieve the goal of `reproducible research' in the same way that knitr helps you to do so in R.
-
-We're going to build an example bioinformtics pipeline using BioPython along with several command line programs.  This pipeline will incorporate such features as web based queries and conversion of information between different file formats.
+Building on our initial forays into building bioinformatics pipelines last week, we now turn to a more complicated example that integrates BioPython along with several command line programs.  This pipeline will incorporate such features as web based queries and conversion of information between different file formats.
 
 \section{The Pipeline}
 
@@ -24,89 +22,6 @@ The tasks carried out by the pipeline will be as follows:
 
 
 You will need a working installation of Python (2.7+), IPython, and the BioPython library (1.59+) as well as the command line tools we installed last week (MAFFT, HMMER).
-
-\section{MAFFT}
-
-MAFFT is a multiple sequence alignment program. It's relatively fast and a number of studies have shown that it is amongst the best performing multiple sequence aligners. MAFFT is usually the sequence aligner I reach for first.  Clustalw is the `classic' alignment tool, so it's useful to have on your system, but MAFFT usually gives better alignments (though Clustalw2 is supposed to address some of the short-comings of the older versions of Clustalw). See the \href{http://mafft.cbrc.jp/alignment/software/}{MAFFT website} for additional references and information.
-
-There are pre-compiled MAFFT binaries available on the MAFFT website.
-
-Once you've installed MAFFT check the installation location and confirm that the binary is working (on Windows, add the MAFFT install directory to your PATH):
-%
-\begin{code}
-$ which mafft
-/usr/local/bin/mafft
-$ mafft  # type ctrl-c to exit from the interactive prompt
-
----------------------------------------------------
-
-   MAFFT v6.864b (2011/11/10)
-
-        Copyright (c) 2011 Kazutaka Katoh
-        NAR 30:3059-3066, NAR 33:511-518
-        http://mafft.cbrc.jp/alignment/software/
----------------------------------------------------
-\end{code}
-
-\subsection{Testing MAFFT}
-
-Once you've confirmed that MAFFT is properly installed, let's test it with some real data. Download the |fungal-ras.fas| file from the class website. This file includes protein sequences of Ras-family proteins from a number of different fungi.  Ras proteins are small GTPases that are involved in cellular signal transduction.  Ras signaling is often involved in cellular growth and differentiation and mutations that affect Ras signaling often lead to cancer.  We'll use this data to do some quick tests to confirm that our software tools are working correctly. Of course, when putting together an analysis pipeline for your own purposes you'll want to spend a fair amount of time reading the documentation (and related papers) for each tool and make sure you understand the various options and settings.
-
-Let's run Clustalw and MAFFT to align the Ras sequences:
-%
-\begin{bash}
-$ mafft --auto fungal-ras.fas > fungal-ras-mafft.fas
-\end{bash}
-%
-The commands above should produce the following file: |fungal-ras-mafft.fas| (MAFFT).  To visualize the alignments there are a variety of different multiple alignment viewers. One such program is \href{http://www.jalview.org/}{Jalview}, a free cross platform, multiple alignment viewer/editor written in Java.  Take a look at the MAFFT alignment using Jalview.
-
-
-\section{HMMER}
-
-HMMER is an implementation of a profile Hidden Markov Model (HMM) for protein sequence analysis. You can read up on HMMER at the \href{http://hmmer.janelia.org/}{HMMER website}. We will use it here for finding protein domains in sequences in conjuction with the PFAM database.
-
-
-\subsection{Get the PFAM HMM library}
-
-We will be using the Pfam database (Release 26) in conjunction with HMMER to search for known protein domains in our sequences of interest. Since the the Pfam HMM libraries are large I'll try and provide a couple of thumb drives with the necessary library. If you're using this document outside of class you can download the necessay library as follows:
-%
-\begin{code}
-$ curl -O ftp://ftp.sanger.ac.uk/pub/databases/Pfam/releases/Pfam26.0/Pfam-A.hmm.gz
-\end{code}
-%
-This is a large file (202MB) and decompresses to an even larger file (approx. 1GB). Make sure you have adequate disk space. On OS X or Windows using Cygwin you can unzip it as follows:
-%
-\begin{code}
-$ gunzip Pfam-A.hmm.gz
-\end{code}
-%
-If you aren't using Cygwin on Windows you can download the open source program \href{http://www.7-zip.org/}{7-zip} which can unzip gzip'd files (and many other common compression formats).
-
-\subsection{Testing HMMER}
-
-To test out HMMER and Pfam download the |Rme1.fas| file from the class wiki. Rme1 is a transcription factor that regulates sporulation and meiosis in budding yeast, \textit{Saccharomyces cerevisiae}.  We'll use HMMER to analyze the domain structure of Rme1.
-
-The first thing you'll need to do is run |Pfam-A.hmm| through the |hmmpress| program which prepares the HMM database for fast scanning by creating binary files. This might take a few minutes depending on the speed of your machine.
-
-\begin{code}
-$ hmmpress Pfam-A.hmm
-\end{code}
-
-This will create a number of additional files in the same directory as |Pfam-A.hmm|. We can now use |hmmscan| to search for known protein domains included in the Pfam database.
-
-\begin{code}
-$ hmmscan Pfam-A.hmm Rme1.fas > Rme1-Pfam-out.txt
-\end{code}
-
-The default output from |hmmscan| is designed to be human readable. Open |Rme1-Pfam-out.txt| in a text editor to see the output. For outputs that are easier to parse computationally use the |--tblout| or |--domtblout| options to save output in a tabular format.
-
-\begin{code}
-$ hmmscan --domtblout Rme1-output.txt -o /dev/null Pfam-A.hmm Rme1.fas
-\end{code}
-
-This call produces a file |Rme1-output.txt| that contains a space delimited text file summarizing the per-domain output. The |-o| option redirects the main human-readable output (in this case to the `bit-bucket', /dev/null). You can then manipulate the tabular output in |Rme1-output.txt| using standard Unix tools like |awk|.
-
-See pp.\,24-26  of the \href{ftp://selab.janelia.org/pub/software/hmmer3/3.0/Userguide.pdf}{HMMER user guide} for more info on the |hmmscan| program and settings. E-values and bit-scores are the criteria you want to look at when trying to judge which domains you sequence of interest has good matches to.  HMMER bit scores reflect the extent to which a sequence is a good match to a  profile model (higher bit scores are better matches). See p.\,43 of the HMMER 2.3 user guide (use Google to find a copy of the older version of the HMMER manual) for a discussion of E-values and bit scores.  If you examine the output file |Rme1-output.txt| you'll see that the model with the lowest E-values and highest bit-scores is a ``zinc finger'' domain.  There are three such domains in the Rme1 protein (see the column labeled ``N'' in the output), though two of them are weaker matches (larger E-values). Rme1 is a zinc finger transcriptional factor. The two weaker zinc finger domains are weak matches to the HMM model for zinc fingers but are nonetheless functional domains.
 
 
 \section{Biopython}
@@ -152,7 +67,7 @@ Seq('ATGATGAATT', SingleLetterAlphabet())
 Seq('MMNFFTSKSS', HasStopCodon(ExtendedIUPACProtein(), '*'))
 \end{python}
 
-|SeqIO| is a sub-module of the top-level module Biopython module |Bio|.  |SeqIO.read| reads a single sequence object from a file and returns an instance of a |SeqRecord| class (defined in the Biopython package). A \emph{class} is a programming concept that groups data and functions that operate on that data into a single object. For example, in the code above we used the |.name| and |.description| attributes to examine information about the sequence (this information was retrieved from the FASTA file itself).  A |SeqRecord| holds a |Seq| object (yet another class!) as well as accessory information like the name of the sequence, a description, etc. |Seq| objects act very much like strings in terms of slicing and element access but they also have specialized function like |.translate()| that can be used to translate a nucleotide sequence into a peptide sequence.
+|SeqIO| is a sub-module of the top-level module Biopython module |Bio|.  The function |SeqIO.read()| reads a single sequence object from a file and returns an instance of a |SeqRecord| class (defined in the Biopython package). A \emph{class} is a programming concept that groups data and functions that operate on that data into a single object. For example, in the code above we used the |.name| and |.description| attributes to examine information about the sequence (this information was retrieved from the FASTA file itself).  A |SeqRecord| holds a |Seq| object (yet another class!) as well as accessory information like the name of the sequence, a description, etc. |Seq| objects act very much like strings in terms of slicing and element access but they also have specialized function like |.translate()| that can be used to translate a nucleotide sequence into a peptide sequence.
 
 \subsubsection{Reading in multiple sequences from a FASTA file}
 
@@ -187,7 +102,7 @@ StopIteration                             Traceback (most recent call last)
 StopIteration:
 \end{python}
 
-In this case the |SeqIO.parse| function returns an object that has \emph{iterator} semantics (technically it's a `generator' but this is a technical difference that you can ignore for now). An iterator is an object that `acts like' a sequence (e.g. a list or tuple), but there are some major differences. The most important one is that an iterator does not have to compute the entire sequence at once. In the case of the |SeqIO.parse()| function that means that if you have a FASTA file with thousands of sequence entries it wouldn't try to suck them all into memory. The |.next()| method is used to call successive sequence entries in the FASTA file. When you call |.next()| on the iterator(generator) instance you get back |SeqRecords|, one at a time. However, as the lost call demonstrates if there is no 'next' item in the iterator it raises a |StopIteration| exception. For more info about iterators and generators see Norman Matloff's  \href{https://github.com/pmagwene/Bio313/raw/master/lecture-13/PyIterGen.pdf}{Tutorial on Python Iterators and Generators}.
+In this case the |SeqIO.parse| function returns an object that has \emph{iterator} semantics (technically it's a `generator' but this is a technical difference that you can ignore for now). An iterator is an object that `acts like' a sequence (e.g. a list or tuple), but there are some major differences. The most important one is that an iterator does not have to compute the entire sequence at once. In the case of the |SeqIO.parse()| function that means that if you have a FASTA file with thousands of sequence entries it wouldn't try to suck them all into memory. The |.next()| method is used to call successive sequence entries in the FASTA file. When you call |.next()| on the iterator(generator) instance you get back |SeqRecords|, one at a time. However, as the last call demonstrates if there is no 'next' item in the iterator it raises a |StopIteration| exception. For more info about iterators and generators see Norman Matloff's  \href{https://github.com/pmagwene/Bio313/raw/master/lecture-13/PyIterGen.pdf}{Tutorial on Python Iterators and Generators}.
 
 The steps for reading a FASTA sequence file can be wrapped up in the following function. We'll place each of the functions we develop in a module called |pipeline.py| (place this in your working directory or your |PYTHONPATH|).  As you progress through the pipeline design you will add additional functions to this module.
 
