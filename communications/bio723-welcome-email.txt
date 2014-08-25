@@ -1,0 +1,52 @@
+Bio 723 Participants,
+
+You are receiving this email because you are enrolled in or expressed interest in Bio 723: Statistical Computing for Biologists (Fall 2014).  
+
+** Our first class session is Tuesday, August 26 from 3:05-5:35pm in FFSC 4233. ***
+
+Please read this email in its entirety, as there are a number of tasks I'd like you to complete before our first class session.
+
+
+Course Website
+==============
+
+The following wiki will serve as the course website for the semester. Lecture slides, the course workbook, reading assignments, and a variety of resources and links will be posted regularly to this site so I recommend you bookmark it for easy access:
+
+ https://github.com/pmagwene/Bio723/wiki
+
+
+Computing Resources
+====================
+
+I assume you have access to a laptop computer on which you have administrative access (so you can install software). PLEASE BRING YOUR LAPTOP TO EVERY CLASS SESSION. A Mac or Windows machine will work equally well.  Whatever operating system your machine runs, please make sure it's relatively up to date (OSX 10.8 or 10.9; Windows 7 or 8). If you use an outdated operating system (OSX 10.6 or earlier; Windows Vista or earlier) you are likely to run into compatibility problems with some of the software packages we'll be using.
+
+In addition to your own laptop, we will make use of linux-based "virtual machines" provided by OIT.  During the first class session I will walk you through the process of creating and connecting to your virtual machine.
+
+
+Software Tools
+==============
+
+So that we can "hit the ground running", BEFORE THE FIRST CLASS SESSION please download and install the following software for your computing platform:
+
+
+All Platforms
+-------------
+* Cyberduck -- a cross-platform SFTP client.
+* Anaconda Python Distribution -- http://continuum.io/downloads
+* R -- http://www.r-project.org/
+* R studio -- http://www.rstudio.com/
+
+
+Windows Only
+------------
+* Putty -- an SSH client. [Putty Website](http://www.chiark.greenend.org.uk/~sgtatham/putty/)
+* Notepad++ -- a programmer's text editor.  [Notepad++ Website](http://notepad-plus-plus.org/)
+
+
+Mac Only
+--------
+* TextMate 2.0 -- a programmer's text editor. Download the 2.0 alpha version.  [TextMate Downloads](http://macromates.com/download).
+
+
+
+
