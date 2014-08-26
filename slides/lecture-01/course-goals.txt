@@ -1,0 +1,12 @@
+
+
+Goals for the Course
+====================
+
+1. Introduce multivariate statistics from a geometric perspective, emphasizing the geometry of vector spaces.
+
+2. Develop a good working knowledge of Python (a general purpose programming language), R (a statistical computing environment), and the Unix-like command line (de facto standard for building bioinformatics pipelines).
+
+3. Provide a statistical and computational toolbox for dealing with complex data -- visualization, data wrangling, exploratory 
+
+4. Provide the tools and knowledge to conduct reproducible computational and statistical research.
