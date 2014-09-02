@@ -1,0 +1,83 @@
+%!TEX root = ./hands-on1.tex
+
+\newpage
+\section{Getting started with literate programming in R}
+
+\subsection{knitr for R}
+
+knitr documents weave together documentation/discussion and code into a
+single document. The pieces of code and documentation are referred to as
+`chunks'. Knitr comes with a set of tools that allow you to extract just the
+code, or to turn the entire document into a nicely formatted report.
+
+You can install knitr using the `Packages' tab in the R studio IDE or at the command line as follows:
+%
+\begin{R}
+install.packages('knitr', dependencies = TRUE)
+\end{R}
+%
+Restart R Studio after installing knitr.
+
+Once knitr is installed, you can create your first knitr document. knitr documents are just plain text files, but R Studio includes some convenient tools to compile such documents in HTML.  In R Studio select |New > R Markdown| to create a new knitr document, delete the template text, and and enter the text shown below: 
+
+\begin{noindentcodeblock}
+
+My First knitr Document
+========================
+
+This is very simple knitr document. It includes some *emphasized* and **bold** text, and a single code chunk.
+
+```{r}
+z <- rnorm(30, mean=0, sd=1)
+summary(z)
+```
+
+\end{noindentcodeblock}
+
+Save this as a markdown file |knit1.Rmd| and `knit' the document using the |Knit HTML| button in the R Studio IDE.  If you entered everything correctly, R Studio will pop up a preview window showing the HTML document that was created from your knitr source code.
+
+As you can see, knitr uses a simple way to markup text (using a formatting convention called `Markdown'), and code chunks are delineated from text using three backticks. In the HTML output notice that your text blocks includes some formatted italic and bold text, and that the code chunks are shown in grey boxes.  Note that there's also a table below the code chunk. This shows the result of evaluating the code chunk. 
+
+If you knit the document a second time you'll find that the table output changes slightly. Figure out why this is so by reading the documentation for the |rnorm| function.
+
+
+
+
+\subsubsection{A fancier kintr document}
+
+Let's get a little bit fancier and show how we can create graphics and
+use some knitr's formatting features to produce a nicer document.
+
+
+\begin{noindentcodeblock}
+My Second knitr Document
+========================
+
+This is a still a simple knitr file. However, now it includes several code chunks, graphics, and mathematical symbols.
+
+## Sampling from the random normal distribution
+
+```{r}
+z <- rnorm(30, mean=0, sd=1)
+summary(z)
+```
+
+That code chunk generated a random sample of 30 observations drawn from a normal distribution with mean zero ($\mu = 0$) and standard deviation one ($\sigma = 1$). 
+
+Note the use of the hashmarks to indicate section headings.  
+
+### Mathematical notation 
+
+knitr uses standard LaTeX conventions for writing mathematical formulas in text blocks.
+
+## Generating figures
+
+We canautomatically imbed graphics in our report. For example, the following will generate a histogram.
+
+```{r}
+hist(z)
+```
+\end{noindentcodeblock}
+
+
+For a full overview of knitr's capabilities see the documentation and examples at the knitr website \url{http://yihui.name/knitr/}.
