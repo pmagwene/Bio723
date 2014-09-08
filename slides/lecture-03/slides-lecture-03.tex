@@ -20,7 +20,7 @@
 \author{Instructor: Paul M. Magwene}
 
 
-\date{10 September 2013}
+\date{09 September 2014}
 
 \begin{document}
 %===========================================================
@@ -33,8 +33,9 @@
   \frametitle{Overview of Lecture}
   
 \begin{itemize}
+        \item ANOVA as bivariate regression
         \item Partial correlation
-		\item Introduction to Matrices
+	\item Introduction to Matrices
 		\begin{itemize}
 			\item Matrices as collections of vectors
 			\item Special matrices
@@ -55,36 +56,120 @@
 \end{frame}
 %===========================================================
 
+% %===========================================================
+% \begin{frame}
+%   \frametitle{Hands-on Session}
+% 		\begin{itemize}
+%     \item Matrices in R
+% 		\item Standard statistics as matrix operations
+%         \begin{itemize}
+%         	\item Mean vector
+%         	\item Deviates matrix
+%         	\item Covariance matrix
+%         	\item Correlation matrix
+%         	\item Concentration matrix / Partial corelations
+%         	\item Euclidean distance matrix		  
+%         \end{itemize}
+% 		  
+% 	\item Graphical plots for multivariate data in R
+%         \begin{itemize}
+%         	\item Scatter plot matrix
+%             \item 3D scatter plots
+%             \item Color grid plots
+%         \end{itemize}
+% 
+%     \item Tools for reshaping, aggregating, and summarizing data in R
+%         \begin{itemize}
+%             \item reshape2 package
+%         \end{itemize}
+%     \end{itemize}
+% 
+% \end{frame}		
+%===========================================================
+
 %===========================================================
 \begin{frame}
-  \frametitle{Hands-on Session}
-		\begin{itemize}
-    \item Matrices in R
-		\item Standard statistics as matrix operations
-        \begin{itemize}
-        	\item Mean vector
-        	\item Deviates matrix
-        	\item Covariance matrix
-        	\item Correlation matrix
-        	\item Concentration matrix / Partial corelations
-        	\item Euclidean distance matrix		  
-        \end{itemize}
-		  
-	\item Graphical plots for multivariate data in R
-        \begin{itemize}
-        	\item Scatter plot matrix
-            \item 3D scatter plots
-            \item Color grid plots
-        \end{itemize}
+  \frametitle{Geometry of Bivariate Regression}
 
-    \item Tools for reshaping, aggregating, and summarizing data in R
-        \begin{itemize}
-            \item reshape2 package
-        \end{itemize}
-    \end{itemize}
+Geometric interpretation of regression as projection:
 
-\end{frame}		
+\begin{center}
+
+\begin{tikzpicture}[x=0.5cm, y=0.5cm]
+
+\draw[thick,->] (0,0) -- (6,0);
+\draw (6,0) node[below] {$\vec{x} $};
+
+\draw[thick,red,->] (0,0) -- (4,0);
+\draw (4,0) node[below left] {$\vec{\widehat{y}}$};
+
+\draw[thick,->] (0,0) -- (4,3);
+\draw (2,1.5) node[above left] {$\vec{y}$};
+
+\draw[dashed,blue,->] (4,0) -- (4,3);
+\draw (4,1.5) node[right] {$\vec{e}$};
+
+\draw (0,0) +(0:0.5cm) arc (0:37:0.5cm);
+\path (0,0) ++(18:0.7cm) node[font=\footnotesize] {$\theta$};
+
+\end{tikzpicture}
+
+\[
+\vec{\widehat{y}} = b\vec{x}
+\]
+\begin{equation}
+b = \frac{\vec{x} \cdot \vec{y}}{\vec{x} \cdot \vec{x}}
+\end{equation}
+
+\end{center}
+
+\end{frame}
 %===========================================================
+
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{Two-group ANOVA as Regression}
+
+We can also use a geometric perspective to test whether the mean of a variable differs between two groups of subjects.
+
+\begin{itemize}
+\item Setup a `dummy variable' as the predictor $X_g$.   We assign all subjects in group 1 the value 1 and all subjects in group 2 the value -1 on the dummy variable.  We then regress the variable of interest, $Y$, on $X_g$.  
+
+\item When the means are different in the two groups, $X_g$ will be a good predictor of the variable of interest, hence $\vec{y}$ and $\vec{x_g}$ will have a small angle between them.
+
+\item When the means in the two groups are similar, the dummy variable will not be a good predictor.  Hence the angle between $\vec{y}$ and $\vec{x_g}$ will be large.
+
+\end{itemize}
+
+\begin{center}
+
+\begin{tikzpicture}[x=0.2cm, y=0.2cm]
+
+% different means
+\draw[thick,->] (-10,0) -- (-4,0);
+\draw (-4,0) node[below] {$\vec{x_g}$};
+
+\draw[thick,->] (-10,0) -- (-3,1);
+\draw (-4,1.5) node[above left] {$\vec{y}$};
+\draw (-10,-2) node[below,font=\footnotesize] {Different means};
+
+% Similar means
+\draw[thick,->] (0,0) -- (6,0);
+\draw (6,0) node[below] {$\vec{x_g}$};
+
+\draw[thick,->] (0,0) -- (1,3.5);
+\draw (1,3) node[above left] {$\vec{y}$};
+\draw (4,-2) node[below,font=\footnotesize] {Similar means};
+
+\end{tikzpicture}
+
+\end{center}
+
+\end{frame}
+%===========================================================
+
 
 \begin{frame}
   \frametitle{Reminder: Correlation}
@@ -134,8 +219,6 @@ What we mean by ``account for'' here is essentially `to factor out', by projecti
 \asyinclude[width=7cm,inline=true]{partial-corr.asy}
 %\includegraphics[width=6cm]{partial-corr.pdf}
 \end{center}
-
-
 
 \end{frame}
 
@@ -915,28 +998,30 @@ x_1 \\ x_2 \\ x_3
 \end{frame}
 
 
-%===========================================================
-\begin{frame}
-  \frametitle{Homework}
+% %===========================================================
+% \begin{frame}
+%   \frametitle{Homework}
+% 
+% \begin{itemize}
+% \item Reading
+% 
+% \begin{itemize}
+%  \item Wickens, chapters 3 and 4.
+%  \item Matloff, chapters 4 and 5
+%  \item For a review of linear algebra concepts pertinent to todays lecture see Hamilton, chapters 3 - 6, 8, and 16.
+% \end{itemize}
+% 
+% \item Programming exercises
+% \begin{itemize}
+% 	\item See handout
+% \end{itemize}
+% 
+% 
+% \end{itemize}
+% 
+% \end{frame}
+% %===========================================================
 
-\begin{itemize}
-\item Reading
 
-\begin{itemize}
- \item Wickens, chapters 3 and 4.
- \item Matloff, chapters 4 and 5
- \item For a review of linear algebra concepts pertinent to todays lecture see Hamilton, chapters 3 - 6, 8, and 16.
-\end{itemize}
-
-\item Programming exercises
-\begin{itemize}
-	\item See handout
-\end{itemize}
-
-
-\end{itemize}
-
-\end{frame}
-%===========================================================
 
 \end{document}
