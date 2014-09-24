@@ -1,0 +1,118 @@
+<style>
+
+/* FONTS */
+    @font-face {
+        font-family: "Computer Modern";
+        src: url('http://9dbb143991406a7c655e-aa5fcb0a5a4ec34cff238a2d56ca4144.r56.cf5.rackcdn.com/cmunss.otf');
+    }
+    @font-face {
+        font-family: "Computer Modern";
+        font-weight: bold;
+        src: url('http://9dbb143991406a7c655e-aa5fcb0a5a4ec34cff238a2d56ca4144.r56.cf5.rackcdn.com/cmunsx.otf');
+    }
+    @font-face {
+        font-family: "Computer Modern";
+        font-style: oblique;
+        src: url('http://9dbb143991406a7c655e-aa5fcb0a5a4ec34cff238a2d56ca4144.r56.cf5.rackcdn.com/cmunsi.otf');
+    }
+    @font-face {
+        font-family: "Computer Modern";
+        font-weight: bold;
+        font-style: oblique;
+        src: url('http://9dbb143991406a7c655e-aa5fcb0a5a4ec34cff238a2d56ca4144.r56.cf5.rackcdn.com/cmunso.otf');
+    }
+
+
+/* HEADER STYLING */
+    h1, h2, h3, h4, h5 {
+        font-family: palatino, Constantia, "Hoefler Text", georgia, times new roman, Times, serif;
+    }
+
+    h1 {
+        font-size:2.5em; 
+        color:#959ea1;
+        border-bottom: 1px solid #EEE;    
+    }
+
+    h2 {font-size:2.0em; margin-bottom:1em;color:#959ea1;}
+    h3 {font-size:1.5em; margin-bottom:1em;color:#959ea1;}
+    h4 {font-size:1.167em; margin-bottom:0.867em; text-transform:uppercase;color:#959ea1;}
+    h5 {font-size:1.167em; margin-bottom:0.867em; text-transform:uppercase; color:#999;}
+    h6 {font-size:1.167em; margin-bottom:0.867em; text-transform:uppercase; color:#ccc;}
+
+
+/* LINK STYLING */
+    a:link, a:visited {
+        color:#ff8a00; 
+    }
+    a:hover {
+        color:#feb925;
+    }
+
+    div.cell a:link {
+        text-decoration:none;
+    }
+
+
+/* CELL STYLING */
+    div.cell{
+        width:800px;
+        margin-left:16% !important;
+        margin-right:auto;
+    }
+
+
+    div.text_cell_render{
+        font-family: palatino, Constantia, "Hoefler Text", georgia, times new roman, Times, serif;
+        line-height: 135%;
+        font-size: 120%;
+        width:800px;
+        margin-left:auto;
+        margin-right:auto;
+    }
+
+/* CODE CELL STYLING */    
+    .CodeMirror{
+            font-family: "Inconsolata","Source Code Pro", source-code-pro,Consolas, monospace;
+            background:#FCFCFC;
+    }
+
+    .cm-s-ipython span.cm-variable{color:#000}
+    .cm-s-ipython span.cm-keyword{color:#A35200;font-weight:bold}
+    .cm-s-ipython span.cm-number{color:#2E2EE6}
+    .cm-s-ipython span.cm-comment{color:#E6CC80;font-style:italic}
+    .cm-s-ipython span.cm-string{color:#E68A00}
+    .cm-s-ipython span.cm-builtin{color:#008000;font-weight:bold}
+    .cm-s-ipython span.cm-error{color:#f00}
+    .cm-s-ipython span.cm-operator{color:#660066;font-weight:bold}
+    .cm-s-ipython span.cm-meta{color:#DB704D;}
+
+    div.cell.code_cell {
+    margin: 10px 0 10px 0;
+    }
+
+/* MISC */
+    .prompt{
+        display: None;
+    }
+    
+    .warning{
+        color: rgb( 240, 20, 20 )
+        }  
+</style>
+
+<script>
+    MathJax.Hub.Config({
+                        TeX: {
+                           extensions: ["AMSmath.js"]
+                           },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+                },
+                displayAlign: 'center', // Change this to 'center' to center equations.
+                "HTML-CSS": {
+                    styles: {'.MathJax_Display': {"margin": 4}}
+                }
+        });
+</script>
