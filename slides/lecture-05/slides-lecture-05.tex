@@ -74,7 +74,7 @@
 Let $S$ be a subspace of \RealN.  Then there is a finite list, $\Mtx{X}$, of vectors from $S$ such that $S$ is the space spanned by $X$.
 \medskip
 
-Let $S$ be a subspace of $\RealN$ spanned by the list $(\vec{u}_1, \vec{u}_2, \ldots, \vec{u}_n)$. Then  there is a linearly independent sublist of $(\vec{u}_1, \vec{u}_2, \ldots, \vec{u}_n)$ that also spans $S$.
+Let $S$ be a subspace of $\RealN$ spanned by the $\Mtx{X}$. Then  there is a linearly independent sublist of $\Mtx{X}$ that also spans $S$.
 \medskip
 
 \begin{block}{Definition}
@@ -319,83 +319,12 @@ Loadings give a sense of the relative contribution of each of the original varia
 
 %===========================================================
 \begin{frame}[fragile]
-  \frametitle{Bivariate Example Revisited}
+  \frametitle{PCA Example: Jolicoeur and Mosimann's Turtle Data Set}
 
-\begin{columns}[c]
-  
-\column{0.5\textwidth}
-\begin{Rcode}
-> cov(z)
-         [,1]      [,2]
-[1,] 1.865551 0.6523660
-[2,] 0.652366 0.9248509
-
-> z.pca
-Standard deviations:
-[1] 1.4830530 0.7687363
-
-Rotation:
-            PC1        PC2
-[1,] -0.8901780 -0.4556128
-[2,] -0.4556128  0.8901780
-
-> A <- z.pca$rotation # coefficients
-> L <- diag(z.pca$sdev) # lengths of PCs
-> A %*% L  # loadings
-          [,1]       [,2]
-[1,] -1.320181 -0.3502461
-[2,] -0.675698  0.6843122
-\end{Rcode}
-
-\column{0.5\textwidth}
-\begin{Rcode}
-> (A %*% L)**2  # loadings squared
-          [,1]      [,2]
-[1,] 1.7428784 0.1226723
-[2,] 0.4565677 0.4682832
-> apply(z, 2, var) # variance of orig.
-[1] 1.8655507 0.9248509
-\end{Rcode}
-\includegraphics[width=\textwidth]{fig-bivariate-pca-vectors.pdf}
-
-\end{columns}
-
-\end{frame}
-%===========================================================
-
-
-
-%===========================================================
-\begin{frame}
-  \frametitle{PCA Cautions and Caveats}
-
-\begin{description}
-
-\item[Scale matters] \mbox{}\\
-If the original variables are not measured on comparable scales they should be standardized prior to PCA
-
-\item[PCA emphasizes correlated variables] \mbox{}\\
-If one of the original variables is (nearly) independent of the other variables than it will have weak loadings on the major PCs. But this doesn't mean it's unimportant!
-
-\item[PCA does not represent a model] \mbox{}\\
-It's simply a transformation of the original data.
-
-\end{description}
-
-\end{frame}
-
-%===========================================================
-\begin{frame}
-  \frametitle{PCA for Dimension Reduction}
-
-
-A common application of PCA is to find a lower dimensional representation of a high dimensional data set.
-\bigskip 
-
-\begin{block}{Goal}
-Capture the majority of the variance with just a few principal component axes.
-\end{block}
-
+\begin{center}
+\hspace*{-0.8cm}
+\includegraphics[width=0.95\paperwidth]{turtles}
+\end{center}
 \end{frame}
 
 %===========================================================
@@ -469,6 +398,91 @@ H & 0.575 & 0.813 &  0.092 \\
 \end{frame}
 
 %===========================================================
+
+% %===========================================================
+% \begin{frame}[fragile]
+%   \frametitle{Bivariate Example Revisited}
+
+% \begin{columns}[c]
+  
+% \column{0.5\textwidth}
+% \begin{Rcode}
+% > cov(z)
+%          [,1]      [,2]
+% [1,] 1.865551 0.6523660
+% [2,] 0.652366 0.9248509
+
+% > z.pca
+% Standard deviations:
+% [1] 1.4830530 0.7687363
+
+% Rotation:
+%             PC1        PC2
+% [1,] -0.8901780 -0.4556128
+% [2,] -0.4556128  0.8901780
+
+% > A <- z.pca$rotation # coefficients
+% > L <- diag(z.pca$sdev) # lengths of PCs
+% > A %*% L  # loadings
+%           [,1]       [,2]
+% [1,] -1.320181 -0.3502461
+% [2,] -0.675698  0.6843122
+% \end{Rcode}
+
+% \column{0.5\textwidth}
+% \begin{Rcode}
+% > (A %*% L)**2  # loadings squared
+%           [,1]      [,2]
+% [1,] 1.7428784 0.1226723
+% [2,] 0.4565677 0.4682832
+% > apply(z, 2, var) # variance of orig.
+% [1] 1.8655507 0.9248509
+% \end{Rcode}
+% \includegraphics[width=\textwidth]{fig-bivariate-pca-vectors.pdf}
+
+% \end{columns}
+
+% \end{frame}
+% %===========================================================
+
+
+
+%===========================================================
+\begin{frame}
+  \frametitle{PCA Cautions and Caveats}
+
+\begin{description}
+
+\item[Scale matters] \mbox{}\\
+If the original variables are not measured on comparable scales they should be standardized prior to PCA
+
+\item[PCA emphasizes correlated variables] \mbox{}\\
+If one of the original variables is (nearly) independent of the other variables than it will have weak loadings on the major PCs. But this doesn't mean it's unimportant!
+
+\item[PCA does not represent a model] \mbox{}\\
+It's simply a transformation of the original data.
+
+\end{description}
+
+\end{frame}
+
+%===========================================================
+\begin{frame}
+  \frametitle{PCA for Dimension Reduction}
+
+
+A common application of PCA is to find a lower dimensional representation of a high dimensional data set.
+\bigskip 
+
+\begin{block}{Goal}
+Capture the majority of the variance with just a few principal component axes.
+\end{block}
+
+\end{frame}
+
+%===========================================================
+
+
 
 
 
