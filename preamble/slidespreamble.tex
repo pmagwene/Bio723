@@ -9,6 +9,7 @@
 \usepackage[scale=0.85,stdmathitalics=true,romanfamily=casual]{lucimatx}
 \usefonttheme[stillsansseriftext]{serif}
 
+\usepackage{bm}
 
 
 \usepackage{fancyvrb}
@@ -48,11 +49,11 @@
 \newcommand{\Real}{\ensuremath{\mathbb{R}}}
 \newcommand{\RealN}{\ensuremath{\mathbb{R}^n}}
 \newcommand{\RealP}{\ensuremath{\mathbb{R}^p}}
-\newcommand{\Mtx}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\Mtx}[1]{\ensuremath{\bm{#1}}}
 \newcommand{\Inv}[1]{\ensuremath{#1^{-1}}}
-\newcommand{\InvMtx}[1]{\ensuremath{\mathbf{#1}^{-1}}}
+\newcommand{\InvMtx}[1]{\ensuremath{\bm{#1}^{-1}}}
 \newcommand{\Red}[1]{\textcolor{red}{#1}}
-\newcommand{\PsInv}[1]{\ensuremath{\mathbf{#1}^{+}}}
+\newcommand{\PsInv}[1]{\ensuremath{\bm{#1}^{+}}}
 
 \usepackage{booktabs}
 
@@ -99,7 +100,7 @@
 
 % --- Override \vec with an invocation of \xvec.
 \let\stdvec\vec
-\renewcommand{\vec}[1]{\xvec[]{#1}}
+\renewcommand{\vec}[1]{\xvec[]{\bm{#1}}}
 % --- Define \dvec and \ddvec for dotted and double-dotted vectors.
 \newcommand{\dvec}[1]{\xvec[.]{#1}}
 \newcommand{\ddvec}[1]{\xvec[:]{#1}}

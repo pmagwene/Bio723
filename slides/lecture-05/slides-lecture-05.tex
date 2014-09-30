@@ -13,7 +13,8 @@
 \usepackage[inline]{asymptote}
 \usepackage{marvosym} % for male/female symbols
 
-
+\newcommand{\matindex}[1]{\scriptsize#1}% Matrix index
+\usepackage{blkarray}
 
 
 %===========================================================
@@ -24,7 +25,7 @@
 \author{Instructor: Paul M. Magwene}
 
 
-\date{24 September 2013}
+\date{30 September 2014}
 
 \begin{document}
 %===========================================================
@@ -55,7 +56,7 @@
 \begin{frame}
   \frametitle{Hands-on Session}
 \begin{itemize}
-    \item Eigenanalysis and PCA in R
+    \item Eigenanalysis and PCA in Python
     \item Introduction to Biplots
 \end{itemize} 
 
@@ -68,12 +69,12 @@
 
 %===========================================================
 \begin{frame}
-  \frametitle{Reminder from last lecture: Definition of Basis}
+  \frametitle{Reminder: Definition of Basis}
 
-Let $S$ be a subspace of \RealN.  Then there is a finite list, $X$, of vectors from $S$ such that $S$ is the space spanned by $X$.
+Let $S$ be a subspace of \RealN.  Then there is a finite list, $\Mtx{X}$, of vectors from $S$ such that $S$ is the space spanned by $X$.
 \medskip
 
-Let $S$ be a subspace of $\RealN$ spanned by the list $(u_1, u_2, \ldots, u_n)$. Then  there is a linearly independent sublist of $(u_1, u_2, \ldots, u_n)$ that also spans $S$.
+Let $S$ be a subspace of $\RealN$ spanned by the list $(\vec{u}_1, \vec{u}_2, \ldots, \vec{u}_n)$. Then  there is a linearly independent sublist of $(\vec{u}_1, \vec{u}_2, \ldots, \vec{u}_n)$ that also spans $S$.
 \medskip
 
 \begin{block}{Definition}
@@ -104,7 +105,7 @@ By nice we mean:
 \begin{itemize}
 	\item spans same space as original basis
 	\item provides an orthogonal basis
-	\item the order of the basis vectors is related to their relative importance
+	\item the order of the basis vectors is related to their relative ``importance"
 	\item can be used to facilitate low dimensional summaries of high dimensional data
 \end{itemize}
 
@@ -177,25 +178,56 @@ Variable Space Representation
   \frametitle{Mathematical Constraints on PCA}
 
 The principal components are linear combinations of the original variables
-\medskip
+\smallskip
 
 \[ \begin{array}{ccc}
-\Mtx{u}_1 & = & a_{11}\Mtx{x}_1 + a_{21}\Mtx{x}_2 + \cdots + a_{p1}\Mtx{x}_p \\
-\Mtx{u}_2 & = & a_{12}\Mtx{x}_1 + a_{22}\Mtx{x}_2 + \cdots + a_{p2}\Mtx{x}_p \\
+\vec{u}_1 & = & a_{11}\vec{x}_1 + a_{21}\vec{x}_2 + \cdots + a_{p1}\vec{x}_p \\
+\vec{u}_2 & = & a_{12}\vec{x}_1 + a_{22}\vec{x}_2 + \cdots + a_{p2}\vec{x}_p \\
 \vdots & & \vdots \\
-\Mtx{u}_p & = & a_{1p}\Mtx{x}_1 + a_{2p}\Mtx{x}_2 + \cdots + a_{pp}\Mtx{x}_p \\
+\vec{u}_p & = & a_{1p}\vec{x}_1 + a_{2p}\vec{x}_2 + \cdots + a_{pp}\vec{x}_p \\
 \end{array}
 \]
 
 \bigskip
 
-\[
-\Mtx{U}  =  \left[ \begin{array}{cccc}
-\Mtx{u}_1 & \Mtx{u}_2 & \cdots &  \Mtx{u}_p\\
-\end{array} \right]
-\]
+In this formulation the $\vec{x}_i$ and $\vec{u}_i$ are column vectors.
+\end{frame}
+%===========================================================
 
-In this formulation the $\Mtx{x}_i$ and $\Mtx{u}_i$ are column vectors.
+
+%===========================================================
+\begin{frame}
+  \frametitle{Mathematical Constraints on PCA, cont.}
+
+
+
+\begin{align*}
+\underset{(n \times p)}{\Mtx{X}} &=  \begin{bmatrix}
+x_{11} & x_{12} & \cdots & x_{1p}\\
+x_{21} & x_{22} & \cdots & x_{2p}\\
+\cdots & \cdots & \cdots & \cdots\\
+x_{n1} & x_{p2} & \cdots & x_{np}\\
+\end{bmatrix} & =  \begin{bmatrix}
+\vec{x}_{1} & \vec{x}_{2} & \cdots & \vec{x}_{p}
+\end{bmatrix} &  \\
+\underset{(p \times p)}{\Mtx{A}}  &= \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1p}\\
+a_{21} & a_{22} & \cdots & a_{2p}\\
+\cdots & \cdots & \cdots & \cdots\\
+a_{p1} & a_{p2} & \cdots & a_{pp}\\
+\end{bmatrix} & = \begin{bmatrix}
+\vec{a}_{1} & \vec{a}_{2} & \cdots & \vec{a}_{p}
+\end{bmatrix} & \\
+\underset{(n \times p)}{\Mtx{U}}  &= \begin{bmatrix}
+u_{11} & u_{12} & \cdots & u_{1p}\\
+u_{21} & u_{22} & \cdots & u_{2p}\\
+\cdots & \cdots & \cdots & \cdots\\
+u_{n1} & u_{p2} & \cdots & u_{np}\\
+\end{bmatrix} &= \begin{bmatrix}
+\vec{u}_{1} & \vec{u}_{2} & \cdots & \vec{u}_{p}
+\end{bmatrix} &= \Mtx{X}\Mtx{A}
+\end{align*}
+
 
 
 \end{frame}
@@ -205,27 +237,28 @@ In this formulation the $\Mtx{x}_i$ and $\Mtx{u}_i$ are column vectors.
 \begin{frame}
   \frametitle{Mathematical Constraints on PCA, cont.}
 
-
 \begin{itemize}
+  \item The PCs are orthogonal:
+\[
+\vec{a}_j \cdot \vec{a}_k = 0 \mbox{ for all } j \neq k.
+\]
+
+
 	\item The sum of the squared coefficients for each PC is fixed to unity:
 \[
-a_{1k}^2 + a_{2k}^2 + \cdots + a_{pk}^2 = 1
+\vec{a}_k \cdot \vec{a}_k = 1
 \]
 
 	\item The sum of the squared lengths for the original variables and the PCs is the same:
 \[
-|\Mtx{x}_1|^2 + |\Mtx{x}_2|^2 + \cdots + |\Mtx{x}_p|^2 = |\Mtx{u}_1|^2 + |\Mtx{u}_2|^2 + \cdots + |\Mtx{u}_p|^2
+|\vec{x}_1|^2 + |\vec{x}_2|^2 + \cdots + |\vec{x}_p|^2 = |\vec{u}_1|^2 + |\vec{u}_2|^2 + \cdots + |\vec{u}_p|^2
 \]	
 
-	\item The PCs are orthogonal:
-\[
-\Mtx{a}_j \cdot \Mtx{a}_k = 0 \mbox{ for all } j \neq k.
-\]
 
 	\item The PCs are ordered such that:
 
 \[
- |\Mtx{u}_1|^2 \geq |\Mtx{u}_2|^2  \geq \cdots \geq |\Mtx{u}_p|^2
+ |\vec{u}_1|^2 \geq |\vec{u}_2|^2  \geq \cdots \geq |\vec{u}_p|^2
 \]
 
 \end{itemize}
@@ -254,7 +287,7 @@ If the values of the $i$-th individual in the original variables are:
 then the score of that individual on the $k$-th principal component axis is given by:
 
 \[
-\Mtx{r}_i \cdot \Mtx{a}_k = a_{1k}x_{i1} + a_{2k}x_{i2} + \cdots + a_{pk}x_{ip}
+\Mtx{U}_{ik} = \Mtx{r}_i \cdot \Mtx{a}_k = a_{1k}x_{i1} + a_{2k}x_{i2} + \cdots + a_{pk}x_{ip}
 \]
 
 \end{frame}
@@ -414,7 +447,7 @@ PC1 & PC2 & PC3 \\ \hline
 &PC1 & PC2 & PC3 \\ \cline{2-4}
 L & 0.579 & -0.325 & 0.748 \\
 W & 0.578 & -0.483 & -0.657 \\
-H & 0.575 & 0.813 & $\sim$0 \\
+H & 0.575 & 0.813 &  0.092 \\
 \end{tabular}
 \end{center}
 } % end \small
