@@ -1,0 +1,75 @@
+
+\section{Descriptive statistics as matrix functions}
+
+Assume you have a data set represented as a $n \times p$ matrix, $X$, with
+observations in rows and variables in columns. Below I give formulae for
+calculating some descriptive statistics as matrix functions.
+
+\subsection{Mean vector and matrix}
+
+You can calculate a row vector of means, $\mathbf{m}$, as: 
+\[
+\mathbf{m} = \frac{1}{n} \mathbf{1}^T  X
+\] where $1$ is a $n \times 1$ vector of ones.
+
+A $n \times p$ matrix $M$ where each column is filled with the mean
+value for that column is: 
+\[
+M = \mathbf{1}\mathbf{m}
+\]
+
+\subsection{Deviation matrix}
+
+To re-express each value as the deviation from the variable means
+(i.e.~each columns is a mean centered vector) we calculate a deviation
+matrix: 
+\[
+D = X - M
+\]
+
+\subsection{Covariance matrix}
+
+The $p \times p$ covariance matrix can be expressed as a matrix product of the deviation matrix:
+\[
+S = \frac{1}{n-1} D^T D
+\]
+
+\subsection{Correlation matrix}
+
+The correlation matrix, $R$, can be calculated from the covariance
+matrix by: 
+\[
+R = V S V
+\]
+
+where $V$ is a $p \times p$ diagonal matrix where
+$V_{ii} = 1/\sqrt{S_{ii}}$.
+
+\subsection{Concentration matrix and Partial Correlations}
+
+If the covariance matrix, $S$ is invertible, than inverse of the
+covariance matrix, $S^{-1}$, is called the `concentration matrix' or
+`precision matrix'. We can relate the concentration matrix to partial
+correlations as follow. Let 
+\[
+P = S^{-1}
+\]
+Then:
+\[
+\mbox{corr}(x_i,x_j \mid X \backslash \{x_i,x_j\}) = -\frac{p_{ij}}{\sqrt{p_{ii} p_{jj}}}
+\]
+
+where $X \backslash \{x_i,x_j\}$ indicates all variables other than
+$x_j$ and $x_i$. You can read this as `the correlation between x and y
+conditional on all other variables.'
+
+% \medskip
+
+% \begin{assignment}
+% Create an R library that includes functions that
+% use matrix operations to calculate each of the descriptive statistics
+% discussed above (except the concentration matrix / partial
+% correlations). Calculate these statistics for \lstinline!iris! data set and check the results of your
+% functions against the built-in R functions.
+% \end{assignment}
+

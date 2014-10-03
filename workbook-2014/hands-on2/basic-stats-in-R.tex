@@ -101,13 +101,13 @@ help to read about the iris data set (\lstinline!?iris!). We'll be using
 this data set repeatedly in future weeks so familiarize yourself with
 it.
 
-\smallskip
-\begin{assignment}
-Calculate a summary table as well as correlation
-and covariance matrices for each of the species in the iris data set.
-Use \lstinline!help.search()! and \lstinline!apropos()! to lookup any
-necessary function names.
-\end{assignment}
+% \smallskip
+% \begin{assignment}
+% Calculate a summary table as well as correlation
+% and covariance matrices for each of the species in the iris data set.
+% Use \lstinline!help.search()! and \lstinline!apropos()! to lookup any
+% necessary function names.
+% \end{assignment}
 
 
 \subsection{Exploring Univariate Distributions in R}
@@ -363,21 +363,21 @@ As you can see this splits the beanplot in half for each group and puts
 them back to back to facilitate comparison. The difference in the mean
 of the two groups is visually obvious from the beanplot.
 
-\begin{assignment}
-\begin{enumerate}[a)]
-\item
-  Prepare beanplots showing samples grouped by \lstinline!Species! for
-  each of the quantitative variables in the iris data set. Label the x-
-  and y-axes of your boxplots and give each plot a title. \textbf{Tip}: since there are three species, you can't use the \lstinline!side='both'! argument, and you'll need to extend the \lstinline!col=list! argument to add a third color.
+% \begin{assignment}
+% \begin{enumerate}[a)]
+% \item
+%   Prepare beanplots showing samples grouped by \lstinline!Species! for
+%   each of the quantitative variables in the iris data set. Label the x-
+%   and y-axes of your boxplots and give each plot a title. \textbf{Tip}: since there are three species, you can't use the \lstinline!side='both'! argument, and you'll need to extend the \lstinline!col=list! argument to add a third color.
 
-\item Carry out two-sample t-tests contrasting \lstinline!versicolor! and
-  \lstinline!virginica! for each of the four morphometric variables in
-  the iris data set. \textbf{Tip}: use the \lstinline!subset()! function to create a subset of the iris data containing just these two species.
+% \item Carry out two-sample t-tests contrasting \lstinline!versicolor! and
+%   \lstinline!virginica! for each of the four morphometric variables in
+%   the iris data set. \textbf{Tip}: use the \lstinline!subset()! function to create a subset of the iris data containing just these two species.
 
-\item Write a brief paragraph interpreting the results of the t-tests you
-  conducted.
-\end{enumerate}
-\end{assignment}
+% \item Write a brief paragraph interpreting the results of the t-tests you
+%   conducted.
+% \end{enumerate}
+% \end{assignment}
 
 \subsection{Exploring Bivariate Distributions in R}
 
@@ -447,26 +447,26 @@ Note the use of the function \lstinline!abline()! to plot the regression
 line. Calling \lstinline!plot()! with an object of class \lstinline!lm!
 shows a series of diagnostic plots. Try this.
 
-\begin{assignment}
-Write your own regression function (i.e.~your
-code shouldn't refer to the built in regression functions) for mean
-centered vectors in R. The function will take as it's input two vectors,
-$\vec{x}$ and $\vec{y}$. The function should return:
+% \begin{assignment}
+% Write your own regression function (i.e.~your
+% code shouldn't refer to the built in regression functions) for mean
+% centered vectors in R. The function will take as it's input two vectors,
+% $\vec{x}$ and $\vec{y}$. The function should return:
 
-\begin{enumerate}[1.]
-\item
-  a list containing the mean-centered versions of these vectors
-\item
-  the regression coefficient $b$ in the mean centered regression
-  equation $\vec{\widehat{y}} = b\vec{x}$
-\item
-  the coefficient of determination, $R^2$
-\end{enumerate}
-Demonstrate your regression function by using it to carry out
-regressions of Sepal.Length on Sepal.Width separately for the `setosa'
-and `virginica' specimens from the iris data set (again,
-\lstinline!subset()! is your friend). Include plots in which you use the
-\lstinline!plot()! and \lstinline!abline()! functions to illustrate your
-calculated regression line.
+% \begin{enumerate}[1.]
+% \item
+%   a list containing the mean-centered versions of these vectors
+% \item
+%   the regression coefficient $b$ in the mean centered regression
+%   equation $\vec{\widehat{y}} = b\vec{x}$
+% \item
+%   the coefficient of determination, $R^2$
+% \end{enumerate}
+% Demonstrate your regression function by using it to carry out
+% regressions of Sepal.Length on Sepal.Width separately for the `setosa'
+% and `virginica' specimens from the iris data set (again,
+% \lstinline!subset()! is your friend). Include plots in which you use the
+% \lstinline!plot()! and \lstinline!abline()! functions to illustrate your
+% calculated regression line.
 
-\end{assignment}
+% \end{assignment}

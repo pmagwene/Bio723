@@ -129,28 +129,28 @@ shows a series of diagnostic plots. Try this yourself.
 \caption{Linear regression of Sepal Width on Sepal Length for \Species{I.~setosa}.}
 \end{figure}
 
-\begin{assignment}
-Write your own regression function (i.e.~your
-code shouldn't refer to the built in regression functions) for mean
-centered vectors in R. The function will take as it's input two vectors,
-$\vec{x}$ and $\vec{y}$. The function should return:
+% \begin{assignment}
+% Write your own regression function (i.e.~your
+% code shouldn't refer to the built in regression functions) for mean
+% centered vectors in R. The function will take as it's input two vectors,
+% $\vec{x}$ and $\vec{y}$. The function should return:
 
-\begin{enumerate}[1.]
-\item
-  a list containing the mean-centered versions of these vectors
-\item
-  the regression coefficient $b$ in the mean centered regression
-  equation $\vec{\widehat{y}} = b\vec{x}$
-\item
-  the coefficient of determination, $R^2$
-\end{enumerate}
-Demonstrate your regression function by using it to carry out
-regressions of Sepal.Length on Sepal.Width separately for the `versicolor'
-and `virginica' specimens from the iris data set. Include |ggplot| created plots in which you use the
-\lstinline!geom_point()! and \lstinline!geom_abline()! functions to illustrate your
-calculated regression line. To test your function, compare your regression coefficients and coefficient of determination to the same values returned by the built in |lm()| function.
+% \begin{enumerate}[1.]
+% \item
+%   a list containing the mean-centered versions of these vectors
+% \item
+%   the regression coefficient $b$ in the mean centered regression
+%   equation $\vec{\widehat{y}} = b\vec{x}$
+% \item
+%   the coefficient of determination, $R^2$
+% \end{enumerate}
+% Demonstrate your regression function by using it to carry out
+% regressions of Sepal.Length on Sepal.Width separately for the `versicolor'
+% and `virginica' specimens from the iris data set. Include |ggplot| created plots in which you use the
+% \lstinline!geom_point()! and \lstinline!geom_abline()! functions to illustrate your
+% calculated regression line. To test your function, compare your regression coefficients and coefficient of determination to the same values returned by the built in |lm()| function.
 
-\end{assignment}
+% \end{assignment}
 
 
 
