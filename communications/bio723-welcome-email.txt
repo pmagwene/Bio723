@@ -39,7 +39,7 @@ All Platforms
 
 Windows Only
 ------------
-* Putty -- an SSH client. [Putty Website](http://www.chiark.greenend.org.uk/~sgtatham/putty/)
+* Bitvise SSH Client (Tunnelier) -- a free for personal use SSH client. [Bitvise Website](http://www.bitvise.com/download-area)
 * Notepad++ -- a programmer's text editor.  [Notepad++ Website](http://notepad-plus-plus.org/)
 
 

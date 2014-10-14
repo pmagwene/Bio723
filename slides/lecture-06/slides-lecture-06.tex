@@ -4,7 +4,7 @@
 
 \usepackage{tikz}
 \usepackage{marvosym} % for male/female symbols
-\usepackage{MnSymbol} % for thinstar
+%\usepackage{MnSymbol} % for star
 
 \setbeamersize{description width=2em}
 
@@ -18,7 +18,7 @@
 \author{Instructor: Paul M. Magwene}
 
 
-\date{01 October 2013}
+\date{21 October 2014}
 
 \begin{document}
 %===========================================================
@@ -68,20 +68,25 @@
 \begin{frame}[fragile]
   \frametitle{Matrix Decomposition}
 
-A matrix decomposition is a factoring of a matrix into simpler parts.
+\begin{itemize}
+\item A ``factorization'' is a re-writing of a mathematical object (number, function, etc.) into the product of other object.
 
-\medskip
-Some familiar factorizations:
+\item Your familiar with factorization as used in arithmetic and algebra.
 
 \begin{align*}
 12 &= 3 \times 4 = 2 \times 6  \\
 x^2 - 4 &= (x-2)(x+2)
 \end{align*}
 
+\end{itemize}
+
+
+
 
 \begin{center}
-   \alert{Matrix decomposition is the same idea!}
+ \alert{Matrix decomposition is the same idea! A matrix decomposition is a factoring of a matrix into simpler parts.}
 \end{center}
+
 
 
 
@@ -332,7 +337,7 @@ By SVD we can write $\Mtx{X} = \Mtx{U}\Mtx{S}\Mtx{V}^T$, therefore:
   \frametitle{Applications of SVD}
 
 \begin{itemize}
-\item Pseudoinverse of an arbirary matrix
+\item Pseudoinverse of an arbitrary matrix
 \item Matrix approximation
 \item Biplots
 \item ... and many more ...
@@ -378,13 +383,13 @@ where \PsInv{S} has the reciprocal of non-zero elements of S.
 If $ \Mtx{A} = \Mtx{U} \Mtx{S} \Mtx{V}^T $
 then the optimal (least-squares) $k$-dimensional approximation of \Mtx{A} (where $ k < \rank(\Mtx{A})$) is given by:
 \[
-\tilde{\Mtx{A}} = \Mtx{U}\Mtx{S}^{\thinstar} \Mtx{V}^T
+\tilde{\Mtx{A}} = \Mtx{U}\Mtx{S}^{\star} \Mtx{V}^T
 \]
 
 where:
 \begin{eqnarray*}
-\Mtx{S}_{ii}^{\thinstar} &=& \Mtx{S}_{ii} \text{ for } i \leq k\\
-\Mtx{S}_{ii}^{\thinstar} &=& 0 \text{ for } i > k\\
+\Mtx{S}_{ii}^{\star} &=& \Mtx{S}_{ii} \text{ for } i \leq k\\
+\Mtx{S}_{ii}^{\star} &=& 0 \text{ for } i > k\\
 \end{eqnarray*}
 
 \end{frame}
@@ -416,7 +421,7 @@ where:
 
 Given a data matrix, \Mtx{X}, we can use SVD to approximate \Mtx{X} as so:
 \begin{gather*}
-  \tilde{\Mtx{X}}_k =  \Mtx{U}\Mtx{S}^{\thinstar} \Mtx{V}^T \\
+  \tilde{\Mtx{X}}_k =  \Mtx{U}\Mtx{S}^{\star} \Mtx{V}^T \\
   \text{\footnotesize (k-dimensional approximation to \Mtx{X})}
 \end{gather*}
 
@@ -427,7 +432,7 @@ We can rewrite $\tilde{\Mtx{X}}_k$ as a product of two matrices:
 \]
 where
 \[
-  \Mtx{G} = \Mtx{U}(\Mtx{S}^{\thinstar})^\alpha\; \text{ and } \ \Mtx{H}^T = (\Mtx{S}^{\thinstar})^{1-\alpha}\Mtx{V}^T
+  \Mtx{G} = \Mtx{U}(\Mtx{S}^{\star})^\alpha\; \text{ and } \ \Mtx{H}^T = (\Mtx{S}^{\star})^{1-\alpha}\Mtx{V}^T
 \]
 \end{frame}
 
@@ -439,8 +444,8 @@ where
   \frametitle{Biplots, cont.}
 
 \begin{eqnarray*}
-\Mtx{G} &=& \Mtx{U}(\Mtx{S}^{\thinstar})^{\alpha} \text{ (row effects) } \\
-\Mtx{H}^T &=& (\Mtx{S}^{\thinstar})^{1-\alpha} \Mtx{V}^T \text{ (columns effects) }
+\Mtx{G} &=& \Mtx{U}(\Mtx{S}^{\star})^{\alpha} \text{ (row effects) } \\
+\Mtx{H}^T &=& (\Mtx{S}^{\star})^{1-\alpha} \Mtx{V}^T \text{ (columns effects) }
 \end{eqnarray*}
 
 Different choices of $\alpha$ emphasize different relationships in the data.
