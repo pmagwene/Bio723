@@ -350,14 +350,13 @@ As you can see from the images you created the approximation based on the approx
 
 \section{Image Approximation Using SVD in R}
 
-R doesn't have native support for common image files like JPEG and PNG.  However, there are a couple of packages we call install that will allow us to read in such files and treat them as matrices:
+R doesn't have native support for common image files like JPEG and PNG.  However, there are packages we can install that will allow us to read in such files and treat them as matrices:
 %
 \begin{R}
-> install.packages("png", dependencies=T)
 > install.packages("jpeg", dependencies=T)
 \end{R}
 
-The |png| and |jpeg| libraries provide simple functions for reading and writing image files.  The following code shows how to read in the |chesterbw.jpg| image which can be found in the course datasets. %The |ReadImages| provides more functions for manipulating image data, including functions for converting color images to grayscale, and for normalizing image values so they conform to what R expects for raster images.
+The |jpeg| library provides simple functions for reading and writing image files.  The following code shows how to read in the |chesterbw.jpg| image which can be found in the course datasets. %The |ReadImages| provides more functions for manipulating image data, including functions for converting color images to grayscale, and for normalizing image values so they conform to what R expects for raster images.
 
 
 The function |grid.raster| in the |grid| library can be used to draw the matrix of image data returned from the |readJPEG|.  There is also a lower-level |rasterImage()| function that can be used to draw images, as shown below. The |image()| function included in R base will also draw images, but to do so conveniently we'll write a simple wrapper function called |GreyscaleImage()|.
