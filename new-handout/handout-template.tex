@@ -1,0 +1,34 @@
+%!TEX TS-program = xelatex
+\documentclass[10pt,oneside,bigheadings,tablecaptionabove]{scrbook}
+\usepackage{scrpage2}
+
+\input{layoutpreamble.tex}
+\input{fontpreamble.tex}
+\input{packages.tex}
+\input{codepreamble.tex}
+\input{macros.tex}
+
+\usepackage[colorlinks=true,
+            citecolor=blue,
+            linkcolor=black,
+            breaklinks=true,
+            linktocpage]{hyperref}
+\usepackage[capitalize]{cleveref} % should always be loaded after hyperref
+
+\begin{document}
+
+\setheadcolor{DarkRed!3}
+\ihead{\tikzhead\headmark}
+\ohead{\pagemark}
+\setkomafont{pagehead}{\normalfont\sffamily}
+\setkomafont{pagenumber}{\normalfont\sffamily}
+\pagestyle{scrheadings}
+\renewcommand*{\chapterpagestyle}{scrheadings}
+
+
+\chapter{Handout Title}
+%\input{handout-file.tex}
+
+
+
+\end{document}
