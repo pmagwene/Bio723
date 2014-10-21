@@ -38,7 +38,7 @@ As we discussed in lecture, the eigenvectors of square matrix, \Mtx{A}, point in
 
 \subsection{Writing our own PCA function}
 
-In lecture we discussed the relationship between SVD and PCA.  Let's walk through some code that carries out PCA via SVD, and then we'll impliment our own PCA function.
+In lecture we discussed the relationship between SVD and PCA.  Let's walk through some code that carries out PCA via SVD, and then we'll implement our own PCA function.
 %
 \begin{R}
 > i.sub <- subset(iris, select=-Species)
@@ -120,7 +120,9 @@ Let's put our function through it's paces:
 > iris.pca <- PCA(i.sub)
 > plot(iris.pca$scores, asp=1)
 
-> sing.pca <- PCA(t(i.sub))  # should have singular values equal to zero
+# flip the rows and columns of i.sub and do PCA
+ # Our function should detect singular values equal to zero. Why?
+> sing.pca <- PCA(t(i.sub)) 
 [1] "WARNING: Zero singular values detected"
 
 > tree.pca <- PCA(trees)
