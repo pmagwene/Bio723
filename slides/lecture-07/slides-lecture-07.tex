@@ -483,8 +483,8 @@ F = \frac{\Mtx{a}'\Mtx{B}\Mtx{a}}{\Mtx{a}'\Mtx{W}\Mtx{a}}
 \item \Mtx{W} is within-group matrix (as defined previously)
 \item \Mtx{B} is the between-group covariance matrix
 \begin{itemize}
-    \item $\Mtx{B}_w = \frac{1}{g-1}\sum_{i=1}^{g} n_i(\Mtx{x}_i - \bar{\Mtx{x}})(\Mtx{x}_i - \bar{\Mtx{x}})'$ where $n_i$ is the sample size in group $i$ (weighted version)
-    \item  $\Mtx{B}_u = \frac{1}{g-1}\sum_{i=1}^{g} (\Mtx{x}_i - \bar{\Mtx{x}})(\Mtx{x}_i - \bar{\Mtx{x}})'$ (unweighted version)
+    \item $\Mtx{B}_w = \frac{1}{g-1}\sum_{i=1}^{g} n_i(\bar{\Mtx{x}}_i - \bar{\Mtx{x}})(\bar{\Mtx{x}}_i - \bar{\Mtx{x}})'$ where $\bar{\Mtx{x}}$ is the ``grand-mean'', $\bar{\Mtx{x}}_i$ is the mean in group $i$, and $n_i$ is the sample size in group $i$ (weighted version)
+    \item  $\Mtx{B}_u = \frac{1}{g-1}\sum_{i=1}^{g} (\bar{\Mtx{x}}_i - \bar{\Mtx{x}})(\bar{\Mtx{x}}_i - \bar{\Mtx{x}})'$ (unweighted version)
 \end{itemize}
 
 \end{itemize}
