@@ -109,7 +109,7 @@ PCA <- function(X, center=T, scale=F){
    pc.sdev <- diag(sqrt((S**2/(n-1))))
    return(list(vectors = V, scores=pc.scores, sdev = pc.sdev))
 }
-\end{codeblock}
+\end{codeblock}%$
 
 Note I also included some code to warn the user when the covariance matrix is singular. Use the help to read about variables defined in `.Machine`.
 
@@ -140,7 +140,7 @@ To bring things full circle, let's make sure that the covariance matrix we recon
 > reconstructed.cov <- (1/(n-1)) * V %*% S %*% S %*% t(V) # see pg. 11 of slides
 > all.equal(reconstructed.cov, cov(i.sub), check.attributes=F)
 [1] TRUE
-\end{R}
+\end{R}%$
 Great! I seems like things are working as expected.
 
 \section{Creating Biplots in R}
@@ -409,7 +409,7 @@ Now we'll use SVD to create a low-dimensional approximation of this image.
 
 > approx15 <- U15 %*% S15 %*% Vt15
 > GreyScaleImage(approx15)
-\end{R}
+\end{R}%$
 %
 The output of our approximate image is shown in Fig~\ref{fig:chester15}.
 \begin{figure}[ht!]
