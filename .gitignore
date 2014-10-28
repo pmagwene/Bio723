@@ -8,3 +8,15 @@ slides/lecture-05/beamerinnerthemechamfered.sty
 slides/lecture-05/beamerouterthemewuerzburg.sty
 
 *.fdb_latexmk
+
+*.toc
+
+*.snm
+
+*.out
+
+*.aux
+
+*.log
+
+*.nav
