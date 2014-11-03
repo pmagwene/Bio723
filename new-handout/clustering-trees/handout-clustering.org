@@ -1,0 +1,71 @@
+
+#+TITLE: Bio 723: Clustering I
+#+AUTHOR: Paul Magwene
+#+EMAIL: paul.magwene@duke.edu
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t c:nil creator:comment d:(not "LOGBOOK") date:t
+#+OPTIONS: e:t email:nil f:t inline:t num:t p:nil pri:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:t todo:t |:t
+#+DESCRIPTION:
+#+EXCLUDE_TAGS: noexport
+#+KEYWORDS:
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+ 
+* Dissimilarity measures
+:PROPERTIES:
+:header-args:R: :session *R* :cache no :results output :exports both
+:header-args:python: :session :cache no :results value pp  :exports both 
+:END:
+
+** Dissimilarity measures in R
+
+R includes a function, ~dist()~, for calculating some of the most basic dissimilarity measures including Euclidean, Minkowski, and Manhattan metrics among others. The typical input to ~dist()~ is a data frame or matrix and a ~method~ argument specifying the type of distance measure to use. The ~upper~ argument specifies whether the upper diagonal of the calculated distance matrix should be printed (by default only the lower diagonal is printed).
+
+To start with let's create a small $4 \times 3$ matrix where we can easily calculate the distances between the 4 points by pencil and paper.
+
+#+BEGIN_SRC R
+# create a 4 x 3 matrix
+z <- matrix(c(0,0,0,
+              1,0,0,
+              0,1,0,
+              0,0,1), 4, 3, byrow=T)
+dist(z)
+#+END_SRC
+
+#+RESULTS[87b0c7e6f3f3bc847b277d4137dba901bd70092b]:
+:          1        2        3
+: 2 1.000000                  
+: 3 1.000000 1.414214         
+: 4 1.000000 1.414214 1.414214
+
+The default distance measure is Euclidean distance.  Let's apply Manhattan distance to the same matrix.
+
+#+BEGIN_SRC R
+dist(z, method='manhattan')
+#+END_SRC
+
+#+RESULTS[f5477a05c8f49f8022fb0e80ce99ef89973ba919]:
+:   1 2 3
+: 2 1    
+: 3 1 2  
+: 4 1 2 2
+
+** Dissimilarity Measures in Python 
+
+#+BEGIN_SRC python
+import numpy as np # import numpy
+
+z = np.matrix([[0,0,0],
+               [1,0,0],
+               [0,1,0],
+               [0,0,1]], dtype=np.float)
+z
+#+END_SRC
+
+#+RESULTS[b0f92127d335f56bc65e5a2648bc911da609a18a]:
+: matrix([[ 0.,  0.,  0.],
+:         [ 1.,  0.,  0.],
+:         [ 0.,  1.,  0.],
+:         [ 0.,  0.,  1.]])
+
