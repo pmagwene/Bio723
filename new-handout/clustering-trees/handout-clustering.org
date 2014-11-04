@@ -53,19 +53,79 @@ dist(z, method='manhattan')
 
 ** Dissimilarity Measures in Python 
 
-#+BEGIN_SRC python
-import numpy as np # import numpy
+The SciPy module ~scipy.spatial.distance~ (see the [[http://docs.scipy.org/doc/scipy-0.14.0/reference/spatial.distance.html][SciPy]] manual) supports computation of a large number of dissimilarity measures. The primary function is ~pdist()~ which computes pairwise distances between observations (rows) of an array.
 
-z = np.matrix([[0,0,0],
+#+BEGIN_SRC python
+import numpy as np
+from scipy.spatial import distance
+
+z = np.array ([[0,0,0],
                [1,0,0],
                [0,1,0],
                [0,0,1]], dtype=np.float)
-z
+D = distance.pdist(z)
+D
 #+END_SRC
 
-#+RESULTS[b0f92127d335f56bc65e5a2648bc911da609a18a]:
-: matrix([[ 0.,  0.,  0.],
-:         [ 1.,  0.,  0.],
-:         [ 0.,  1.,  0.],
-:         [ 0.,  0.,  1.]])
+#+RESULTS:
+: array([ 1.        ,  1.        ,  1.        ,  1.41421356,  1.41421356,
+:         1.41421356])
 
+ SciPy's ~pdist()~ function returns a condensed representation of the corresponding distance matrix, corresponding to the elements of the lower triangle of the distance matrix.  To convert this condensed form to a more standard square matrix we can use the ~squareform()~ function defined in the same module. 
+
+
+#+BEGIN_SRC python
+from scipy.spatial.distance import pdist, squareform
+squareform(pdist(z))
+#+END_SRC
+
+#+RESULTS:
+: array([[ 0.        ,  1.        ,  1.        ,  1.        ],
+:        [ 1.        ,  0.        ,  1.41421356,  1.41421356],
+:        [ 1.        ,  1.41421356,  0.        ,  1.41421356],
+:        [ 1.        ,  1.41421356,  1.41421356,  0.        ]])
+
+As with the R function ~dist~, the default distance measure is Euclidean distance.  ~pdist~ can use a wide range of other distance measures as illustrated here:
+
+#+BEGIN_SRC python :results output pp
+
+print "Cityblock (Manhattan) distance: "
+print squareform(pdist(z, "cityblock"))
+print
+print "Hamming distance: " 
+print squareform(pdist(z, "hamming"))
+print
+print "Chebyshev distance: "
+print squareform(pdist(z, "chebyshev"))
+
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+Cityblock (Manhattan) distance:
+[[ 0.  1.  1.  1.]
+ [ 1.  0.  2.  2.]
+ [ 1.  2.  0.  2.]
+ [ 1.  2.  2.  0.]]
+
+Hamming distance:
+[[ 0.          0.33333333  0.33333333  0.33333333]
+ [ 0.33333333  0.          0.66666667  0.66666667]
+ [ 0.33333333  0.66666667  0.          0.66666667]
+ [ 0.33333333  0.66666667  0.66666667  0.        ]]
+
+Chebyshev distance:
+[[ 0.  1.  1.  1.]
+ [ 1.  0.  1.  1.]
+ [ 1.  1.  0.  1.]
+ [ 1.  1.  1.  0.]]
+#+end_example
+
+* Hierarchical Clustering
+** Hierarchical clustering in R
+** Hierarchical clustering in Python
+
+* Minimum Spanning Trees 
+
+* Neighbor Joining Trees
