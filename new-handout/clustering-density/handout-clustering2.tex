@@ -1,0 +1,48 @@
+%!TEX TS-program = xelatex
+\documentclass[10pt,oneside,headings=big,captions=tableheading]{scrbook}
+\usepackage{scrpage2}
+
+\input{../layoutpreamble.tex}
+\input{../fontpreamble.tex}
+\input{../packages.tex}
+\input{../codepreamble.tex}
+\input{../macros.tex}
+
+
+
+\usepackage[colorlinks=true,
+            citecolor=blue,
+            linkcolor=black,
+            breaklinks=true,
+            linktocpage]{hyperref}
+\usepackage[capitalize]{cleveref} % should always be loaded after hyperref
+
+\begin{document}
+
+\setheadcolor{DarkRed!3}
+\renewcommand*{\chaptermarkformat}{}  % gets rid of chapter numbering in header
+\automark{chapter} % put chapter name in header
+\ihead{\tikzhead}  % see macros.tex for definition of tikzhead
+\ohead{\pagemark}
+\setkomafont{pageheadfoot}{\normalfont\sffamily}
+\setkomafont{pagenumber}{\normalfont\sffamily}
+\pagestyle{scrheadings}
+
+\renewcommand*{\chapterpagestyle}{scrheadings}
+
+\cfoot{}
+
+
+\setcounter{chapter}{10} % counter gets indexed to n+1
+\chapter{Density Based Clustering Methods}
+\input{clustering2.tex}
+
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: xelatex
+%%% End: 
