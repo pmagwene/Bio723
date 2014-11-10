@@ -1,0 +1,118 @@
+\useinnertheme[shadow,outline]{chamfered}
+\usecolortheme{beaver}
+\beamertemplatenavigationsymbolsempty
+
+\usepackage{mathspec}
+
+
+\defaultfontfeatures{Ligatures=TeX,Scale=.92}
+\setmainfont{Lucida Handwriting OT}
+\setsansfont{Lucida Sans OT}
+\setmathfont{Lucida Bright Math OT}
+\setmathfont[version=bold]{Lucida Bright Math OT Demibold}
+
+
+
+\usefonttheme[stillsansseriftext]{serif}
+
+
+
+\usepackage{fancyvrb}
+
+%% Fancy syntax coloring via pygments
+\usepackage{minted}
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\usemintedstyle{borland}
+
+
+\newenvironment{Rcode}
+{\VerbatimEnvironment
+ \begin{minted}[fontsize=\scriptsize,baselinestretch=1]{r}}%
+{\end{minted}}
+
+\newenvironment{Pcode}
+{\VerbatimEnvironment
+ \begin{minted}[fontsize=\scriptsize,baselinestretch=1]{python}}%
+{\end{minted}}
+
+\newenvironment{Code}[1]
+{\VerbatimEnvironment
+ \begin{minted}[fontsize=\scriptsize,baselinestretch=1]{#1}}%
+{\end{minted}}
+
+
+\usepackage{textfit} % commands \scaletoheight{height}{text} and \scaletowidth{width}{text}
+
+\usepackage{tikz}
+
+\usepackage{tcolorbox}
+
+\newtheorem{Alert}{Alert}
+\newtheorem{Highlight}{Highlight}
+
+\newcommand{\Species}[1]{{\rmfamily \itshape #1}}
+\newcommand{\Real}{\ensuremath{\mathbb{R}}}
+\newcommand{\RealN}{\ensuremath{\mathbb{R}^n}}
+\newcommand{\RealP}{\ensuremath{\mathbb{R}^p}}
+\newcommand{\Mtx}[1]{\ensuremath{#1}}
+\newcommand{\Inv}[1]{\ensuremath{#1^{-1}}}
+\newcommand{\InvMtx}[1]{\ensuremath{#1^{-1}}}
+\newcommand{\Red}[1]{\textcolor{red}{#1}}
+\newcommand{\PsInv}[1]{\ensuremath{#1^{+}}}
+
+\usepackage{booktabs}
+
+
+
+% --- Macro \xvec
+% From a tex.stackexchange.com answer by Todd Lehman
+% http://tex.stackexchange.com/questions/44017/dot-notation-for-derivative-of-a-vector
+\makeatletter
+\newlength\xvec@height%
+\newlength\xvec@depth%
+\newlength\xvec@width%
+\newcommand{\xvec}[2][]{%
+  \ifmmode%
+    \settoheight{\xvec@height}{$#2$}%
+    \settodepth{\xvec@depth}{$#2$}%
+    \settowidth{\xvec@width}{$#2$}%
+  \else%
+    \settoheight{\xvec@height}{#2}%
+    \settodepth{\xvec@depth}{#2}%
+    \settowidth{\xvec@width}{#2}%
+  \fi%
+  \def\xvec@arg{#1}%
+  \def\xvec@dd{:}%
+  \def\xvec@d{.}%
+  \raisebox{.2ex}{\raisebox{\xvec@height}{\rlap{%
+    \kern.05em%  (Because left edge of drawing is at .05em)
+    \begin{tikzpicture}[scale=1]
+    \pgfsetroundcap
+    \draw (.05em,0)--(\xvec@width-.05em,0);
+    \draw (\xvec@width-.05em,0)--(\xvec@width-.15em, .075em);
+    \draw (\xvec@width-.05em,0)--(\xvec@width-.15em,-.075em);
+    \ifx\xvec@arg\xvec@d%
+      \fill(\xvec@width*.45,.5ex) circle (.5pt);%
+    \else\ifx\xvec@arg\xvec@dd%
+      \fill(\xvec@width*.30,.5ex) circle (.5pt);%
+      \fill(\xvec@width*.65,.5ex) circle (.5pt);%
+    \fi\fi%
+    \end{tikzpicture}%
+  }}}%
+  #2%
+}
+\makeatother
+
+% --- Override \vec with an invocation of \xvec.
+\let\stdvec\vec
+\renewcommand{\vec}[1]{\xvec[]{\bm{#1}}}
+% --- Define \dvec and \ddvec for dotted and double-dotted vectors.
+\newcommand{\dvec}[1]{\xvec[.]{#1}}
+\newcommand{\ddvec}[1]{\xvec[:]{#1}}
+
+
+\usepackage{pifont}
+\newcommand{\weblink}{\ding{43}}  % hand with pointing finger
+
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{colorlinks,linkcolor=,urlcolor=magenta}
