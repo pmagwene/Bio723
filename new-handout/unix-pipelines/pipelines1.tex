@@ -298,248 +298,19 @@ awk '{print $2, $1, $4, $5}' out.txt | less
 
 In the command above the the dollar signs followed by numbers refer to the fields of the file. With it's default setting |awk| operates line by line, so you can interpret the above statement as saying: ``for each line, print the fields 2, 1, 4 and 5''.
 
-The basic syntax of |awk| is often depicted in the form |pattern {action}|. The above command only specified an action, so it was applied to every line.  By contrast, in the example below we specify a pattern.  The pattern can be read as -- ``if the 3rd field is 'chromosome'". For all lines that match that pattern the correspoding action is applied; in this case ``print fields 1 and 5'' (the chromosome name and its length):
-
-\begin{bash}
-awk '$3=="chromosome" {print $1, $5}' saccharomyces_cerevisiae.gff 
-\end{bash}%$
-
-Here's another |pattern {action}| pair that shows how we could find all gene features with length less than 300:
-\begin{bash}
-$ awk '$3 == "gene" && ($5 - $4) < 300 {print $0 }' \
-  saccharomyces_cerevisiae.gff | wc -l
-     446
-\end{bash}%$
-
-|&&| is the AND operator. Read this as ``if the 3rd fields is 'gene' AND the the 5th field minus the 4th field is less than 300.''
-
-In this last example we added one more condition -- we looked for the word `Dubious' in the 9th field. The results indicate that a significant proportion of these small genes are classified as `Dubious'.
-
-\begin{bash}
-$ awk '$3 == "gene" && ($5 - $4) < 300 && match($9, "Dubious") {print $0 }' saccharomyces_cerevisiae.gff | wc -l
-     163
-\end{bash}
-
-
- There's lots of powerful things you can do with |awk| one-liners, but writing short command files often makes things easier to understand. You can think of an |awk| command file as a set of |pattern {action}| statements.  Our command file  will create a table giving both the length of each chromosome and the number of genes on that chromosome. Save the following awk script in a file called |gcount.awk|.
-
-\begin{codeblock}[awk]
-# gcount.awk
-# length of each chromosome
-$3 == "chromosome" {
-    clen[$1] = $5
-}
-
-# increment the gene count for the given chromosome
-$3 == "gene" {
-    ngenes[$1] += 1
-}
-
-# once we've processed all the records
-END {
-for (chr in clen) {
-    print chr "\t" clen[chr] "\t" ngenes[chr]
-    }
-}
-\end{codeblock}%$
-
-In the example above we create two arrays -- |clen| and |ngenes| -- to keep track of the chromosome lengths and number of genes on each chromosome. Arrays can be indexed by either integers or strings; when they're indexed by strings we can think of them like Python dictionaries. We have two patterns -- whether the 3rd field equals 1) ``chromosome'' or 2) ``gene''. The final pattern, labeled |END|, says what to do once we've processed all the lines in the file.  To run this script do the following:
-
-\begin{bash}
-$ awk -f gcount.awk saccharomyces_cerevisiae.gff
-\end{bash}%$
-
-The |-f| option says to use the pattern/action pairs contained in the specified file.  One possible shortcoming (at least on my system) is that the output wasn't sorted.  That's easy to solve by piping the results to the sort command:
-
-\begin{bash}
-$ awk -f gcount.awk saccharomyces_cerevisiae.gff | sort
-\end{bash}%$
-
-Our |gcount.awk| script works pretty well, but what if we wanted to count pseudogenes rather than genes, or tRNA features? In its current form the feature type is hardcoded into the script. Let's see how we can get rid of that constraint. Save the following awk script as |fcount.awk|.
-
-\begin{codeblock}[awk]
-# fcount.awk
-BEGIN {
-# if var ftype has NOT been defined, assign it a default value
-if (!ftype)
-  ftype = "gene"
-}
-
-# length of each chromosome
-$3 == "chromosome" {
-    clen[$1] = $5
-}
-
-# increment the feature count for the given chromosome
-$3 == ftype {
-    ngenes[$1] += 1
-}
-
-END {
-for (chr in clen) {
-    print chr "\t" clen[chr] "\t" ngenes[chr]
-    }
-}
-\end{codeblock}%$
-
-Here we introduced the |BEGIN| pattern. This pattern is carried out before any lines of the file are processed.  By default, this new script will count genes like our previous script did, but if you specify the variable |ftype| using the |-v| option on the command line it will count the specified feature type:
-
-\begin{code}[]
-# count pseudogenes
-$ awk -f fcount.awk  -v ftype="pseudogene" saccharomyces_cerevisiae.gff 
-
-# counts ARS sequences (origins of replication)
-$ awk -f fcount.awk  -v ftype="ARS" saccharomyces_cerevisiae.gff
-
-# count tRNA genes
-$ awk -f fcount.awk  -v ftype="tRNA" saccharomyces_cerevisiae.gff
-\end{code}%$
-
-As a final example of using |awk|, let's say you wanted to look for all gene features that include reference to a particular gene family in the attribute field (column 9 of the GFF file). You could do something like this:
-
-\begin{code}
-$ awk 'match($9,"FLO") && $3 == "gene" { print $0 }' \ 
-  saccharomyces_cerevisiae.gff  | less
-\end{code}
-
-This works, but the output is a bit ugly because of how the attribute field is specified. Let's write a simple awk |function| that nicely formats the output, with each of the attributes appearing as a subline. Save the following script as |attribs.awk|.
-
-\begin{codeblock}[awk]
-# attribs.awk
-# parse the attributes field of a GFF file
-
-NF >= 9 {
-    # print the first 8 fields
-    print $1, $2, $3, $4, $5, $6, $7, $8
-  
-    # break the attributes field up into individual attributes
-    n = split($9, attributes, ";")
-    for (i = 1; i <= n; i++){
-        tstr = attributes[i]
-        gsub(/%20/," ", tstr ) # spaces
-        gsub(/%2C/, ",", tstr) # commas
-        gsub(/%3B/, ";", tstr) # semi-colons
-        gsub(/%2F/, "/", tstr) # forward slash
-        print "\t\t" tstr
-        }
-    print "\n"
-}
-\end{codeblock}%$
-
-The awk function |gsub()| globally substitutes one string for another. In this case it's replacing HTML type encoding of spaces, commas, semi-colons, etc. with more human friendly versions of the same.
-
-We can use our |attribs.awk| script as follows:
-\begin{code}
-$ awk 'match($9,"FLO") && $3 == "gene" { print $0 }'  \
-  saccharomyces_cerevisiae.gff  | awk -f attribs.awk | less
-\end{code}
-
-This produces output that is much nicer for a human reader to interpret, though less easy to parse computationally.
-
-The GFF3 format is used by many organism specific genome projects besides yeast. If we take care to write our scripts to operate on GFF3 files generically then we can apply scripts we write for one organism easily to another organism. Let's test this out by downloading the X-chromosome GFF3 file for \textit{Drosophila melanogaster} from FlyBase:
-
-\begin{bash}
-$ curl -O ftp://ftp.flybase.net/genomes/dmel/current/gff/dmel-X-r5.41.gff.gz   
-$ gunzip dmel-X-r5.41.gff.gz  # unzip the compressed file
-\end{bash}
-
-Now let's test our |attribs.awk| script with this new GFF file by generating a report on pseudogenes on the \textit{Drosophila} X-chromosome:
-
-\begin{bash}
-$ awk '$3 == "pseudogene"  {print $0}' dmel-X-r5.41.gff | awk -f attribs.awk > fly-X-pseudogenes.txt    
-\end{bash}%$
-
-Use |less| or a text editor to view your report.
-
-\section{Tieing it all together with bash}
-
-To this point all of our examples have involved single command lines or scripts, occasionally tied together with pipes.  This works well for quick analyses, but what if you wanted to run an analysis over and over again, say on a monthly basis as a genome project was updated, or as you generated new data as part of your research?  In that context a shell script might be useful. I'm going to assume you're using bash as your shell (the default on OS X, cygwin, and most Linux based systems).
-
-You can confirm that your default shell is bash by doing something like:
-\begin{bash}
-$ sh --version
-GNU bash, version 3.2.48(1)-release (x86_64-apple-darwin10.0)
-Copyright (C) 2007 Free Software Foundation, Inc.
-\end{bash}%$
-
-Assuming, that you've got bash working on your system, enter the following code into your text-editor and save it with the filename |genome_reporter.sh| in the same directory where you've saved |fcount.awk| that we created earlier. Be careful that you enter the text as shown as |bash| is particularly picky about extra spaces around the equal sign (=) in variable assignment so if you get error messages when you try and run this script (see below), that's the first thing to check.
-
-\begin{codeblock}[bash]
-#!/bin/bash
-
-URL='http://downloads.yeastgenome.org/curation/chromosomal_feature/saccharomyces_cerevisiae.gff'
-BASEFILE='saccharomyces_cerevisiae.gff'
-
-# get today's date
-TODAY=$(date -u +%Y-%m-%d)
-
-# create filename, prepended w/today's date
-FILENAME="$TODAY-$BASEFILE"
-REPORT="report-$FILENAME"
-
-# if the GFF file does not already exist then
-# use curl to download the file and save if with the name above
-if [ ! -e $FILENAME ]
-then
-    curl -o $FILENAME $URL
-fi
-
-
-# create report with a series of awk calls
-echo -e "Genome Report\nPrepared: $TODAY\n" > $REPORT
-
-echo "Total genes: " >> $REPORT
-awk '$3 == "gene" {print $0}' $FILENAME | wc -l >> $REPORT
-
-echo -e "\nDubious ORFs: " >> $REPORT
-awk '$3 == "gene" && ($5 - $4) < 300 && match($9, "Dubious") {print $0 }' $FILENAME | wc -l >> $REPORT
-
-echo -e "\nPseudogenes: " >> $REPORT
-awk -f fcount.awk  -v ftype="pseudogene" $FILENAME | wc -l >> $REPORT
-
-echo -e "\nChromosome, length, genes per chromosome: " >> $REPORT
-awk -f fcount.awk $FILENAME | sort >> $REPORT    
-\end{codeblock}
-
-Note that the line |#!/bin/bash| needs to be the first line in the file. This tells the operating system to run this script using the bash shell. This line is sometimes referred to as the `she-bang' line by Unix programmers. We'll see next week how to set this for a Python program.
-
-Having entered and saved that script, make the script executable by typing:
-\begin{bash}
-$ chmod +x genome_reporter.sh
-\end{bash}%$
-from the command line.  Once you've done that you can run the script, from the same directory, by typing:
-\begin{bash}
-$ ./genome_reporter.sh
-\end{bash} %$
-Assuming you don't have any errors the script will download the GFF file from the Saccharomyces Genome Database, save it with the date prefixed to the file name, and then generate a short report listing some useful summaries generated from the file.
-
-
-
-\section{Awk revisited}
-
-One of the tools that was introduced in the appendix on Unix command line tools was Awk, a programming language for processing structured text files.  We'll start by revisiting Awk to build some simple but useful programs that we'll then incorporate into our first pipeline.
-
-If you haven't already done so, download the \textit{Saccharomyces cerevisiae} GFF file from the yeast genome database as so:
-%
-\begin{bash}
-$ curl -O http://downloads.yeastgenome.org/curation/chromosomal_feature/saccharomyces_cerevisiae.gff  
-\end{bash}%$
-%
-Recall that Awk works on the fields of a structured data file. By default fields are delimited by spaces or tabs, though this can be changed.  Conveniently, GFF files consist of 9 columns separated by tabs, so they are well suited to manipulation by awk.  The information that is found in each of the columns of the GFF format is described here: \url{http://www.sequenceontology.org/gff3.shtml}.
-
 \subsection{The \texttt{pattern \{action\}} syntax of Awk}
 
 The basic syntax of |awk| is often depicted in the form |pattern {action}|. In the example below the pattern can be read as -- ``if the 3rd field is 'chromosome'". For all lines that match that pattern the corresponding action is applied; in this case ``print fields 1 and 5'' (the chromosome name and its length):
 %
 \begin{bash}
 awk '$3=="chromosome" {print $1, $5}' saccharomyces_cerevisiae.gff 
-\end{bash}
+\end{bash}%$
 
 Here's another |pattern {action}| pair that shows how we could find all gene features with length less than 300:
 %
 \begin{bash}
 $ awk '$3 == "gene" && ($5 - $4) < 300 {print $0 }' saccharomyces_cerevisiae.gff | wc -l
-\end{bash}
+\end{bash}%$
 %
 |&&| is the AND operator. The pattern for this example translates as ``if the 3rd fields is 'gene' AND the the 5th field minus the 4th field is less than 300''; the corresponding action is ``print the whole line.'' Notice how we piped the output of |awk| to the utility |wc| to count the number of lines returned.
 
@@ -617,7 +388,7 @@ for (chr in clen) {
     print chr "\t" clen[chr] "\t" ngenes[chr]
     }
 }
-\end{codeblock}
+\end{codeblock}%$
 
 Here we introduced the |BEGIN| pattern. This pattern is carried out before any lines of the file are processed.  By default, this new script will count genes like our previous script did, but if you specify the variable |ftype| using the |-v| option on the command line it will count the specified feature type:
 %
@@ -630,7 +401,7 @@ $ awk -f fcount.awk  -v ftype="ARS" saccharomyces_cerevisiae.gff
 
 # count tRNA genes
 $ awk -f fcount.awk  -v ftype="tRNA" saccharomyces_cerevisiae.gff
-\end{code}
+\end{code}%$
 
 \subsection{String substitution in Awk}
 
@@ -640,7 +411,7 @@ Here's a now familiar example of using the |pattern {action}| syntax to find all
 %
 \begin{code}
 $ awk '$3 == "pseudogene" { print $0 }' saccharomyces_cerevisiae.gff  | less
-\end{code}
+\end{code}%$
 %
 This works, but the output is a bit ugly because of how the attribute field is specified in GFF format. Let's write a simple awk |function| that nicely formats the output. Save the following script as |attribs.awk|.
 %
@@ -676,7 +447,7 @@ The awk function |gsub()| globally substitutes one string for another. In this c
 %
 \begin{code}
 $ awk '$3 == "pseudogene" { print $0 }' saccharomyces_cerevisiae.gff  | awk -f attribs.awk | less
-\end{code}
+\end{code}%$
 %
 This produces output that is much nicer for a human reader to interpret, though perhaps less easy to parse computationally.
 
@@ -691,7 +462,7 @@ Now let's test our |attribs.awk| script with this new GFF file by generating a r
 %
 \begin{bash}
 $ awk '$3 == "pseudogene"  {print $0}' dmel-X-r5.54.gff | awk -f attribs.awk > fly-X-pseudogenes.txt    
-\end{bash}
+\end{bash}%$
 %
 Use |less| or a text editor to view your report.
 
@@ -704,7 +475,7 @@ To this point all of our examples have involved single command lines or scripts,
 $ sh --version
 GNU bash, version 3.2.48(1)-release (x86_64-apple-darwin10.0)
 Copyright (C) 2007 Free Software Foundation, Inc.
-\end{bash}
+\end{bash}%$
 
 Assuming, that you've got bash working on your system, enter the following code into your text-editor and save it with the filename |genome_reporter.sh| in the same directory where you've saved |fcount.awk| that we created earlier. Be careful that you enter the text as shown as |bash| is particularly picky about extra spaces around the equal sign (=) in variable assignment so if you get error messages when you try and run this script (see below), that's the first thing to check.
 %
@@ -744,18 +515,18 @@ echo -e "\nChromosome, length, genes per chromosome: " >> $REPORT
 awk -f fcount.awk $FILENAME | sort >> $REPORT    
 
 echo "Report written to: $REPORT"
-\end{codeblock}
+\end{codeblock}%$
 %
 Note that the line |#!/bin/bash| needs to be the first line in the file. This tells the operating system to run this script using the bash shell. This line is sometimes referred to as the `she-bang' line by Unix programmers. We'll see next week how to set this for a Python program.
 
 Having entered and saved that script, make the script executable by typing:
 \begin{bash}
 $ chmod +x genome_reporter.sh
-\end{bash}
+\end{bash}%$
 from the command line.  Once you've done that you can run the script, from the same directory, by typing:
 \begin{bash}
 $ ./genome_reporter.sh
-\end{bash} 
+\end{bash} %$
 Assuming you don't have any errors the script will download the GFF file from the Saccharomyces Genome Database, save it with the date prefixed to the file name, and then generate a short report listing some useful summaries generated from the file.
 
 Most of the bottom half of the script should be easy to understand; it simply shows a bunch of |echo| and |awk| commands that you might have typed at the command line. In the top portion of the script we create a set of variables to hold the names of the files we'll be using. One new feature we haven't seen before is the use of the dollar sign (\verb|$|) to dereference variable names.  For example, the variable |FILENAME| is constructed by creating a string by joining together the strings held in the variables |TODAY| and |BASEFILE| (and separated by a dash |-|). Depending on the date on which the script is run it generates a different set of file names, as specified by the variables |TODAY|, |BASEFILE|, and |REPORT|.  The bottom half of the script is setup to generate the appropriate output given those changing variables.  One other feature to take note of is the |if-then-fi| conditional statement. The portion in the square brackets (\verb|[ ! -e $FILENAME ]|) asks whether the file for that date already exists. If so it doesn't bother downloading the file again, for efficiency reasons.
