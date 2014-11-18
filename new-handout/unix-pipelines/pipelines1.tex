@@ -187,6 +187,19 @@ some text here
 some more text
 \end{bash}
 
+
+\medskip
+\begin{inclassassignment}
+
+The \verb|cat| command has a number of possible arguments it can take. Read about these arguments in the \verb|cat| man pages (\verb|man cat|) and then:
+\begin{enumerate}
+  \item Download the file \verb|jabberwocky.txt| from the course Github site.
+  \item Using \verb|cat| and the redirection operator, create a new version of the file, \verb|jabberwocky-numbered.txt|, in which \emph{only} the non-blank lines in the file are numbered.
+\end{enumerate}
+
+\end{inclassassignment}
+\medskip
+
 \subsection{wc}
 
 |wc| is a program that counts the number of words, lines, and characters in a file.  You can also specify you only want one of those counts using options like |-l| (count only lines).
@@ -235,45 +248,75 @@ Another useful option to sort is |-u| which tells sort to output only the first 
 $ cut -s -f3 saccharomyces_cerevisiae.gff | sort -u
 \end{bash}%$
 
+\subsection{uniq}
+
+|uniq| filters \emph{adjacent} matching lines from it's input. Open a text editor and create a file, \verb|testunique.txt| with the following lines:
+\begin{code}
+apple  
+apple
+cherry
+peach
+peach
+apple
+blueberry
+blueberry
+apple
+\end{code}
+Now pass this file to |uniq|:
+\begin{bash}
+$ uniq testunique.txt  
+\end{bash}%$
+Notice how ``apple'' appeared three times in the list, because there are multiple \emph{non-adjacent} instances of the word in the file.
+
+Often times one wants to combine |uniq| with |sort| as illustrated below:
+\begin{bash}
+$ sort testunique.txt | uniq  
+\end{bash}%$
+Compare the output above to what you got when you only used |uniq|.
+
+|uniq| can also count the number of occurences of repeated lines:
+\begin{bash}
+$ sort testunique.txt | uniq -c 
+\end{bash}%$
+See the |uniq| man page for more options.
+
 \subsection{grep}
 
 |grep| is a tool for doing regular expression matching on lines of a file. Regular expressions are a way to specificy search patterns in strings. The simplest type of regular expression is to just search for a specific word, as illustrated here:
 \begin{bash}
 $ grep "gene" out.txt | less
 \end{bash}%$
+The above command simply returns all the lines in |out.txt| that have the word ``gene'' in them. 
 
-The above command simply returns all the lines in |out.txt| that have the word ``gene" in them. Let's use this in a slightly different way to count instances of different features in the file:
-\begin{bash}
-$ grep "gene" out.txt | wc -l
-    6720
-$ grep "pseudogene" out.txt | wc -l
-      21
-$ grep "telomere" out.txt | wc -l
-      32
-\end{bash}%$
-NOTE: the numbers of matches may change somewhat between releases of the curated yeast genome.  If the numbers you get above or below are \emph{slightly} different from what is shown here don't worry.
+\medskip
+\begin{inclassassignment}
+
+\begin{itemize}
+  \item  Combine \verb|grep| with \verb|wc| to count the number of lines if the GFF that contain the word ``gene''.  
+  \item Make similar counts for ``pseudogene'' and ``telomere''.
+\end{itemize}
+
+\end{inclassassignment}
+\medskip
 
 We can get a little fancier if we use the ``extended'' |grep| syntax (specified using the |-E| option).  Here's how we can search for lines that match on any of a set of terms (the vertical bar \verb+|+ indicates an ``OR'' operator):
 \begin{bash}
-$ grep -E "tRNA|rRNA|snRNA|snoRNA" out.txt | wc -l
-     409
+$ grep -E "tRNA|rRNA|snRNA|snoRNA" out.txt | less
 \end{bash}%$
 
 Note that we have to be careful about what |grep| matches, for example:
 \begin{bash}
-$ grep "chr01" out.txt | grep "gene" | wc -l
-    121
+$ grep "chr01" out.txt | grep "gene" | less
 \end{bash}%$
 
 Note how we piped two |grep| commands together to get the equivalent of AND (``chr01'' AND ``gene''). However, there's a very subtle problem with this command as constructed. We search on the word ``gene'' but ``gene'' is also a substring of ``psuedogene'' and hence ``pseudogene'' features also generate matches.  What we really want is whole word matches. We can do that as follows:
 \begin{bash}
-$ grep "\<chr01\>" out.txt | grep "\<gene\>" | wc -l
-     117
+$ grep "\<chr01\>" out.txt | grep "\<gene\>" | less 
 \end{bash}%$
 
 This uses what are called ``POSIX character classes" to match possible sets of characters. A list of the POSIX character classes is linked to on the course wiki. Here's the equivalent call for counting genes on chromosome IV:
 \begin{bash}
-$ grep "\<chr04\>" out.txt | grep "\<gene\>" | wc -l
+$ grep "\<chr04\>" out.txt | grep "\<gene\>" | less wc -l
      836
 \end{bash}%$
 
@@ -286,6 +329,61 @@ We've only just scratched the surface of regular expressions. Regular expression
 $ cat out.txt | tr "\t" "," > out.csv
 \end{bash}%$
 Note that |tr| only reads from standard input so we used the |cat| program to feed the lines of text to |tr|.
+
+\medskip
+\begin{inclassassignment}
+  Use the \verb|tr| command to:
+  \begin{enumerate}
+ \item Replace all punctuation from \verb|jabberwocky.txt| with spaces. 
+ \item Make all uppercase letters into lowercase letters. 
+  \end{enumerate}
+\end{inclassassignment}
+
+
+\subsection{sed}
+
+A more powerful tool for manipulating strings in files is \verb|sed|.  Sed stands for ``string editor'' and provides powerful facilities for parsing and transforming text.  \verb|sed| combined with |awk| (below) provides a very powerful tool for manipulating files, but here we only scratch the surface of what |sed| can do.
+
+The simplest |sed| operation is string substitution:
+\begin{bash}
+$ echo "Cats Rule" | sed 's/Cats/Dogs/' 
+\end{bash}%$
+The above command line substitutes  ``Dogs'' for ``Cats''. The prefix |s/| indicates substitution.
+
+By default |sed| works line-wise, only making the first substitution it finds, as shown below:
+\begin{bash}
+$ echo "Cats Rule! Cats are Great!" | sed 's/Cats/Dogs/'
+\end{bash}%$
+To replace all instances of ``Cats'' with ``Dogs'' we need to tell |sed| to carry out the substitution globally, by appending the global flag, |/g|.
+\begin{bash}
+$ echo "Cats Rule! Cats are Great!" | sed 's/Cats/Dogs/g'
+\end{bash}%$
+
+|sed| is case-sensitive by default. To make substitutions in a case-insensitive manner append the |/I| flag:
+\begin{bash}
+$ echo "Cats rule and small cats are cute." | sed 's/Cats/Dogs/gI'
+\end{bash}%$
+
+For a more extensive overview of |sed| see \url{http://www.grymoire.com/Unix/Sed.html}.
+
+
+\medskip
+\begin{inclassassignment}
+
+Using the various command line utilities covered above, try and put together a ``one-line'' command (using pipes and redirection where appropriate) that accomplishes the following steps on the \verb|jabberwocky.txt| file:
+
+\begin{enumerate}
+ \item Deletes all punctuation.
+ \item Converts upper case letter to lower case.
+ \item Deletes all blank lines (lines with only a new line character, |\n|)
+ \item Converts spaces between words to newlines
+ \item Sorts the lines of the file alphabetically
+ \item Counts the number of occurences of each word in the file
+ \item Returns the words and counts, sorted from most to least frequent
+\end{enumerate}  
+
+\end{inclassassignment}
+
  
 \section{Awk}
 
@@ -314,7 +412,7 @@ $ awk '$3 == "gene" && ($5 - $4) < 300 {print $0 }' saccharomyces_cerevisiae.gff
 %
 |&&| is the AND operator. The pattern for this example translates as ``if the 3rd fields is 'gene' AND the the 5th field minus the 4th field is less than 300''; the corresponding action is ``print the whole line.'' Notice how we piped the output of |awk| to the utility |wc| to count the number of lines returned.
 
-Let's add one more condition to the previous example -- we'll look for the word `Dubious' in the 9th field. 
+Let's add one more condition to the previous example -- we'll look for the word `Dubious' in the 9th field (the attributes field). 
 %
 \begin{bash}
 $ awk '$3 == "gene" && ($5 - $4) < 300 && match($9, "Dubious") {print $0 }' saccharomyces_cerevisiae.gff | wc -l
@@ -392,7 +490,7 @@ for (chr in clen) {
 
 Here we introduced the |BEGIN| pattern. This pattern is carried out before any lines of the file are processed.  By default, this new script will count genes like our previous script did, but if you specify the variable |ftype| using the |-v| option on the command line it will count the specified feature type:
 %
-\begin{code}[]
+\begin{code}[bash]
 # count pseudogenes
 $ awk -f fcount.awk  -v ftype="pseudogene" saccharomyces_cerevisiae.gff 
 

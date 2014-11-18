@@ -83,3 +83,10 @@ language=#1}}
 {\endtcolorbox}
 
 
+\newcounter{inclassassignnum}
+\counterwithin{inclassassignnum}{chapter}
+\setcounter{inclassassignnum}{1}
+\newenvironment{inclassassignment}{%
+\tcolorbox[colback=DarkBlue!5,colframe=DarkBlue!50,fonttitle=\sffamily\bfseries,title={In-class Assignment \stepcounter{inclassassignnum}\theinclassassignnum},fontupper=\small,fontlower=\small,boxrule=0.1pt,left=2mm,right=2mm]}%
+{\endtcolorbox}
+
