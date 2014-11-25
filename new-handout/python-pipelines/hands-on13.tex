@@ -178,7 +178,7 @@ In [5]: [juvenilize(i) for i in y]
 Out[5]: ???
 \end{python}
 
-You can  use the |read_fast()| function as follows:
+You can  use the |parse_fasta()| function as follows:
 \begin{python}
 >>> import pipeline
 >>> recs = pipeline.parse_fasta('unknown2.fas')
@@ -220,18 +220,13 @@ def translate_recs(seqrecs):
 We can then encapsulate the whole process of converting a nucleotide FASTA file to a peptide sequence FASTA file as so (add these to |pipeline.py|):
 
 \begin{python}
-def write_fasta(recs, outfile):
-    ofile = open(outfile, 'w')
-    SeqIO.write(recs, ofile, 'fasta')
 
 def translate_fasta(infile, outfile):
     """ nucleotide fasta file -> protein fasta file """
     nrecs = parse_fasta(infile)
     precs = translate_recs(nrecs)
-    write_fasta(precs, outfile)
+    SeqIO.write(precs, outfile, 'fasta')
 \end{python}
-
-|open()| is a built-in Python function that when called with the |'w'| argument opens a file for writing. When called with |'r'| as it's second argument it opens a file for reading.
 
 We can use our |translate_fasta| function from the Python interpreter like so:
 
@@ -243,7 +238,106 @@ We can use our |translate_fasta| function from the Python interpreter like so:
 %
 Take a moment to open the file \texttt{unknown2-protein.fasta} in a text editor to confirm that the file now hold amino acid sequences rather than nucleotide sequences.
 
-\subsubsection{Globbing to get multiple files of a given type}
+\medskip
+\begin{inclassassignment}
+
+Since DNA is a double-stranded molecule, protein coding information can be coded on either strand (referred to as the Watson and Crick strands, see Cartwright and Graur 2011, Biology Direct 6:7 for a discussion of the history of this terminology and how it's defined).  Sequence data in genome databases such as GenBank are typically provided in their Watson strand encoding, so that if you are dealing with a coding gene of interest whose 5' to 3' encoding is on the Crick strand you will need to take the reverse complement of the sequence before translating it.
+
+\smallskip
+\begin{enumerate}
+  \item Using the Biopython documentation, figure out how to get the reverse complement of a sequence, and then write a Python function |reverse_complement_fasta| that takes as its input a file of nucleotide FASTA records (\verb|infile|), calculates their reverse complements, and write those reverse complements out to the argument \verb|outfile|. This should parallel the function |translate_fasta| given above.
+
+  \item Apply your function the the file \verb|unknown3.fas| from the course website, producing the file \verb|unknown3-revcomp.fas|.
+    
+  \item Apply the |translate_fasta| function to \verb|unknown3-revcomp.fas| producing the protein sequence file \verb|unknown3-protein.fas|.
+
+\end{enumerate}
+
+\end{inclassassignment}
+
+\subsection{Turning a Python module into a command line program}
+
+A Python module can server both as a library of functions, as a well as a command line program that can be called like other Unix programs.  The easiest way to do this is to use the \href{https://docs.python.org/2/library/argparse.html#module-argparse}{argparse} module, which is part of the Python standard library.  
+
+The following snippet shows how we can make our \verb|pipeline.py| act as a command line program:
+\begin{python}
+#!/usr/bin/env python
+
+from Bio import SeqIO, Seq, SeqRecord
+
+def parse_fasta(infile):
+    recs = SeqIO.parse(infile, 'fasta')
+    return [i for i in recs]
+
+def translate_recs(seqrecs):
+    proteins = []
+    for rec in seqrecs:
+        aaseq = rec.seq.translate()
+        protrec = SeqRecord.SeqRecord(aaseq, id=rec.id, name=rec.name,
+                                      description=rec.description)
+        proteins.append(protrec)
+    return proteins
+
+def translate_fasta(infile, outfile):
+    nrecs = parse_fasta(infile)
+    precs = translate_recs(nrecs)
+    SeqIO.write(precs, outfile, 'fasta')
+
+def reverse_complement_fasta(infile, outfile):
+    pass  # replace with your reverse_complement_fasta fxn
+
+
+import sys
+import argparse
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('command', choices=['translate', 'revcomp'], help='The command to run on input to the program')
+
+    parser.add_argument('-i','--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
+    parser.add_argument('-o', '--outfile',nargs='?', type=argparse.FileType('w'), default=sys.stdout)
+
+    args = parser.parse_args()
+
+    if args.command == 'translate':
+        translate_fasta(args.infile, args.outfile)
+
+    elif args.command == 'revcomp':
+        reverse_complement_fasta(args.infile, args.outfile)
+  
+\end{python}
+
+
+At the very top of our module we've added a line \verb|#!/usr/bin/env python|.  This instructs the shell to run this program with Python (\verb|/usr/bin/env| figures out where Python is installed on your system). 
+
+At the end of our module we've imported a couple more modules, and then we have the statement \verb|if __name__ == '__main__'|.  This if statement simply says, ``execute the following code only if this module is being run as a program'' (as opposed to imported as a module). Nested within this if statement is the setup and logic associated with \verb|argparse|.  First we create and \verb|ArgumentParser| object called |parser|, and then we add a number of arguments to the parser.  Our first argument, |`command`| currently takes one of two possible choices, depending if we want our program to translate nucleotide sequences or take their reverse complement.  The next two arguments specificy infile and outfile arguments, that can be called with either short names (|-i|/|-o|) or long names (|--infile|/|--outfile|).  If file names aren't specified, the default behavior is to follow the Unix norm  of taking input from |STDIN| and writing output to |STDOUT|.
+
+
+The make this script executable in a Unix environment we need to set the executable bit by using the \verb|chmod| command from the bash prompt as follows:
+\begin{bash}
+$ chmod +x ./pipeline.py 
+\end{bash} %$
+
+If you don't have any errors in your program, you should now be able to call it as so (assuming you're in the same directory as |pipeline.py|).  First, let's get some help on using our function:
+\begin{bash}
+$ ./pipeline.py --help 
+\end{bash} %$
+%
+By using |argparse| we get automatically generate a short description of the available arguments!
+
+To use the program to translate a set of records:
+\begin{bash}
+ $ ./pipeline.py -i unknown2.fas -o unknown2-proteins.fas translate
+\end{bash} %$
+
+Because our program can read and write to |STDIN| and |STDOUT| we can combine multiple calls to |pipeline.py| with pipes and other Unix utilities. Here for example we first take the reverse complement and then translate |unknown3.fas|:
+\begin{bash}
+$ cat unknown3.fas | ./pipeline.py revcomp | ./pipeline.py translate
+\end{bash} %$
+
+For more details and explanation about how |argparse| works see the \href{https://docs.python.org/2/library/argparse.html#module-argparse}{argparse documentation}.
+
+
+\subsection{Globbing to get multiple files of a given type}
 As an aside, what if we wanted to repeat this for a whole directory full of DNA sequences in separate FASTA files?  Here's a function to help accomplish that task:
 \begin{python}
 import glob
@@ -420,6 +514,13 @@ SeqRecord(seq=Seq('MNYLPFVLQRRSTVVASAPAPGSASRIPESPTTTGSNIINIIYSQSTHPNSSPT...SMQ'
 >>> seqs.append(prot1)  # add our original protein sequence to the list
 >>> pipeline.write_fasta(seqs, 'unknown1-plus-human-fly.fasta')
 \end{python}
+
+\medskip
+\begin{inclassassignment}
+
+Apply the BLAST and Swiss-Prot code above to the protein sequence you generated from |unknown3.fas|, searching against the genomes of  H.~sapiens, D.~melanogaster, and E.~coli.  Based on the results of your search, what is the function of this protein? 
+  
+\end{inclassassignment}
 
 
 \subsection{Multiple sequence alignment via MAFFT}
